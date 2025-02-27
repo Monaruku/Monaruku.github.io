@@ -17,7 +17,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const links = {
         'Facebook': 'https://www.facebook.com/SQLEstream/',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
-        'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI'
+        'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
+        'Red note': 'xhsdiscover://profile/65164c2e000000002302441a'
     };
 
     // Add active state for touch devices
