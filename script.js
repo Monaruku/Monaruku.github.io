@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     else {
             document.querySelector(".facebook").addEventListener("click", function() {
-    window.open("htps://facebook.com", "_blank");
+    window.open("https://facebook.com", "_blank");
     });
     }
 
