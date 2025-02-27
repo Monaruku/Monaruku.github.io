@@ -12,7 +12,7 @@
         <div class="buttons">
             <a href="#" class="button tiktok">Share to TikTok</a>
             <a href="#" class="button rednote">Share to Red Note</a>
-            <a href="https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI" target="_blank" class="button google">Review us on Google</a>
+            <a href="#" target="_blank" class="button google" onclick="leaveReview()">Review us on Google</a>
             <a href="#" class="button facebook">Follow us on Facebook</a>
             <a href="#" class="button instagram">Follow us on Instagram</a>
             <a href="#" class="button google" onclick="promptCopyReview(event)">Review us on Google</a>
@@ -32,6 +32,19 @@
             if (confirm("Had a great experience! Highly recommend this place.⭐⭐⭐⭐⭐\nReview text copied! Click OK to proceed to the review page.")) {
                 window.location.href = "https://www.google.com/maps/place/E+Stream+Software/@3.1069402,101.4650931,17z/data=!4m8!3m7!1s0x31cc531a8f38dd77:0x32ff1b6fa257a8d8!8m2!3d3.1069402!4d101.467668!9m1!1b1!16s%2Fg%2F1tfzt_k4?entry=ttu&g_ep=EgoyMDI1MDIyNC4wIKXMDSoASAFQAw%3D%3D";
             }
+        }
+
+        function leaveReview() {
+            // Suggested review text
+            const reviewText = "I had an amazing experience with SQL EStream! Highly recommended.";
+
+            // Copy to clipboard
+            navigator.clipboard.writeText(reviewText).then(() => {
+                alert("Review text copied! Just paste it in the Google review box.");
+            });
+
+            // Open the Google review link
+            window.open("https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI", "_blank");
         }
     </script>
         </div>
