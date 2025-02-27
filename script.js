@@ -4,4 +4,8 @@ document.addEventListener("DOMContentLoaded", function() {
             alert('This will redirect to the respective page wifi!');
         });
     });
+
+    document.querySelector(".facebook").addEventListener("click", function() {
+    window.open("fb://page/110600357296339", "_blank");
+    });
 });
