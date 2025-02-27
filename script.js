@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			var currentUrl = jQuery(this).attr('href');
 			
 			if (detectOs.isAndroid()) {
-				jQuery(this).attr('href', 'intent://page/' + pageID + '#Intent;scheme=fb;package=com.facebook.katana;S.browser_fallback_url='+ encodeURIComponent(currentUrl) +';end');
+				jQuery(this).attr('href', 'fb://page/' + pageID);
 			} else if (detectOs.isIos()) {
 				jQuery(this).attr('href', 'fb://profile/' + pageID);
 			} else {
