@@ -1,4 +1,18 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    // if (isMobile) {
+    //     document.querySelector(".facebook").addEventListener("click", function() {
+    //         window.open("fb://page/110600357296339", "_blank");
+    //     });
+    // }
+    // else {
+    //         document.querySelector(".facebook").addEventListener("click", function() {
+    // window.open("https://facebook.com", "_blank");
+    // });
+    // }
+
+
+
     // Define the links
     const links = {
         'Facebook': 'https://www.facebook.com/SQLEstream/',
