@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -16,6 +16,25 @@
             <a href="#" class="button facebook">Follow us on Facebook</a>
             <a href="#" class="button instagram">Follow us on Instagram</a>
             <a href="#" class="button wifi">Connect to Wi-Fi</a>
+            <a href="#" class="button google" onclick="promptCopyReview(event)">Review us on Google</a>
+            <a href="https://www.facebook.com/SQLEstream/" class="button facebook">Follow us on Facebook</a>
+            <a href="https://www.instagram.com/sqlestream/?hl=ms" class="button instagram" target="_blank" class="btn instagram">Follow us on Instagram</a>
+        </div>
+    </div>
+    <textarea id="reviewText" style="display:none">Had a great experience! Highly recommend this place. ⭐⭐⭐⭐⭐</textarea>
+    
+    <script>
+        function promptCopyReview(event) {
+            event.preventDefault();
+            var reviewText = document.getElementById("reviewText");
+            reviewText.select();
+            document.execCommand("copy");
+            
+            if (confirm("Had a great experience! Highly recommend this place.⭐⭐⭐⭐⭐\nReview text copied! Click OK to proceed to the review page.")) {
+                window.location.href = "https://www.google.com/maps/place/E+Stream+Software/@3.1069402,101.4650931,17z/data=!4m8!3m7!1s0x31cc531a8f38dd77:0x32ff1b6fa257a8d8!8m2!3d3.1069402!4d101.467668!9m1!1b1!16s%2Fg%2F1tfzt_k4?entry=ttu&g_ep=EgoyMDI1MDIyNC4wIKXMDSoASAFQAw%3D%3D";
+            }
+        }
+    </script>
         </div>
     </div>
     <script src="script.js"></script>
