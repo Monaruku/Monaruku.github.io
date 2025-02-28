@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
         'Facebook': 'https://www.facebook.com/SQLEstream/',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
-        'Red note': 'xhsdiscover://user/65164c2e000000002302441a'
+        'Red note': 'Red note'
     };
 
     // Add active state for touch devices
@@ -40,7 +40,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
-                window.open(links[platform], '_blank');
+                if(links[platform] == 'Red note'){
+                    //Testing function
+                    var fallbackToStore = function() {
+                      window.location = 'https://www.xiaohongshu.com/user/profile/65164c2e000000002302441a';
+                    };
+                    var openApp = function() {
+                      window.location = 'xhsdiscover://user/65164c2e000000002302441a';
+                    };
+
+                    openApp();
+                    setTimeout(fallbackToStore, 700);
+                }
+                else{
+                   window.open(links[platform], '_blank');
+                }
             } else {
                 const actionType = this.textContent;
                 alert(`You are about to ${actionType.toLowerCase()} on ${platform}!`);
