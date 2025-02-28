@@ -68,7 +68,8 @@ document.addEventListener("DOMContentLoaded", function () {
                       window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                     };
                     var openApp = function() {
-                      window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                      //window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                      window.location = 'xhsdiscover://post_note';
                     };
 
                     openApp();
