@@ -51,6 +51,7 @@ h1 {
     transform: translateY(-3px);
 }
 
+/* Icon container styles */
 .icon-container {
     width: 48px;
     height: 48px;
@@ -62,39 +63,36 @@ h1 {
     font-size: 22px;
 }
 
-.tiktok-icon {
-    background: black;
+.tiktok-icon img{
+    background: #212121;
     color: white;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
 }
 
-.rednote-icon {
-    background: #FF0000;
+.rednote-icon img{
+    background: #ffffff;
     color: white;
-    font-weight: bold;
-}
-
-.red-text {
-    font-size: 16px;
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
 }
 
 .google-icon img {
-    width: 28px;
-    height: 28px;
+    height: 100%;
+    width: 100%;
 }
 
-.facebook-icon {
-    background: #1877F2;
-    color: white;
+.instagram-icon img {
+    height: 100%;
+    width: 100%;
+    border-radius: 50%;
 }
 
-.instagram-icon {
-    background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-    color: white;
-}
-
-.wifi-icon {
-    background: #00BFFF;
-    color: white;
+.wifi-icon img{
+    height: 100%;
+    width: 100%;
 }
 
 p {
