@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", function () {
         'FacebookIOS': 'fb://page/110600357296339',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
-        'Red note': 'Red note'
+        'Red note': 'Red note',
+        'TikTok': 'TikTok'
     };
 
     /**
@@ -103,7 +104,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             //window.open(links['FacebookIOS'], '_blank');
                         }
-                }  
+                }
+                else if(links[platform] == links['TikTok']) {
+                    //Check if the device have Rednote installed or not before redirecting
+                    var fallbackToStore = function() {
+                      window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    };
+                    var openApp = function() {
+                      window.location = 'snssdk1233://user/profile/6988483642273219586';
+                    };
+
+                    openApp();
+                    setTimeout(fallbackToStore, 700);
+                }
                 else{
                    window.open(links[platform], '_blank');
                 }
