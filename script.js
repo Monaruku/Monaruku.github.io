@@ -35,10 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function copyText() {
         const text = "This place is good and helpful. Accounting made easy!";
-        navigator.clipboard.writeText(text).then(() => {
-            alert("Text copied! Paste it onto Google Review.");
-            window.open(links['Google review'], '_blank');
-        }).catch(err => console.error("Failed to copy:", err));
+        navigator.clipboard.writeText(text);
     }
 
 
@@ -79,6 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 //lazy way of doing this
                 else if(links[platform] == links['Google review']) {
                     copyText();
+                    alert("Text copied! Paste it onto Google Review.");
+                    window.open(links['Google review'], '_blank');
                 }
                 else{
                    window.open(links[platform], '_blank');
