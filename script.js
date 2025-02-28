@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'Facebook': 'https://www.facebook.com/SQLEstream/',
+        'FacebookIOS': 'fb://page/110600357296339',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note'
@@ -79,6 +80,30 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Text copied! Paste it onto Google Review.");
                     window.open(links['Google review'], '_blank');
                 }
+                else if(links[platform] == links['Facebook']) {
+                    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+                        if (/android/i.test(userAgent)) {
+                            window.open(links['Facebook'], '_blank');
+                        }
+
+                        // iOS detection from: http://stackoverflow.com/a/9039885/177710
+                        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                            //Check if the device have Rednote installed or not before redirecting
+                            var fallbackToStore = function() {
+                              window.location = links['Facebook'];
+                            };
+                            var openApp = function() {
+                              window.location = links['FacebookIOS'];
+                            };
+
+                            openApp();
+                            setTimeout(fallbackToStore, 1700);
+
+
+                            //window.open(links['FacebookIOS'], '_blank');
+                        }
+                }  
                 else{
                    window.open(links[platform], '_blank');
                 }
