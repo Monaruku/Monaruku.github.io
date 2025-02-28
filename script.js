@@ -15,12 +15,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Define the links
     const links = {
-        'Facebook': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
-        'Facebook Page': 'https://www.facebook.com/SQLEstream/',
+        'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
+        'Facebook': 'https://www.facebook.com/SQLEstream/',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note'
     };
+
+    function shareToRedNote() {
+    if (navigator.share) {
+        navigator.share({
+            title: 'Check this out!',
+            text: 'Sharing this via RedNote!',
+            //url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
+        }).catch(error => console.log('Error sharing:', error));
+    } else {
+        alert('Sharing not supported on this browser.');
+    }
+}
 
     // Add active state for touch devices
     document.querySelectorAll('.action-button').forEach(button => {
@@ -42,16 +54,19 @@ document.addEventListener("DOMContentLoaded", function () {
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
                 if(links[platform] == 'Red note'){
+                    /**
                     //Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function() {
-                      window.location = 'https://www.xiaohongshu.com/user/profile/65164c2e000000002302441a';
+                      window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                     };
                     var openApp = function() {
-                      window.location = 'xhsdiscover://user/65164c2e000000002302441a';
+                      window.location = 'xhsdiscover://user/60ba509f0000000001008605';
                     };
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
+                    */
+                    shareToRedNote();
                 }
                 else{
                    window.open(links[platform], '_blank');
