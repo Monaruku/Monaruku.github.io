@@ -22,17 +22,25 @@ document.addEventListener("DOMContentLoaded", function () {
         'Red note': 'Red note'
     };
 
+    /**
     function shareToRedNote() {
     if (navigator.share) {
         navigator.share({
-            title: 'Check this out!',
-            text: 'Sharing this via RedNote!',
-            //url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
+            url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
         }).catch(error => console.log('Error sharing:', error));
     } else {
         alert('Sharing not supported on this browser.');
     }
-}
+    */
+
+    function copyText() {
+        const text = "This place is good and helpful. Accounting made easy!";
+        navigator.clipboard.writeText(text).then(() => {
+            alert("Text copied! Paste it onto Google Review.");
+            window.open(links['Google review'], '_blank');
+        }).catch(err => console.error("Failed to copy:", err));
+    }
+
 
     // Add active state for touch devices
     document.querySelectorAll('.action-button').forEach(button => {
@@ -54,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
                 if(links[platform] == 'Red note'){
-                    /**
+                    
                     //Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function() {
                       window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
@@ -65,8 +73,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
-                    */
-                    shareToRedNote();
+                    
+                    //shareToRedNote();
+                }
+                //lazy way of doing this
+                else if(links[platform] == links['Google review']) {
+                    copyText();
                 }
                 else{
                    window.open(links[platform], '_blank');
