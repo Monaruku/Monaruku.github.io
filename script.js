@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Define the links
     const links = {
         'Facebook': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
+        'Facebook Page': 'https://www.facebook.com/SQLEstream/',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note'
@@ -41,7 +42,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
                 if(links[platform] == 'Red note'){
-                    //Testing function
+                    //Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function() {
                       window.location = 'https://www.xiaohongshu.com/user/profile/65164c2e000000002302441a';
                     };
