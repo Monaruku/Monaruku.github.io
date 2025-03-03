@@ -103,13 +103,14 @@
                 .then(response => response.blob())
                 .then(blob => {
                     const file = new File([blob], 'image.jpg', { type: blob.type });
-                    const shareText = 'Here is something interesting for you.!';
+                    const shareText = new File([textblob], 'title.txt', { type: textblob.type });
                     const shareTitle = 'Check this out!';
+                    const textContent = 'Here is something interesting for you!'; // Text content
+                    const textBlob = new Blob([textContent], { type: 'text/plain' });
 
                     navigator.share({
                         files: [file],
-                        title: shareTitle,
-                        text: shareText
+                        title: textBlob
                     }).then(() => {
                         console.log('Content shared successfully!');
                     }).catch((error) => {
