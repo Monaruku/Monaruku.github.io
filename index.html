@@ -103,15 +103,11 @@
                 .then(response => response.blob())
                 .then(blob => {
                     const file = new File([blob], 'image.jpg', { type: blob.type });
-                    const textMessage = 'Here is something interesting for you!'; // The message you want in the text file
-
-        const textBlob = new Blob([textMessage], { type: 'text/plain' });
-
-        const textFile = new File([textBlob], 'message.txt', { type: 'text/plain' });
 
                     navigator.share({
                         files: [file],
-                        title: textBlob
+                        title: 'Check this out!',
+                        text: 'Here is something interesting for you.',
                     }).then(() => {
                         console.log('Content shared successfully!');
                     }).catch((error) => {
