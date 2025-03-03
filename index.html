@@ -105,7 +105,8 @@
 
             //const text = "Check this out! Here is something interesting for you.";
             const imageUrl = "https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png";
-            const url = "Check this out! This is a url but link";
+            const text = "Check this out! This is a url but link";
+            const title = "Check this out!"
 
             try {
                 // Fetch image
@@ -114,7 +115,7 @@
                 const file = new File([blob], "image.jpg", { type: blob.type });
 
                 // Share with Web Share API
-                const shareData = { title: "Check this out!", url};
+                const shareData = { title, url};
                 if (navigator.canShare && navigator.canShare({ files: [file] })) {
                     shareData.files = [file]; // Only add files if supported
                 }
