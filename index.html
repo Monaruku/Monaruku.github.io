@@ -51,7 +51,6 @@
                 <p>Follow us on</p>
                 <h3>Red note</h3>
                 <button class="action-button">Share</button>
-                <button onclick="shareContent()"> Share to XHS </button>
             </div>
             
             <!-- Google -->
@@ -89,13 +88,14 @@
                 <div class="icon-container wifi-icon">
                     <img src="Image/wifi_logo.svg" alt="wifi logo">
                 </div>
-                <p>Connect to</p>
-                <h3>WI-FI</h3>
-                <button class="action-button">Connect</button>
+                <p>Press to</p>
+                <h3>Share</h3>
+                <button onclick="shareContent()">Connect</button>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
+    <!-- Temporary Stuff -->
     <script>
         async function shareContent() {
             if (!navigator.share) {
