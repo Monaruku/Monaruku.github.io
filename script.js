@@ -21,8 +21,18 @@ document.addEventListener("DOMContentLoaded", function () {
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note',
-        'TikTok': 'TikTok'
+        'TikTok': 'TikTok',
+        'Share': 'Share'
     };
+
+    //Share Stuff
+    //Define Image Link
+    const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
+
+    //Define Share text
+    const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
+
+
 
     /**
     function shareToRedNote() {
@@ -60,65 +70,95 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
-                if(links[platform] == 'Red note'){
-                    
+                if (links[platform] == 'Red note') {
+
                     //Check if the device have Rednote installed or not before redirecting
-                    var fallbackToStore = function() {
-                      window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
+                    var fallbackToStore = function () {
+                        window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                     };
-                    var openApp = function() {
-                      window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                    var openApp = function () {
+                        window.location = 'xhsdiscover://user/60ba509f0000000001008605';
                     };
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
-                    
+
                     //shareToRedNote();
                 }
                 //lazy way of doing this
-                else if(links[platform] == links['Google review']) {
+                else if (links[platform] == links['Google review']) {
                     copyText();
                     alert("Text copied! Paste it onto Google Review.");
                     window.open(links['Google review'], '_blank');
                 }
-                else if(links[platform] == links['Facebook']) {
+                else if (links[platform] == links['Facebook']) {
                     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-                        if (/android/i.test(userAgent)) {
-                            window.open(links['Facebook'], '_blank');
-                        }
+                    if (/android/i.test(userAgent)) {
+                        window.open(links['Facebook'], '_blank');
+                    }
 
-                        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-                        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                            //Check if the device have Rednote installed or not before redirecting
-                            var fallbackToStore = function() {
-                              window.location = links['Facebook'];
-                            };
-                            var openApp = function() {
-                              window.location = links['FacebookIOS'];
-                            };
+                    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+                    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                        //Check if the device have Rednote installed or not before redirecting
+                        var fallbackToStore = function () {
+                            window.location = links['Facebook'];
+                        };
+                        var openApp = function () {
+                            window.location = links['FacebookIOS'];
+                        };
 
-                            openApp();
-                            setTimeout(fallbackToStore, 1700);
+                        openApp();
+                        setTimeout(fallbackToStore, 1700);
 
 
-                            //window.open(links['FacebookIOS'], '_blank');
-                        }
+                        //window.open(links['FacebookIOS'], '_blank');
+                    }
                 }
-                else if(links[platform] == links['TikTok']) {
+                else if (links[platform] == links['TikTok']) {
                     //Check if the device have Rednote installed or not before redirecting
-                    var fallbackToStore = function() {
-                      window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    var fallbackToStore = function () {
+                        window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
                     };
-                    var openApp = function() {
-                      window.location = 'snssdk1233://user/profile/6988483642273219586';
+                    var openApp = function () {
+                        window.location = 'snssdk1233://user/profile/6988483642273219586';
                     };
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
                 }
-                else{
-                   window.open(links[platform], '_blank');
+                //how many else if do I need
+                else if (links[platform] == links['Share']) {
+                    // Copy Share Text
+                    navigator.clipboard.writeText(shareText);
+
+                    // Try to share to Xiaohongshu (Red Note)
+                    if (navigator.share) {
+                        fetch(imageURL)
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'image.jpg', { type: blob.type });
+
+                                // Try standard Web Share API first
+                                navigator.share({
+                                    text: shareText,
+                                    files: [file]
+                                }).then(() => {
+                                    console.log('Content shared successfully!');
+                                }).catch((error) => {
+                                    console.error('Error sharing:', error);
+
+                                    // Fall back to app-specific method for Xiaohongshu
+                                    tryShareToXiaohongshu(blob);
+                                });
+                            }).catch(error => console.error('Error fetching image:', error));
+                    } else {
+                        // Direct app opening approach if Web Share API is not available
+                        tryShareToXiaohongshu();
+                    }
+                }
+                else {
+                    window.open(links[platform], '_blank');
                 }
             } else {
                 const actionType = this.textContent;
@@ -127,6 +167,23 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
+
+    function tryShareToXiaohongshu(imageBlob) {
+        alert("Text copied! Opening Xiaohongshu app. Please paste the copied text when creating your post.");
+
+        // Try to open Xiaohongshu in create post mode
+        const fallbackToStore = function () {
+            window.location = 'https://www.xiaohongshu.com/';
+        };
+
+        const openApp = function () {
+            // Attempt to open Xiaohongshu in create/post mode
+            window.location = 'xhsdiscover://creation';
+        };
+
+        openApp();
+        setTimeout(fallbackToStore, 1000);
+    }
 
     // Also add direct click functionality to the card for Facebook and Instagram
     // document.querySelectorAll('.card').forEach(card => {

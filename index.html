@@ -26,9 +26,9 @@
                 <div class="icon-container tiktok-icon">
                     <img src="Image/tiktok_logo.svg"  alt="Tiktok logo" >
                 </div>
-                <p>Share to</p>
+                <p>Follow Our</p>
                 <h3>TikTok</h3>
-                <button class="action-button">Share</button>
+                <button class="action-button">Follow</button>
             </div>
             
 
@@ -50,8 +50,7 @@
                 </div>
                 <p>Follow us on</p>
                 <h3>Red note</h3>
-                <button class="action-button">Share</button>
-                <button onclick="shareContent()"> Share to XHS </button>
+                <button class="action-button">Follow</button>
             </div>
             
             <!-- Google -->
@@ -89,28 +88,28 @@
                 <div class="icon-container wifi-icon">
                     <img src="Image/wifi_logo.svg" alt="wifi logo">
                 </div>
-                <p>Connect to</p>
-                <h3>WI-FI</h3>
-                <button class="action-button">Connect</button>
+                <p>Press to</p>
+                <h3>Share</h3>
+                <button class="action-button">Share</button>
             </div>
         </div>
     </div>
     <script src="script.js"></script>
+    <!-- Temporary Stuff (Remove later)-->
     <script>
         function shareContent() {
             if (navigator.share) {
-                const textContent = 'Here is an interesting post on Xiaohongshu! Check this out.';
-                const textBlob = new Blob([textContent], { type: 'text/plain' });
-                const textFile = new File([textBlob], 'description.txt', { type: 'text/plain' });
                 fetch('https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png') // Replace with your image URL
                     .then(response => response.blob())
                     .then(blob => {
                         const file = new File([blob], 'image.jpg', { type: blob.type });
-                    
+                
                         navigator.share({
                             title: 'Check this out!',
-                            text: textContent,
-                            files: [file]
+                            files: [file],
+                            //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
+                            url: 'https://example.com',
+                            text: 'Just some text that I wish it includes into the post.'
                         }).then(() => {
                             console.log('Content shared successfully!');
                         }).catch((error) => {
@@ -119,8 +118,8 @@
                     }).catch(error => console.error('Error fetching image:', error));
             } else {
                 alert('Web Share API is not supported in your browser.');
-            }
-        }
+            }
+        }
     </script>
 </body>
 </html>
