@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Must match what you have in your app dashboard
-    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/index.html';
+    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/';
 
     const scopes = [
         'user.info.basic',
