@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Must match what you have in your app dashboard
-    const redirectUri = 'https://path/to/tiktok/login/redirect.html';
+    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/index.html';
 
     const scopes = [
         'user.info.basic',
@@ -29,10 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
 
     //Share Stuff
-    //Define Image Link
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
-
-    //Define Share text
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
 
