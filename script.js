@@ -11,25 +11,11 @@ document.addEventListener("DOMContentLoaded", function () {
         'Share': 'Share'
     };
 
-    // Authentication class
-    const authentication = new Authentication({
-        client_key: 'sbawgv8e7j4nbi22wy',
-        client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
-    });
-
-    // Must match what you have in your app dashboard
-    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/index.html';
-
-    const scopes = [
-        'user.info.basic',
-        'video.upload'
-    ];
-
-    // Get TikTok login URL
-    const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
-
     //Share Stuff
+    //Define Image Link
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
+
+    //Define Share text
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
 
@@ -121,8 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
                     };
                     var openApp = function () {
-                        // window.location = 'snssdk1233://user/profile/6988483642273219586';
-                        window.location = authenticationUrl;
+                        window.location = 'snssdk1233://user/profile/6988483642273219586';
                     };
 
                     openApp();
