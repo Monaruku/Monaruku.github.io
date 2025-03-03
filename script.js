@@ -50,6 +50,16 @@ document.addEventListener("DOMContentLoaded", function () {
         navigator.clipboard.writeText(text);
     }
 
+    const loginButton = document.getElementById('tiktok-login-button');
+    if (loginButton) {
+        loginButton.href = authenticationUrl;
+        // You can also create the button dynamically if needed:
+        // const loginButton = document.createElement('a');
+        // loginButton.href = authenticationUrl;
+        // loginButton.innerHTML = '<img src="/path/to/tiktok/logo.png" alt="TikTok Logo"/> Continue With TikTok';
+        // document.getElementById('login-container').appendChild(loginButton);
+    }
+
 
     // Add active state for touch devices
     document.querySelectorAll('.action-button').forEach(button => {
