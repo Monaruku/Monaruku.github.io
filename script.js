@@ -118,7 +118,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if (links[platform] == links['TikTok']) {
                     //Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function () {
-                        window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                        // window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                        window.location = authenticationUrl;
                     };
                     var openApp = function () {
                         // window.location = 'snssdk1233://user/profile/6988483642273219586';
