@@ -51,6 +51,7 @@
                 <p>Follow us on</p>
                 <h3>Red note</h3>
                 <button class="action-button">Share</button>
+                <button onclick="shareContent()"> Share to XHS </button>
             </div>
             
             <!-- Google -->
@@ -95,5 +96,62 @@
         </div>
     </div>
     <script src="script.js"></script>
+    <script>
+    function shareContent() {
+        // Xiaohongshu specific content
+        const title = "Check this out!";
+        const text = "Here is something interesting for you.";
+        const url = "https://example.com"; // Your actual URL to share
+        
+        // Try to detect OS
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const isIOS = /iPad|iPhone|iPod/.test(userAgent);
+        const isAndroid = /Android/.test(userAgent);
+        
+        // Function to copy text to clipboard to help user
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                console.log('Content copied to clipboard');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+        
+        // Copy share content to clipboard to make it easier for user
+        copyToClipboard(title + " " + text + " " + url);
+        
+        // Try to open Xiaohongshu directly
+        let xhsUrl;
+        
+        if (isIOS) {
+            // iOS URL scheme for Xiaohongshu
+            xhsUrl = 'xiaohongshu://';
+        } else if (isAndroid) {
+            // Android intent for Xiaohongshu
+            xhsUrl = 'xhsdiscover://';
+        } else {
+            // Fallback for unsupported platforms
+            window.open('https://www.xiaohongshu.com', '_blank');
+            alert('Please share this content on Xiaohongshu manually. Content has been copied to your clipboard.');
+            return;
+        }
+        
+        // Try to open app
+        const appOpenedAt = Date.now();
+        window.location.href = xhsUrl;
+        
+        // Fallback if app doesn't open
+        setTimeout(function() {
+            if (Date.now() - appOpenedAt < 1200) {
+                // App wasn't opened, redirect to web
+                alert('Xiaohongshu app not detected. Opening web version instead. Content has been copied to your clipboard for sharing.');
+                window.location.href = 'https://www.xiaohongshu.com';
+            } else {
+                // App was opened, show guidance
+                alert('Content copied to clipboard. Please paste it in Xiaohongshu to share!');
+            }
+        }, 1000);
+    }
+    </script>
 </body>
 </html>
