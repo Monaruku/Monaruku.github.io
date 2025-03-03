@@ -128,7 +128,7 @@
             xhsUrl = 'xiaohongshu://';
         } else if (isAndroid) {
             // Android intent for Xiaohongshu
-            xhsUrl = 'xhsdiscover://post?ignore_draft=1&content=' + encodeURIComponent(title + " " + text + " " + url);
+            xhsUrl = 'xhsdiscover://post?ignore_draft=true';
         } else {
             // Fallback for unsupported platforms
             window.open('https://www.xiaohongshu.com', '_blank');
