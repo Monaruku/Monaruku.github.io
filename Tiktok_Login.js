@@ -7,7 +7,7 @@ class Authentication {
 
     getAuthenticationUrl(redirectUri, scopes) {
         // Create base URL for TikTok OAuth
-        const baseUrl = 'https://www.tiktok.com/auth/authorize/';
+        const baseUrl = 'https://www.tiktok.com/v2/auth/authorize/';
 
         // Build query parameters
         const params = new URLSearchParams({
