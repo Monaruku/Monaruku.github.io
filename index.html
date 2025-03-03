@@ -107,7 +107,9 @@
                         navigator.share({
                             title: 'Check this out!',
                             files: [file],
-                            url: 'This is actually just plain text' // Replace with your URL
+                            //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
+                            url: 'https://example.com',
+                            text: 'Just some text that I wish it includes into the post.'
                         }).then(() => {
                             console.log('Content shared successfully!');
                         }).catch((error) => {
