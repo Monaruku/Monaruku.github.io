@@ -21,8 +21,18 @@ document.addEventListener("DOMContentLoaded", function () {
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note',
-        'TikTok': 'TikTok'
+        'TikTok': 'TikTok',
+        'Share': 'Share'
     };
+
+    //Share Stuff
+    //Define Image Link
+    const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
+
+    //Define Share text
+    const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
+
+
 
     /**
     function shareToRedNote() {
@@ -116,6 +126,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
+                }
+                //how many else if do I need
+                else if(links[platform] == links['Share']) {
+                    //Copy Share Text
+                    navigator.clipboard.writeText(shareText);
+                    alert("Text copied! Please use it as the content for the post");
+                        if (navigator.share) {
+                        fetch(imageURL) // Replace with your image URL
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'image.jpg', { type: blob.type });
+                
+                                navigator.share({
+                                    files: [file]
+                                    //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
+                                }).then(() => {
+                                    console.log('Content shared successfully!');
+                                }).catch((error) => {
+                                    console.error('Error sharing:', error);
+                                });
+                            }).catch(error => console.error('Error fetching image:', error));
+                    } else {
+                        alert('Web Share API is not supported in your browser.');
+                    }
                 }
                 else{
                    window.open(links[platform], '_blank');
