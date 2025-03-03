@@ -3,6 +3,7 @@ class Authentication {
     constructor(config) {
         this.clientKey = config.client_key;
         this.clientSecret = config.client_secret;
+        this.tokenEndpoint = 'https://open-api.tiktok.com/oauth/access_token/';
     }
 
     getAuthenticationUrl(redirectUri, scopes) {
@@ -25,6 +26,37 @@ class Authentication {
     generateRandomState() {
         return Math.random().toString(36).substring(2, 15) +
             Math.random().toString(36).substring(2, 15);
+    }
+    
+    async getAccessTokenFromCode(code, redirectUri) {
+        try {
+            // Prepare request body
+            const params = new URLSearchParams({
+                client_key: this.clientKey,
+                client_secret: this.clientSecret,
+                code: code,
+                grant_type: 'authorization_code',
+                redirect_uri: redirectUri
+            });
+
+            // Make POST request to token endpoint
+            const response = await fetch(this.tokenEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting access token:', error);
+            throw error;
+        }
     }
 }
 

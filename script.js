@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded",async function () {
+    
     // Define the links
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
@@ -31,8 +32,74 @@ document.addEventListener("DOMContentLoaded", function () {
     //Share Stuff
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
+    // Handle TikTok OAuth redirect with code parameter
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        const results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
 
+    // Check if we have a code parameter in the URL (redirect from TikTok)
+    const code = getUrlParameter('code');
+    if (code) {
+        console.log('TikTok authorization code received:', code);
 
+        try {
+            // Use the function from Tiktok_Login.js to exchange code for token
+            const tokenResponse = await authentication.getAccessTokenFromCode(code, redirectUri);
+
+            if (tokenResponse && tokenResponse.data && tokenResponse.data.access_token) {
+                const { access_token, expires_in, open_id, refresh_token, refresh_expires_in } = tokenResponse.data;
+
+                // Store the tokens in localStorage
+                localStorage.setItem('tiktokAccessToken', access_token);
+                localStorage.setItem('tiktokTokenExpiry', Date.now() + (expires_in * 1000));
+                localStorage.setItem('tiktokOpenId', open_id);
+
+                if (refresh_token) {
+                    localStorage.setItem('tiktokRefreshToken', refresh_token);
+                    localStorage.setItem('tiktokRefreshExpiry', Date.now() + (refresh_expires_in * 1000));
+                }
+
+                console.log('TikTok access token received and stored successfully');
+
+                // Update UI to show logged-in state
+                const loginButton = document.getElementById('tiktok-login-button');
+                if (loginButton) {
+                    loginButton.textContent = 'Following';
+                    loginButton.classList.add('following');
+                    loginButton.href = '#'; // Remove the auth URL
+                }
+
+                // You can fetch user info or perform other actions with the token here
+            } else {
+                console.error('Failed to get TikTok access token:', tokenResponse);
+            }
+        } catch (error) {
+            console.error('Error exchanging code for TikTok access token:', error);
+        }
+
+        // Clean up the URL to remove the code parameter
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    // Check if we already have a valid token
+    const storedToken = localStorage.getItem('tiktokAccessToken');
+    const tokenExpiry = localStorage.getItem('tiktokTokenExpiry');
+
+    if (storedToken && tokenExpiry && Date.now() < parseInt(tokenExpiry)) {
+        console.log('Using stored TikTok access token');
+
+        // Update UI for logged-in state
+        const loginButton = document.getElementById('tiktok-login-button');
+        if (loginButton) {
+            loginButton.textContent = 'Following';
+            loginButton.classList.add('following');
+            loginButton.href = '#'; // Remove the auth URL
+        }
+    }
 
     /**
     function shareToRedNote() {
