@@ -108,9 +108,8 @@
                         const file = new File([blob], 'image.jpg', { type: blob.type });
                     
                         navigator.share({
-                            title: 'Check this out!',
-                            text: 'Here is something interesting for you.',
-                            files: [file,textFile]
+                            title: [textFile],
+                            files: [file]
                         }).then(() => {
                             console.log('Content shared successfully!');
                         }).catch((error) => {
