@@ -29,6 +29,7 @@
                 <p>Follow Our</p>
                 <h3>TikTok</h3>
                 <button class="action-button">Follow</button>
+                <button class="action-button" onclick="capcutShare()">Share with CapCut</button>
             </div>
             
 
@@ -120,6 +121,18 @@
                 alert('Web Share API is not supported in your browser.');
             }
         }
+
+        function capcutShare() {
+            // CapCut template link (Replace with your actual template link)
+            const capcutTemplateUrl = "https://www.capcut.com/signup?redirect_url=https%3A%2F%2Fwww.capcut.com%2Feditor-template%3Fcreate_id%3D7190584089177591042%26from_page%3Dtemplate_page%26template_search_scene%3Dsearch%26template_search_id%3D2025030302404198EAAAF31C08966FBD25%26template_search_keyword%3Dvlog%2520template%26template_search_keyword_source%3Dinput%26template_scale%3D9%3A16%26rank%3D6%26template_tab_name%3Dvideo%26template_search_no_result%3Dundefined%26work_space_template_from%3Dtemplatelist_search%26template_producer_appid%3D3006%26rec_id%3Dundefined&enter_from=use_template&current_page=template_page";
+                
+            alert("You will be redirected to CapCut to auto-generate your video. Click 'Export to TikTok' to upload!");
+                
+            // Redirect user to the CapCut template
+             window.open(capcutTemplateUrl, '_blank');
+        }
     </script>
+    
+    <!-- Temporary Stuff (Remove later)-->
 </body>
 </html>

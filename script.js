@@ -129,32 +129,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 //how many else if do I need
                 else if (links[platform] == links['Share']) {
-                    // Copy Share Text
+                    //Copy Share Text
                     navigator.clipboard.writeText(shareText);
-
-                    // Try to share to Xiaohongshu (Red Note)
+                    alert("Text copied! Please use it as the content for the post");
                     if (navigator.share) {
-                        fetch(imageURL)
+                        fetch(imageURL) // Replace with your image URL
                             .then(response => response.blob())
                             .then(blob => {
                                 const file = new File([blob], 'image.jpg', { type: blob.type });
 
-                                // Try standard Web Share API first
                                 navigator.share({
-                                    text: shareText,
                                     files: [file]
+                                    //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
                                 }).then(() => {
                                     console.log('Content shared successfully!');
                                 }).catch((error) => {
                                     console.error('Error sharing:', error);
-
-                                    // Fall back to app-specific method for Xiaohongshu
-                                    tryShareToXiaohongshu(blob);
                                 });
                             }).catch(error => console.error('Error fetching image:', error));
                     } else {
-                        // Direct app opening approach if Web Share API is not available
-                        tryShareToXiaohongshu();
+                        alert('Web Share API is not supported in your browser.');
                     }
                 }
                 else {
@@ -167,23 +161,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
-    function tryShareToXiaohongshu(imageBlob) {
-        alert("Text copied! Opening Xiaohongshu app. Please paste the copied text when creating your post.");
-
-        // Try to open Xiaohongshu in create post mode
-        const fallbackToStore = function () {
-            window.location = 'https://www.xiaohongshu.com/';
-        };
-
-        const openApp = function () {
-            // Attempt to open Xiaohongshu in create/post mode
-            window.location = 'xhsdiscover://creation';
-        };
-
-        openApp();
-        setTimeout(fallbackToStore, 1000);
-    }
 
     // Also add direct click functionality to the card for Facebook and Instagram
     // document.querySelectorAll('.card').forEach(card => {
