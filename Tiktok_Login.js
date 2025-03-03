@@ -29,29 +29,29 @@ class Authentication {
 }
 
 // Usage example
-document.addEventListener('DOMContentLoaded', () => {
-    // Instantiate authentication
-    const authentication = new Authentication({
-        client_key: 'sbawgv8e7j4nbi22wy', 
-        client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
-    });
+// document.addEventListener('DOMContentLoaded', () => {
+//     // Instantiate authentication
+//     const authentication = new Authentication({
+//         client_key: 'sbawgv8e7j4nbi22wy', 
+//         client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
+//     });
 
-    // URI TikTok will send the user to after they login
-    // Must match what you have in your app dashboard
-    const redirectUri = 'https://path/to/tiktok/login/redirect.html';
+//     // URI TikTok will send the user to after they login
+//     // Must match what you have in your app dashboard
+//     const redirectUri = 'https://path/to/tiktok/login/redirect.html';
 
-    // A list of approved scopes by TikTok for your app
-    const scopes = [
-        'user.info.basic',
-        'video.upload'
-    ];
+//     // A list of approved scopes by TikTok for your app
+//     const scopes = [
+//         'user.info.basic',
+//         'video.upload'
+//     ];
 
-    // Get TikTok login URL
-    const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
+//     // Get TikTok login URL
+//     const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
 
-    // Create login button with TikTok branding
-    const loginButton = document.getElementById('tiktok-login-button');
-    if (loginButton) {
-        loginButton.href = authenticationUrl;
-    }
-});
+//     // Create login button with TikTok branding
+//     const loginButton = document.getElementById('tiktok-login-button');
+//     if (loginButton) {
+//         loginButton.href = authenticationUrl;
+//     }
+// });
