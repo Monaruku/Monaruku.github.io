@@ -1,18 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    // if (isMobile) {
-    //     document.querySelector(".facebook").addEventListener("click", function() {
-    //         window.open("fb://page/110600357296339", "_blank");
-    //     });
-    // }
-    // else {
-    //         document.querySelector(".facebook").addEventListener("click", function() {
-    // window.open("https://facebook.com", "_blank");
-    // });
-    // }
-
-
-
     // Define the links
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
@@ -24,6 +10,23 @@ document.addEventListener("DOMContentLoaded", function () {
         'TikTok': 'TikTok',
         'Share': 'Share'
     };
+
+    // Authentication class
+    const authentication = new Authentication({
+        client_key: 'sbawgv8e7j4nbi22wy',
+        client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
+    });
+
+    // Must match what you have in your app dashboard
+    const redirectUri = 'https://path/to/tiktok/login/redirect.html';
+
+    const scopes = [
+        'user.info.basic',
+        'video.upload'
+    ];
+
+    // Get TikTok login URL
+    const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
 
     //Share Stuff
     //Define Image Link
@@ -121,7 +124,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
                     };
                     var openApp = function () {
-                        window.location = 'snssdk1233://user/profile/6988483642273219586';
+                        // window.location = 'snssdk1233://user/profile/6988483642273219586';
+                        window.location = authenticationUrl;
                     };
 
                     openApp();
