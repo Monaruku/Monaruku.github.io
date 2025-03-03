@@ -108,8 +108,8 @@
                         const file = new File([blob], 'image.jpg', { type: blob.type });
                     
                         navigator.share({
-                            title: [textFile],
-                            files: [file]
+                            // title: [textFile],
+                            files: [textFile]
                         }).then(() => {
                             console.log('Content shared successfully!');
                         }).catch((error) => {
