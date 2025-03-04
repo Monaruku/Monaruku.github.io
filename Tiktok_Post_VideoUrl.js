@@ -44,7 +44,7 @@ class Post {
 async function publishVideoToTikTok() {
     // Instantiation config params
     const config = {
-        access_token: '<USER_ACCESS_TOKEN>',
+        access_token: localStorage.getItem('tiktok_access_token'),
     };
 
     // Instantiate a new post
@@ -58,7 +58,7 @@ async function publishVideoToTikTok() {
         }),
         [Fields.SOURCE_INFO]: JSON.stringify({
             [Fields.SOURCE]: 'PULL_FROM_URL',
-            [Fields.VIDEO_URL]: '<VIDEO_URL>' // video URL that is publicly accessible
+            [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' // video URL that is publicly accessible
             // e.g. http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
         })
     };
