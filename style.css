@@ -144,6 +144,18 @@ h3 {
     background: #0056b3;
 }
 
+/* Testing button */
+.revoke-button {
+    background-color: #ff5252;
+    margin-top: 8px;
+    color: white;
+}
+
+.revoke-button:hover {
+    background-color: #ff1744;
+}
+/* Testing button */
+
 /* Media query for different device sizes */
 @media (max-width: 480px) {
     .buttons-grid {

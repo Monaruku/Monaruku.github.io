@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTok Video Poster</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #9370DB, #BA55D3);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 600px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+        }
+        
+        .post-button {
+            background: #ffffff;
+            color: #333;
+            border: none;
+            border-radius: 25px;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .post-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            background: #f0f0f0;
+        }
+        
+        .post-button:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .status-message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            background-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .error {
+            background-color: rgba(255, 87, 34, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Share Video to TikTok</h1>
+        <button id="postVideoButton" class="post-button">Post to TikTok</button>
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+
+    <script src="Tiktok_Post_VideoUrl.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const postButton = document.getElementById('postVideoButton');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            postButton.addEventListener('click', async function() {
+                try {
+                    // Get access token from local storage (assuming it was stored during authentication)
+                    const accessToken = localStorage.getItem('tiktokAccessToken');
+                    
+                    if (!accessToken) {
+                        showError('No access token found. Please authenticate with TikTok first.');
+                        return;
+                    }
+                    
+                    // Create a new Post instance
+                    const post = new Post({
+                        access_token: accessToken
+                    });
+                    
+                    // Set up parameters for video posting
+                    const params = {
+                        [Fields.POST_INFO]: JSON.stringify({
+                            [Fields.PRIVACY_LEVEL]: 'PUBLIC',
+                            [Fields.TITLE]: 'SQL BOLEH!!!',
+                            [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000
+                        }),
+                        [Fields.SOURCE_INFO]: JSON.stringify({
+                            [Fields.SOURCE]: 'PULL_FROM_URL',
+                            [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' // Replace with your actual video URL
+                        })
+                    };
+                    
+                    // Publish the video
+                    const result = await post.publish(params);
+                    
+                    // Show success message
+                    showSuccess('Video published successfully to TikTok!');
+                    console.log('Publishing result:', result);
+                    
+                } catch (error) {
+                    showError('Failed to publish video: ' + error.message);
+                    console.error('Error:', error);
+                }
+            });
+            
+            function showSuccess(message) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message success';
+                statusMessage.style.display = 'block';
+            }
+            
+            function showError(message) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message error';
+                statusMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
