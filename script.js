@@ -34,10 +34,11 @@ document.addEventListener("DOMContentLoaded",async function () {
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get('code');
-    if (code || !localStorage.getItem('tiktokAccessToken')) {
+    
+    if (!localStorage.getItem('tiktokAccessToken')) {
     try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
         // if (!code) {
         //     throw new Error('No authorization code found in URL');
         // }
@@ -53,7 +54,6 @@ document.addEventListener("DOMContentLoaded",async function () {
         console.log('Access token retrieved successfully');
         alert('Authentication successful!');
 
-        // You can redirect the user or update UI here
         // Check if running on a mobile device
         const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         if (isMobileDevice) {
@@ -222,14 +222,14 @@ document.addEventListener("DOMContentLoaded",async function () {
                     //Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function () {
                         // window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
-                        if (code || !localStorage.getItem('tiktokAccessToken')) 
+                        if (!localStorage.getItem('tiktokAccessToken')) 
                             window.location.href = "tiktok_post_vid.html";
                         else 
                             window.location = authenticationUrl;
                     };
                     var openApp = function () {
                         // window.location = 'snssdk1233://user/profile/6988483642273219586';
-                        if (code || !localStorage.getItem('tiktokAccessToken'))
+                        if (!localStorage.getItem('tiktokAccessToken'))
                             window.location.href = "tiktok_post_vid.html";
                         else
                             window.location = authenticationUrl;
