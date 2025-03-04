@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded",async function () {
         localStorage.setItem('tiktokAccessToken', userToken);
 
         console.log('Access token retrieved successfully');
+        alert('Authentication successful!');
 
         // You can redirect the user or update UI here
         // Check if running on a mobile device
