@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded",async function () {
 
     const scopes = [
         'user.info.basic',
-        'video.upload'
+        'video.upload',
+        'video.publish'
     ];
 
     // Get TikTok login URL
