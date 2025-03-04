@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded",async function () {
         // Get code from URL - assuming it's passed as a query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
+        alert(code);
         if (!code) {
             throw new Error('No authorization code found in URL');
         }

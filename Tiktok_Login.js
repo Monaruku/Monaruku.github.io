@@ -30,30 +30,27 @@ class Authentication {
     
     async getAccessTokenFromCode(code, redirectUri) {
         try {
-            // URL encode the code parameter to be safe
-            const decodedCode = decodeURIComponent(code);
-
             // Prepare request body
-            const params = new URLSearchParams();
-            params.append('client_key', this.clientKey);
-            params.append('client_secret', this.clientSecret);
-            params.append('code', decodedCode);
-            params.append('grant_type', 'authorization_code');
-            params.append('redirect_uri', redirectUri);
+            const params = new URLSearchParams({
+                client_key: this.clientKey,
+                client_secret: this.clientSecret,
+                code: code,
+                grant_type: 'authorization_code',
+                redirect_uri: redirectUri
+            });
 
-            // Use a CORS proxy (for development only)
-            const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/';
-            const response = await fetch(corsProxyUrl + 'https://open.tiktokapis.com/v2/oauth/token/', {
+            // Make POST request to token endpoint
+            const response = await fetch(this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cache-Control': 'no-cache',
                 },
                 body: params
             });
 
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`HTTP error! Status: ${response.status}, Details: ${errorText}`);
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
             return await response.json();
