@@ -99,7 +99,8 @@ document.addEventListener("DOMContentLoaded",async function () {
                 params.append('token', accessToken);
 
                 // Make the revocation request
-                const response = await fetch('https://open.tiktokapis.com/v2/oauth/revoke/', {
+                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+                const response = await fetch(corsProxy + 'https://open.tiktokapis.com/v2/oauth/revoke/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

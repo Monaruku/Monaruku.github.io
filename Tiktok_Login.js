@@ -40,7 +40,8 @@ class Authentication {
             });
 
             // Make POST request to token endpoint
-            const response = await fetch(this.tokenEndpoint, {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
