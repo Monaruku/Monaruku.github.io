@@ -18,7 +18,8 @@ class Post {
 
     async publish(params) {
         try {
-            const response = await fetch(this.apiBaseUrl, {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.apiBaseUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
