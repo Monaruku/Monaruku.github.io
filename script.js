@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded",async function () {
 
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
-    if (code && !localStorage.getItem('tiktokAccessToken')) {
+    if (code || !localStorage.getItem('tiktokAccessToken')) {
     try {
         // if (!code) {
         //     throw new Error('No authorization code found in URL');
