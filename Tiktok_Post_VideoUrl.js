@@ -14,7 +14,7 @@ class Post {
     constructor(config) {
         this.accessToken = config.access_token;
         // Updated to correct TikTok video publishing endpoint
-        this.apiBaseUrl = 'https://open.tiktokapis.com/v2/video/publish/';
+        this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
     }
 
     async publish(params) {
