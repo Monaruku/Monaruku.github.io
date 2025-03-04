@@ -3,7 +3,7 @@ class Authentication {
     constructor(config) {
         this.clientKey = config.client_key;
         this.clientSecret = config.client_secret;
-        this.tokenEndpoint = 'https://open-api.tiktok.com/oauth/access_token/';
+        this.tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/'; 
     }
 
     getAuthenticationUrl(redirectUri, scopes) {
