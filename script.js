@@ -34,13 +34,13 @@ document.addEventListener("DOMContentLoaded",async function () {
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code && !localStorage.getItem('tiktokAccessToken')) {
     try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-
-        if (!code) {
-            throw new Error('No authorization code found in URL');
-        }
+        // if (!code) {
+        //     throw new Error('No authorization code found in URL');
+        // }
 
         const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirectUri);
         console.log('Access token from code:', tokenFromCode);
@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded",async function () {
         // Handle error - update UI to show error message
         alert('Authentication failed. Please try again.');
     }
+}   
 
     const revokeButton = document.getElementById('tiktok-revoke-button');
     if (revokeButton) {

@@ -94,7 +94,8 @@
         
         .title-input {
             width: 100%;
-            padding: 12px;
+            padding-top: 12px;
+            padding-bottom: 12px;
             border-radius: 25px;
             border: none;
             background: rgba(255, 255, 255, 0.2);
@@ -150,6 +151,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const postButton = document.getElementById('postVideoButton');
             const statusMessage = document.getElementById('statusMessage');
+            const videoTitleInput = document.getElementById('videoTitle');
             
             postButton.addEventListener('click', async function() {
                 try {
@@ -170,7 +172,7 @@
                     const params = {
                         [Fields.POST_INFO]: JSON.stringify({
                             [Fields.PRIVACY_LEVEL]: 'PUBLIC',
-                            [Fields.TITLE]: 'SQL BOLEH!!!',
+                            [Fields.TITLE]: videoTitleInput,
                             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000
                         }),
                         [Fields.SOURCE_INFO]: JSON.stringify({
