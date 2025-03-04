@@ -45,6 +45,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
+            margin-top: 20px;
         }
         
         .post-button:hover {
@@ -66,17 +67,83 @@
         }
         
         .success {
-            background-color: rgba(76, 175, 80, 0.3);
+            background-color: rgba(76, 175, 80, 0.8);
         }
         
         .error {
-            background-color: rgba(255, 87, 34, 0.3);
+            background-color: rgba(255, 87, 34, 0.8);
+        }
+
+        .video-container {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+        }
+        
+        .input-container {
+            margin: 20px 0;
+        }
+        
+        .title-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 25px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+        
+        .title-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .title-input:focus {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Share Video to TikTok</h1>
+
+        <!-- Video preview -->
+        <div class="video-container">
+            <video id="videoPreview" controls>
+                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <!-- Title input -->
+        <div class="input-container">
+            <label for="videoTitle">Video Title</label>
+            <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
+        </div>
+        
+        <button id="postVideoButton" class="post-button">Post to TikTok</button>
+        <div id="statusMessage" class="status-message"></div>
+        </div>
+        
         <button id="postVideoButton" class="post-button">Post to TikTok</button>
         <div id="statusMessage" class="status-message"></div>
     </div>
