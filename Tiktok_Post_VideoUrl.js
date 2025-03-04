@@ -13,7 +13,7 @@ class Fields {
 class Post {
     constructor(config) {
         this.accessToken = config.access_token;
-        this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/';
+        this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
     }
 
     async publish(params) {
