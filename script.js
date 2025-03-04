@@ -85,6 +85,13 @@ document.addEventListener("DOMContentLoaded",async function () {
 }   
 
     const revokeButton = document.getElementById('tiktok-revoke-button');
+    if (!localStorage.getItem('tiktokAccessToken')) {
+        revokeButton.style.display = 'none';
+    }
+    else {
+        revokeButton.style.display = 'inline-block';
+        loginButton.style.display = 'none';
+    }
     if (revokeButton) {
         revokeButton.addEventListener('click', async function () {
             try {
@@ -101,30 +108,12 @@ document.addEventListener("DOMContentLoaded",async function () {
                 // Clear the token from storage
                 localStorage.removeItem('tiktokAccessToken');
                 alert('Successfully logged out from TikTok!');
-
-                // Update UI as needed
-                const loginButton = document.getElementById('tiktok-login-button');
-                if (loginButton) {
-                    loginButton.style.display = 'inline-block';
-                }
-                revokeButton.style.display = 'none';
+                window.location.reload();
             } catch (error) {
                 console.error('Error revoking token:', error);
                 alert('Failed to logout: ' + error.message);
             }
         });
-
-        // Show/hide revoke button based on login status
-        const accessToken = localStorage.getItem('tiktokAccessToken');
-        if (accessToken) {
-            revokeButton.style.display = 'inline-block';
-            const loginButton = document.getElementById('tiktok-login-button');
-            if (loginButton) {
-                loginButton.style.display = 'none';
-            }
-        } else {
-            revokeButton.style.display = 'none';
-        }
     }
 
     /**
