@@ -137,7 +137,7 @@
         
         <!-- Title input -->
         <div class="input-container">
-            <label for="videoTitle">Video Title</label>
+            <label for="postTitle">Post Title</label>
             <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
         </div>
         
@@ -151,7 +151,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const postButton = document.getElementById('postVideoButton');
             const statusMessage = document.getElementById('statusMessage');
-            const videoTitleInput = document.getElementById('videoTitle');
+            const postTitleInput = document.getElementById('postTitle');
             
             postButton.addEventListener('click', async function() {
                 try {
@@ -172,7 +172,7 @@
                     const params = {
                         [Fields.POST_INFO]: JSON.stringify({
                             [Fields.PRIVACY_LEVEL]: 'PUBLIC',
-                            [Fields.TITLE]: videoTitleInput,
+                            [Fields.TITLE]: postTitleInput,
                             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000
                         }),
                         [Fields.SOURCE_INFO]: JSON.stringify({
@@ -192,7 +192,25 @@
                     showError('Failed to publish video: ' + error.message);
                     console.error('Error:', error);
                 }
+                
+                const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                if (isMobileDevice) {
+                    window.location.href = 'snssdk1233://user/profile';
 
+                    // Fallback in case app doesn't open
+                    const fallbackToWeb = setTimeout(() => {
+                        window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
+                    }, 1000);
+
+                    // Clear timeout if app opens successfully (may not always work)
+                    window.addEventListener('pagehide', () => {
+                        clearTimeout(fallbackToWeb);
+                    });
+                } else {
+                    // For desktop, redirect to the web version
+                    window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; 
+                    
+                }
                 window.location.href = 'snssdk1233://user/profile';
             });
             
