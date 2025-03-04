@@ -34,14 +34,13 @@ document.addEventListener("DOMContentLoaded",async function () {
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
     try {
-        // Get code from URL - assuming it's passed as a query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
 
         if (!code) {
             throw new Error('No authorization code found in URL');
         }
-        // Exchange the code for an access token
+
         const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirectUri);
         console.log('Access token from code:', tokenFromCode);
         // Access token from the response
@@ -65,7 +64,8 @@ document.addEventListener("DOMContentLoaded",async function () {
                 window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
             }, 1000);
             
-            window.location.href = tikTokAppUrl;
+            // window.location.href = tikTokAppUrl;
+            window.location.href = "tiktok_post_vid.html";
             
             // Clear timeout if app opens successfully (may not always work)
             window.addEventListener('pagehide', () => {
@@ -92,38 +92,19 @@ document.addEventListener("DOMContentLoaded",async function () {
                     return;
                 }
 
-                // Create form data for the request
-                const params = new URLSearchParams();
-                params.append('client_key', 'sbawgv8e7j4nbi22wy');
-                params.append('client_secret', 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf');
-                params.append('token', accessToken);
+                // Use the authentication class method instead of direct fetch
+                const result = await authentication.revokeToken(accessToken);
 
-                // Make the revocation request
-                const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-                const response = await fetch(corsProxy + 'https://open.tiktokapis.com/v2/oauth/revoke/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        'Cache-Control': 'no-cache'
-                    },
-                    body: params
-                });
+                // Clear the token from storage
+                localStorage.removeItem('tiktokAccessToken');
+                alert('Successfully logged out from TikTok!');
 
-                if (response.ok) {
-                    // Clear the token from storage
-                    localStorage.removeItem('tiktokAccessToken');
-                    alert('Successfully logged out from TikTok!');
-
-                    // Update UI as needed
-                    const loginButton = document.getElementById('tiktok-login-button');
-                    if (loginButton) {
-                        loginButton.style.display = 'inline-block';
-                    }
-                    revokeButton.style.display = 'none';
-                } else {
-                    const errorData = await response.json();
-                    throw new Error(`Revocation failed: ${errorData.error_description || 'Unknown error'}`);
+                // Update UI as needed
+                const loginButton = document.getElementById('tiktok-login-button');
+                if (loginButton) {
+                    loginButton.style.display = 'inline-block';
                 }
+                revokeButton.style.display = 'none';
             } catch (error) {
                 console.error('Error revoking token:', error);
                 alert('Failed to logout: ' + error.message);

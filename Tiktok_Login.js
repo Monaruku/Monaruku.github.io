@@ -3,7 +3,8 @@ class Authentication {
     constructor(config) {
         this.clientKey = config.client_key;
         this.clientSecret = config.client_secret;
-        this.tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/'; 
+        this.tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
+        this.revokeEndpoint = 'https://open.tiktokapis.com/v2/oauth/revoke/';
     }
 
     getAuthenticationUrl(redirectUri, scopes) {
@@ -56,6 +57,37 @@ class Authentication {
             return await response.json();
         } catch (error) {
             console.error('Error getting access token:', error);
+            throw error;
+        }
+    }
+
+    async revokeToken(accessToken) {
+        try {
+            // Create form data for the request
+            const params = new URLSearchParams();
+            params.append('client_key', this.clientKey);
+            params.append('client_secret', this.clientSecret);
+            params.append('token', accessToken);
+
+            // Make the revocation request
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.revokeEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cache-Control': 'no-cache'
+                },
+                body: params
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Revocation failed: ${errorData.error_description || 'Unknown error'}`);
+            }
+
+            return { success: true };
+        } catch (error) {
+            console.error('Error revoking token:', error);
             throw error;
         }
     }
