@@ -34,6 +34,12 @@ document.addEventListener("DOMContentLoaded",async function () {
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
     try {
+        // Get code from URL - assuming it's passed as a query parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (!code) {
+            throw new Error('No authorization code found in URL');
+        }
         // Exchange the code for an access token
         const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirectUri);
         // Access token from the response
