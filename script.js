@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded",async function () {
     }
     else {
         revokeButton.style.display = 'inline-block';
-        loginButton.style.display = 'none';
+        // loginButton.style.display = 'none';
     }
     if (revokeButton) {
         revokeButton.addEventListener('click', async function () {
