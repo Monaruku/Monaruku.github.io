@@ -37,12 +37,13 @@ document.addEventListener("DOMContentLoaded",async function () {
         // Get code from URL - assuming it's passed as a query parameter
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        alert(code);
+
         if (!code) {
             throw new Error('No authorization code found in URL');
         }
         // Exchange the code for an access token
         const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirectUri);
+        console.log('Access token from code:', tokenFromCode);
         // Access token from the response
         const userToken = tokenFromCode.access_token;
         // Store the token for later use (e.g., localStorage for client-side use)
