@@ -126,6 +126,8 @@
                     showError('Failed to publish video: ' + error.message);
                     console.error('Error:', error);
                 }
+
+                window.location.href = 'snssdk1233://user/profile';
             });
             
             function showSuccess(message) {
