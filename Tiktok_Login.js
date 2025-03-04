@@ -41,7 +41,7 @@ class Authentication {
             });
 
             // Make POST request to token endpoint
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const corsProxy = 'https://api.allorigins.win/raw?url=';
             const response = await fetch(corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
@@ -70,7 +70,7 @@ class Authentication {
             params.append('token', accessToken);
 
             // Make the revocation request
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const corsProxy = 'https://api.allorigins.win/raw?url=';
             const response = await fetch(corsProxy + this.revokeEndpoint, {
                 method: 'POST',
                 headers: {

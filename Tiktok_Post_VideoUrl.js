@@ -18,7 +18,7 @@ class Post {
 
     async publish(params) {
         try {
-            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const corsProxy = 'https://api.allorigins.win/raw?url=';
             const response = await fetch(corsProxy + this.apiBaseUrl, {
                 method: 'POST',
                 headers: {
