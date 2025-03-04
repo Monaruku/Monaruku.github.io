@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded",async function () {
     });
 
     // Must match what you have in your app dashboard
-    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/index.html';
+    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree/tiktok_post_vid.html';
 
     const scopes = [
         'user.info.basic',
@@ -35,86 +35,38 @@ document.addEventListener("DOMContentLoaded",async function () {
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
     
-    if (!localStorage.getItem('tiktokAccessToken')) {
-    try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        // if (!code) {
-        //     throw new Error('No authorization code found in URL');
-        // }
 
-        const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirectUri);
-        console.log('Access token from code:', tokenFromCode);
-        // Access token from the response
-        const userToken = tokenFromCode.access_token;
-        // Store the token for later use (e.g., localStorage for client-side use)
-        // Note: For security, consider using more secure storage methods especially for production
-        localStorage.setItem('tiktokAccessToken', userToken);
+    // const revokeButton = document.getElementById('tiktok-revoke-button');
+    // if (!localStorage.getItem('tiktokAccessToken')) {
+    //     revokeButton.style.display = 'none';
+    // }
+    // else {
+    //     revokeButton.style.display = 'inline-block';
+    //     // loginButton.style.display = 'none';
+    // }
+    // if (revokeButton) {
+    //     revokeButton.addEventListener('click', async function () {
+    //         try {
+    //             const accessToken = localStorage.getItem('tiktokAccessToken');
 
-        console.log('Access token retrieved successfully');
-        alert('Authentication successful!');
+    //             if (!accessToken) {
+    //                 alert('No access token found. You are not logged in to TikTok.');
+    //                 return;
+    //             }
 
-        // Check if running on a mobile device
-        const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isMobileDevice) {
-            // Try to open the TikTok app directly with the user's profile
-            const tikTokAppUrl = 'snssdk1233://user/profile/6988483642273219586'; // Replace with correct ID/username
-            
-            // Fallback in case app doesn't open
-            const fallbackToWeb = setTimeout(() => {
-                window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
-            }, 1000);
-            
-            // window.location.href = tikTokAppUrl;
-            window.location.href = "tiktok_post_vid.html";
-            
-            // Clear timeout if app opens successfully (may not always work)
-            window.addEventListener('pagehide', () => {
-                clearTimeout(fallbackToWeb);
-            });
-        } else {
-            // For desktop, redirect to the web version
-            // window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
-            window.location.href = "tiktok_post_vid.html";
-        }
-    } catch (error) {
-        console.error('Authentication failed:', error);
-        // Handle error - update UI to show error message
-        alert('Authentication failed. Please try again.');
-    }
-}   
+    //             // Use the authentication class method instead of direct fetch
+    //             const result = await authentication.revokeToken(accessToken);
 
-    const revokeButton = document.getElementById('tiktok-revoke-button');
-    if (!localStorage.getItem('tiktokAccessToken')) {
-        revokeButton.style.display = 'none';
-    }
-    else {
-        revokeButton.style.display = 'inline-block';
-        // loginButton.style.display = 'none';
-    }
-    if (revokeButton) {
-        revokeButton.addEventListener('click', async function () {
-            try {
-                const accessToken = localStorage.getItem('tiktokAccessToken');
-
-                if (!accessToken) {
-                    alert('No access token found. You are not logged in to TikTok.');
-                    return;
-                }
-
-                // Use the authentication class method instead of direct fetch
-                const result = await authentication.revokeToken(accessToken);
-
-                // Clear the token from storage
-                localStorage.removeItem('tiktokAccessToken');
-                alert('Successfully logged out from TikTok!');
-                window.location.reload();
-            } catch (error) {
-                console.error('Error revoking token:', error);
-                alert('Failed to logout: ' + error.message);
-            }
-        });
-    }
+    //             // Clear the token from storage
+    //             localStorage.removeItem('tiktokAccessToken');
+    //             alert('Successfully logged out from TikTok!');
+    //             window.location.reload();
+    //         } catch (error) {
+    //             console.error('Error revoking token:', error);
+    //             alert('Failed to logout: ' + error.message);
+    //         }
+    //     });
+    // }
 
     /**
     function shareToRedNote() {

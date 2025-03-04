@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -18,7 +19,7 @@
             align-items: center;
             flex-direction: column;
         }
-        
+
         .container {
             max-width: 600px;
             padding: 30px;
@@ -27,11 +28,11 @@
             backdrop-filter: blur(5px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        
+
         h1 {
             margin-bottom: 30px;
         }
-        
+
         .post-button {
             background: #ffffff;
             color: #333;
@@ -47,16 +48,43 @@
             overflow: hidden;
             margin-top: 20px;
         }
-        
+
         .post-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
             background: #f0f0f0;
         }
-        
+
         .post-button:active {
             transform: translateY(1px);
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Logout button styling */
+        .logout-button {
+            background: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 15px;
+            display: block;
+            width: 80%;
+            margin: 15px auto 0;
+        }
+
+        .logout-button:hover {
+            background: #ff1744;
+            transform: translateY(-2px);
+        }
+
+        .logout-button:active {
+            transform: translateY(1px);
         }
 
         .status-message {
@@ -65,11 +93,11 @@
             border-radius: 5px;
             display: none;
         }
-        
+
         .success {
             background-color: rgba(76, 175, 80, 0.8);
         }
-        
+
         .error {
             background-color: rgba(255, 87, 34, 0.8);
         }
@@ -82,16 +110,16 @@
             width: 100%;
             max-width: 500px;
         }
-        
+
         video {
             width: 100%;
             display: block;
         }
-        
+
         .input-container {
             margin: 20px 0;
         }
-        
+
         .title-input {
             width: 100%;
             padding-top: 12px;
@@ -104,24 +132,32 @@
             text-align: center;
             outline: none;
         }
-        
+
         .title-input::placeholder {
             color: rgba(255, 255, 255, 0.7);
         }
-        
+
         .title-input:focus {
             background: rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
             font-size: 16px;
             font-weight: bold;
         }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Share Video to TikTok</h1>
@@ -134,92 +170,158 @@
                 Your browser does not support the video tag.
             </video>
         </div>
-        
+
         <!-- Title input -->
         <div class="input-container">
             <label for="postTitle">Post Title</label>
             <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
         </div>
-        
-        <button id="postVideoButton" class="post-button">Post to TikTok</button>
-        <div id="statusMessage" class="status-message"></div>
+
+        <div class="button-container">
+            <button id="postVideoButton" class="post-button">Post to TikTok</button>
+            <button id="logoutButton" class="logout-button">Logout from TikTok</button>
         </div>
+
+        <div id="statusMessage" class="status-message"></div>
     </div>
 
     <script src="Tiktok_Post_VideoUrl.js"></script>
+    <script src="Tiktok_Login.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function () {
             const postButton = document.getElementById('postVideoButton');
+            const logoutButton = document.getElementById('logoutButton');
             const statusMessage = document.getElementById('statusMessage');
-            const postTitleInput = document.getElementById('postTitle');
-            
-            postButton.addEventListener('click', async function() {
+            const videoTitleInput = document.getElementById('videoTitle');
+
+            // Check if there's an access token in localStorage
+            const hasAccessToken = localStorage.getItem('tiktokAccessToken');
+            if (!hasAccessToken) {
+                logoutButton.style.display = 'none';
+            }
+
+            // Initialize Authentication class for token revocation
+            const authentication = new Authentication({
+                client_key: 'sbawgv8e7j4nbi22wy',
+                client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
+            });
+
+            // Token retrieval from URL code
+            const urlParams = new URLSearchParams(window.location.search);
+            const code = urlParams.get('code');
+            if (code && !localStorage.getItem('tiktokAccessToken')) {
                 try {
-                    // Get access token from local storage (assuming it was stored during authentication)
+                    const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://applecakes14.github.io/SQL-Link-Tree/tiktok_post_vid.html');
+                    console.log('Access token from code:', tokenFromCode);
+                    // Access token from the response
+                    const userToken = tokenFromCode.access_token;
+                    // Store the token for later use
+                    localStorage.setItem('tiktokAccessToken', userToken);
+
+                    // Clear the 'code' parameter from the URL without refreshing the page
+                    const url = new URL(window.location.href);
+                    url.searchParams.delete('code');
+                    history.replaceState({}, document.title, url.toString());
+
+                    console.log('Access token retrieved successfully');
+                    alert('Authentication successful!');
+
+                    // Show logout button as we're now logged in
+                    logoutButton.style.display = 'block';
+                } catch (error) {
+                    console.error('Authentication failed:', error);
+                    alert('Authentication failed. Please try again.');
+                }
+            }
+
+            // Logout button functionality
+            logoutButton.addEventListener('click', async function () {
+                try {
                     const accessToken = localStorage.getItem('tiktokAccessToken');
-                    
+
+                    if (!accessToken) {
+                        showError('No access token found. You are not logged in to TikTok.');
+                        return;
+                    }
+
+                    // Use the authentication class to revoke the token
+                    const result = await authentication.revokeToken(accessToken);
+
+                    // Clear the token from storage
+                    localStorage.removeItem('tiktokAccessToken');
+                    showSuccess('Successfully logged out from TikTok!');
+
+                    // Hide logout button
+                    logoutButton.style.display = 'none';
+
+                    // Optionally, redirect after a short delay
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 2000);
+                } catch (error) {
+                    showError('Failed to logout: ' + error.message);
+                    console.error('Error revoking token:', error);
+                }
+            });
+
+            // Post video functionality
+            postButton.addEventListener('click', async function () {
+                try {
+                    // Get access token from local storage
+                    const accessToken = localStorage.getItem('tiktokAccessToken');
+
                     if (!accessToken) {
                         showError('No access token found. Please authenticate with TikTok first.');
                         return;
                     }
-                    
+
                     // Create a new Post instance
                     const post = new Post({
                         access_token: accessToken
                     });
-                    
+
+                    // Get the video title
+                    const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
+
                     // Set up parameters for video posting
                     const params = {
                         [Fields.POST_INFO]: JSON.stringify({
                             [Fields.PRIVACY_LEVEL]: 'PUBLIC',
-                            [Fields.TITLE]: postTitleInput,
+                            [Fields.TITLE]: videoTitle,
                             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000
                         }),
                         [Fields.SOURCE_INFO]: JSON.stringify({
                             [Fields.SOURCE]: 'PULL_FROM_URL',
-                            [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' // Replace with your actual video URL
+                            [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
                         })
                     };
-                    
+
                     // Publish the video
                     const result = await post.publish(params);
-                    
+
                     // Show success message
                     showSuccess('Video published successfully to TikTok!');
                     console.log('Publishing result:', result);
-                    
+
+                    // Open TikTok app or web
+                    const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                    if (isMobileDevice) {
+                        window.location.href = 'snssdk1233://user/profile';
+                    } else {
+                        window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    }
                 } catch (error) {
                     showError('Failed to publish video: ' + error.message);
                     console.error('Error:', error);
                 }
-                
-                const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-                if (isMobileDevice) {
-                    window.location.href = 'snssdk1233://user/profile';
-
-                    // Fallback in case app doesn't open
-                    const fallbackToWeb = setTimeout(() => {
-                        window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
-                    }, 1000);
-
-                    // Clear timeout if app opens successfully (may not always work)
-                    window.addEventListener('pagehide', () => {
-                        clearTimeout(fallbackToWeb);
-                    });
-                } else {
-                    // For desktop, redirect to the web version
-                    window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; 
-                    
-                }
-                window.location.href = 'snssdk1233://user/profile';
             });
-            
+
             function showSuccess(message) {
                 statusMessage.textContent = message;
                 statusMessage.className = 'status-message success';
                 statusMessage.style.display = 'block';
             }
-            
+
             function showError(message) {
                 statusMessage.textContent = message;
                 statusMessage.className = 'status-message error';
@@ -228,4 +330,5 @@
         });
     </script>
 </body>
+
 </html>
