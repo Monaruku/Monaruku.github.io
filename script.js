@@ -74,7 +74,8 @@ document.addEventListener("DOMContentLoaded",async function () {
             });
         } else {
             // For desktop, redirect to the web version
-            window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
+            // window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe'; // Replace with your TikTok profile
+            window.location.href = "tiktok_post_vid.html";
         }
     } catch (error) {
         console.error('Authentication failed:', error);
