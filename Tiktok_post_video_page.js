@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     const logoutButton = document.getElementById('logoutButton');
     const statusMessage = document.getElementById('statusMessage');
     const videoTitleInput = document.getElementById('videoTitle');
+    
+    const redirect_uri = 'https://monaruku.github.io/tiktok_post_vid.html';
 
     // Check if there's an access token in localStorage
     const hasAccessToken = localStorage.getItem('tiktokAccessToken');
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const code = urlParams.get('code');
     if (code && !localStorage.getItem('tiktokAccessToken')) {
         try {
-            const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://applecakes14.github.io/SQL-Link-Tree/tiktok_post_vid.html');
+            const tokenFromCode = await authentication.getAccessTokenFromCode(code, redirect_uri);
             console.log('Access token from code:', tokenFromCode);
             // Access token from the response
             const userToken = tokenFromCode.access_token;
