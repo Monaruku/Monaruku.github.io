@@ -11,8 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // });
     // }
 
-
-
+    
     // Define the links
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
@@ -24,6 +23,24 @@ document.addEventListener("DOMContentLoaded", function () {
         'TikTok': 'TikTok',
         'Share': 'Share'
     };
+
+    // Tiktok Authentication class
+    const tiktokAuthentication = new Authentication({
+        client_key: 'sbawgv8e7j4nbi22wy',
+        client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
+    });
+
+    // Must match the URI registered in Sandbox/Production
+    const redirectUri = 'https://monaruku.github.io/tiktok_post_vid.html';
+
+    const tiktokScopes = [
+        'user.info.basic',
+        'video.upload',
+        'video.publish'
+    ];
+
+    // Get TikTok login URL
+    const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
     //Share Stuff
     //Define Image Link
@@ -116,12 +133,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                 }
                 else if(links[platform] == links['TikTok']) {
-                    //Check if the device have Rednote installed or not before redirecting
-                    var fallbackToStore = function() {
-                      window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    var fallbackToStore = function () {
+                        // window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                        if (localStorage.getItem('tiktokAccessToken'))
+                            window.location.href = "tiktok_post_vid.html";
+                        else
+                            window.location = tiktokAuthenticationUrl;
                     };
-                    var openApp = function() {
-                      window.location = 'snssdk1233://user/profile/6988483642273219586';
+                    var openApp = function () {
+                        // window.location = 'snssdk1233://user/profile/6988483642273219586';
+                        if (localStorage.getItem('tiktokAccessToken'))
+                            window.location.href = "tiktok_post_vid.html";
+                        else
+                            window.location = tiktokAuthenticationUrl;
                     };
 
                     openApp();

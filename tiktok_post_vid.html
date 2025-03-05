@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTok Video Poster</title>
+    <link rel="stylesheet" href="post_vid.css">
+</head>
+
+<body>
+    <div class="container">
+        <a href="index.html" class="back-button">&#8592;</a>
+        <h1>Share Video to TikTok</h1>
+
+        <!-- Video preview -->
+        <div class="video-container">
+            <video id="videoPreview" controls>
+                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                    type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+
+        <!-- Title input -->
+        <div class="input-container">
+            <label for="postTitle">Post Title</label>
+            <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
+        </div>
+
+        <div class="button-container">
+            <button id="postVideoButton" class="post-button">Post to TikTok</button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+    </div>
+    
+    <button id="logoutButton" class="logout-button">Logout from TikTok</button>
+
+    <script src="Tiktok_Post_VideoUrl.js"></script>
+    <script src="Tiktok_Login.js"></script>
+    <script src="Tiktok_post_video_page.js"></script>
+</body>
+
+</html>
