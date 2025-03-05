@@ -61,6 +61,21 @@ class Authentication {
         }
     }
 
+    // Check token validity
+    checkTikTokToken() {
+        const token = localStorage.getItem('tiktokAccessToken');
+        const tokenExpiry = localStorage.getItem('tiktokTokenExpiry');
+
+        // Check if token exists and is still valid
+        if (!token || !tokenExpiry || Date.now() > parseInt(tokenExpiry)) {
+            // Token is expired or doesn't exist
+            localStorage.removeItem('tiktokAccessToken');
+            localStorage.removeItem('tiktokTokenExpiry');
+            return false;
+        }
+        return true;
+    }
+    
     async revokeToken(accessToken) {
         try {
             // Create form data for the request
