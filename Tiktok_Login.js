@@ -28,7 +28,7 @@ class Authentication {
         return Math.random().toString(36).substring(2, 15) +
             Math.random().toString(36).substring(2, 15);
     }
-    
+
     async getAccessTokenFromCode(code, redirectUri) {
         try {
             // Prepare request body
@@ -59,6 +59,21 @@ class Authentication {
             console.error('Error getting access token:', error);
             throw error;
         }
+    }
+
+    // Check token validity
+    checkTikTokToken() {
+        const token = localStorage.getItem('tiktokAccessToken');
+        const tokenExpiry = localStorage.getItem('tiktokTokenExpiry');
+
+        // Check if token exists and is still valid
+        if (!token || !tokenExpiry || Date.now() > parseInt(tokenExpiry)) {
+            // Token is expired or doesn't exist
+            localStorage.removeItem('tiktokAccessToken');
+            localStorage.removeItem('tiktokTokenExpiry');
+            return false;
+        }
+        return true;
     }
 
     async revokeToken(accessToken) {
@@ -97,7 +112,7 @@ class Authentication {
 // document.addEventListener('DOMContentLoaded', () => {
 //     // Instantiate authentication
 //     const authentication = new Authentication({
-//         client_key: 'sbawgv8e7j4nbi22wy', 
+//         client_key: 'sbawgv8e7j4nbi22wy',
 //         client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
 //     });
 
