@@ -132,24 +132,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             //window.open(links['FacebookIOS'], '_blank');
                         }
                 }
-                else if(links[platform] == links['TikTok']) {
-                    var fallbackToStore = function () {
-                        // window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
-                        if (localStorage.getItem('tiktokAccessToken'))
-                            window.location.href = "tiktok_post_vid.html";
-                        else
-                            window.location = tiktokAuthenticationUrl;
-                    };
-                    var openApp = function () {
-                        // window.location = 'snssdk1233://user/profile/6988483642273219586';
-                        if (localStorage.getItem('tiktokAccessToken'))
-                            window.location.href = "tiktok_post_vid.html";
-                        else
-                            window.location = tiktokAuthenticationUrl;
-                    };
-
-                    openApp();
-                    setTimeout(fallbackToStore, 700);
+                else if (links[platform] == links['TikTok']) {
+                    if (checkTikTokToken()) {
+                        window.location.href = "tiktok_post_vid.html";
+                    } else {
+                        window.location = tiktokAuthenticationUrl;
+                    }
                 }
                 //how many else if do I need
                 else if(links[platform] == links['Share']) {
