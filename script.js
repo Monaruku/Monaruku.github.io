@@ -1,4 +1,3 @@
-import checkTikTokToken from './Tiktok_Login.js';
 document.addEventListener("DOMContentLoaded", function () {
     // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     // if (isMobile) {
@@ -134,7 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                 }
                 else if (links[platform] == links['TikTok']) {
-                    if (checkTikTokToken()) {
+                    if (tiktokAuthentication.checkTikTokToken()) {
                         window.location.href = "tiktok_post_vid.html";
                     } else {
                         window.location = tiktokAuthenticationUrl;
