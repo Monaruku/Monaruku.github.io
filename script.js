@@ -1,3 +1,4 @@
+import checkTikTokToken from './Tiktok_Login.js';
 document.addEventListener("DOMContentLoaded", function () {
     // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     // if (isMobile) {
