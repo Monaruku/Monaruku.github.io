@@ -160,23 +160,11 @@ document.addEventListener("DOMContentLoaded",async function () {
                     }
                 }
                 else if (links[platform] == links['TikTok']) {
-                    var fallbackToStore = function () {
-                        // window.location = 'https://www.tiktok.com/@sqlaccounthq_oe';
-                        if (localStorage.getItem('tiktokAccessToken')) 
-                            window.location.href = "tiktok_post_vid.html";
-                        else 
-                            window.location = authenticationUrl;
-                    };
-                    var openApp = function () {
-                        // window.location = 'snssdk1233://user/profile/6988483642273219586';
-                        if (localStorage.getItem('tiktokAccessToken'))
-                            window.location.href = "tiktok_post_vid.html";
-                        else
-                            window.location = authenticationUrl;
-                    };
-
-                    openApp();
-                    setTimeout(fallbackToStore, 700);
+                    if (authentication.checkTikTokToken()) {
+                        window.location.href = "tiktok_post_vid.html";
+                    } else {
+                        window.location = authenticationUrl;
+                    }
                 }
                 //how many else if do I need
                 else if (links[platform] == links['Share']) {
