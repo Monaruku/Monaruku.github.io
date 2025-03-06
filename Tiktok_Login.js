@@ -6,7 +6,10 @@ class Authentication {
         this.tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
         this.revokeEndpoint = 'https://open.tiktokapis.com/v2/oauth/revoke/';
         this.refreshEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
+        this.getUserInfoEndpoint = 'https://open.tiktokapis.com/v2/user/info/';
+        this.corsProxy = 'https://corsproxy.io/?';
     }
+    
 
     getAuthenticationUrl(redirectUri, scopes) {
         // Create base URL for TikTok OAuth
@@ -42,8 +45,7 @@ class Authentication {
             });
 
             // Make POST request to token endpoint
-            const corsProxy = 'https://corsproxy.io/';
-            const response = await fetch(corsProxy + this.tokenEndpoint, {
+            const response = await fetch(this.corsProxy + encodeURIComponent(this.tokenEndpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -86,8 +88,7 @@ class Authentication {
                 refresh_token: accessToken
             });
 
-            const corsProxy = 'https://corsproxy.io/';
-            const response = await fetch(corsProxy + this.tokenEndpoint, {
+            const response = await fetch(this.corsProxy + encodeURIComponent(this.tokenEndpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -131,8 +132,7 @@ class Authentication {
             params.append('token', accessToken);
 
             // Make the revocation request
-            const corsProxy = 'https://corsproxy.io/';
-            const response = await fetch(corsProxy + this.revokeEndpoint, {
+            const response = await fetch(this.corsProxy + encodeURIComponent(this.revokeEndpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -153,13 +153,11 @@ class Authentication {
         }
     }
 
-    async getUserInfo(accessToken, fields = ['open_id', 'union_id', 'avatar_url', 'display_name']) {
+    async getUserInfo(accessToken) {
         try {
-            const fieldsParam = fields.join(',');
-            const corsProxy = 'https://corsproxy.io/';
-            const url = `https://open.tiktokapis.com/v2/user/info/?fields=${fieldsParam}`;
+            const url = this.getUserInfoEndpoint + '?fields=open_id,union_id,avatar_url,display_name';
 
-            const response = await fetch(corsProxy + url, {
+            const response = await fetch(this.corsProxy + encodeURIComponent(url), {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
