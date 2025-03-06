@@ -161,7 +161,7 @@ class Authentication {
         try {
             const url = this.getUserInfoEndpoint + '?fields=open_id,union_id,avatar_url,display_name';
 
-x            // const response = await fetch(this.corsProxy + encodeURIComponent(url), {
+            // const response = await fetch(this.corsProxy + encodeURIComponent(url), {
             const response = await fetch(this.corsProxy + url, {
                 method: 'GET',
                 headers: {
