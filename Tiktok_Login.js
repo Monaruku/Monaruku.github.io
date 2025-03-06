@@ -7,7 +7,7 @@ class Authentication {
         this.revokeEndpoint = 'https://open.tiktokapis.com/v2/oauth/revoke/';
         this.refreshEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
         this.getUserInfoEndpoint = 'https://open.tiktokapis.com/v2/user/info/';
-        this.corsProxy = 'https://corsproxy.io/?';
+        this.corsProxy = 'https://corsproxy.io/?url=';
     }
     
 
@@ -45,7 +45,7 @@ class Authentication {
             });
 
             // Make POST request to token endpoint
-            const response = await fetch(this.corsProxy + encodeURIComponent(this.tokenEndpoint), {
+            const response = await fetch(this.corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -88,7 +88,7 @@ class Authentication {
                 refresh_token: accessToken
             });
 
-            const response = await fetch(this.corsProxy + encodeURIComponent(this.tokenEndpoint), {
+            const response = await fetch(this.corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -132,7 +132,7 @@ class Authentication {
             params.append('token', accessToken);
 
             // Make the revocation request
-            const response = await fetch(this.corsProxy + encodeURIComponent(this.revokeEndpoint), {
+            const response = await fetch(this.corsProxy + this.revokeEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -157,7 +157,7 @@ class Authentication {
         try {
             const url = this.getUserInfoEndpoint + '?fields=open_id,union_id,avatar_url,display_name';
 
-            const response = await fetch(this.corsProxy + encodeURIComponent(url), {
+            const response = await fetch(this.corsProxy + url, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`

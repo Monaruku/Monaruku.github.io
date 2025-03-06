@@ -25,8 +25,9 @@ class Post {
 
     async getCreatorInfo() {
         try {
-            const corsProxy = 'https://corsproxy.io/?';
-            const response = await fetch(corsProxy + encodeURIComponent(this.creatorInfoUrl), {
+            //not done
+            const corsProxy = 'https://corsproxy.io/?url=';
+            const response = await fetch(corsProxy + this.creatorInfoUrl, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +53,7 @@ class Post {
     async publish(params) {
         try {
             const corsProxy = 'https://corsproxy.io/?';
-            const response = await fetch(corsProxy + encodeURIComponent(this.apiBaseUrl), {
+            const response = await fetch(corsProxy + this.apiBaseUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
