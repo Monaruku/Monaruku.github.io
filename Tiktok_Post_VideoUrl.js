@@ -29,12 +29,17 @@ class Post {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+                const errorText = await response.text().catch(() => 'No error details available');
+                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
+                // throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
             return await response.json();
         } catch (error) {
-            console.error('Error publishing video to TikTok:', error);
+            // Add API context to the error
+            if (error.name === 'TypeError') {
+                throw new Error(`Network error: ${error.message} (Check CORS proxy availability)`);
+            }
             throw error;
         }
     }
@@ -63,15 +68,7 @@ async function publishVideoToTikTok() {
         })
     };
 
-    try {
-        // Post video to TikTok
-        const publish = await post.publish(params);
-        console.log('Video published successfully:', publish);
-        return publish;
-    } catch (error) {
-        console.error('Failed to publish video:', error);
-        throw error;
-    }
+    return await post.publish(params);
 }
 
 // Call the function when needed

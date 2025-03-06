@@ -77,41 +77,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Post video functionality
     postButton.addEventListener('click', async function () {
         try {
-            // Get access token from local storage
-            const accessToken = localStorage.getItem('tiktokAccessToken');
-
-            if (!accessToken) {
-                showError('No access token found. Please authenticate with TikTok first.');
-                return;
-            }
-
-            // Create a new Post instance
-            const post = new Post({
-                access_token: accessToken
-            });
-
-            // Get the video title
-            const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
-
-            // Set up parameters for video posting
-            const params = {
-                [Fields.POST_INFO]: JSON.stringify({
-                    [Fields.PRIVACY_LEVEL]: 'PUBLIC',
-                    [Fields.TITLE]: videoTitle,
-                    [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000
-                }),
-                [Fields.SOURCE_INFO]: JSON.stringify({
-                    [Fields.SOURCE]: 'PULL_FROM_URL',
-                    [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-                })
-            };
-
-            // Publish the video
-            const result = await post.publish(params);
-
-            // Show success message
+            await publishVideoToTikTok();
             showSuccess('Video published successfully to TikTok!');
-            console.log('Publishing result:', result);
 
             // Open TikTok app or web
             const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
