@@ -49,7 +49,7 @@ class Post {
 async function publishVideoToTikTok() {
     // Instantiation config params
     const config = {
-        access_token: localStorage.getItem('tiktok_access_token'),
+        access_token: localStorage.getItem('tiktokAccessToken'),
     };
 
     // Instantiate a new post
