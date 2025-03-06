@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get TikTok login URL
     const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
+    //Download image from url thru CORS proxy
     async function fetchImageAsFile(url, fileName) {
       try {
         const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
@@ -133,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var imageUrls;
 
+    //Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
@@ -142,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
-
+    //The actual share Image function, basically call download and send them to share
     async function shareImages() {
 
       // Fetch images and convert to File objects
@@ -199,10 +201,11 @@ document.addEventListener("DOMContentLoaded", function () {
     */
 
 
-
+    //Preloaded content
     var line;
     var lineCN;
 
+    /** <--- Preload Content ---> **/
     //Had to hardlink the text file now because of CORS security policy
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
         .then(response => response.text())
@@ -228,6 +231,9 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
+    /* <-------------------> */
+
+    //Get Random Line from preloaded contents
     function getLines(mode) {
             const randomLines = [];
             const usedIndexes = new Set();
