@@ -261,6 +261,8 @@ document.addEventListener("DOMContentLoaded", function () {
             else if(mode == 2) {
                 const textTC = randomLines.toString();
                 console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
                 return textTC;
             }
 
