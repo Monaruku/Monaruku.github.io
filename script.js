@@ -158,7 +158,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
         try {
           await navigator.share({
-            title: "Check out these images!",
             text: getLines(2),
             files
           });
