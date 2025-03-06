@@ -80,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
           await navigator.share({
             title: "Check out these images!",
-            text: "Here are some photos to check out.",
+            text: getLines(2),
             files
           });
           console.log("Shared successfully!");
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
-    function getLines() {
+    function getLines(mode) {
             const randomLines = [];
             const usedIndexes = new Set();
 
@@ -138,11 +138,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
-            const textTC = randomLines.toString();
-            console.log(textTC);
-            window.focus();
-            navigator.clipboard.writeText(textTC);
-            alert("Text copied! Paste it onto Google Review.");
+            if(mode == 1) {
+                const textTC = randomLines.toString();
+                console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
+                alert("Text copied! Paste it onto Google Review.");
+            }
+            else if(mode == 2) {
+                const textTC = randomLines.toString();
+                return textTC;
+            }
+
     }
 
 
@@ -183,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //lazy way of doing this
                 else if(links[platform] == links['Google review']) {
                     //Had to hardcode https link to read text file, or else chrome's security policy will block it
-                    getLines()
+                    getLines(1)
                     window.open(links['Google review'], '_blank');
                 }
                 else if(links[platform] == links['Facebook']) {
