@@ -9,10 +9,19 @@
 </head>
 
 <body>
+    
     <div class="container">
         <a href="index.html" class="back-button">&#8592;</a>
         <h1>Share Video to TikTok</h1>
 
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <img id="userAvatar" class="user-avatar" src="" alt="Profile picture">
+            <div class="user-info">
+                <h2 id="userName">Loading...</h2>
+                <p>Posting as this TikTok account</p>
+            </div>
+        </div>
+        
         <!-- Video preview -->
         <div class="video-container">
             <video id="videoPreview" controls>

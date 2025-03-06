@@ -152,32 +152,29 @@ class Authentication {
             throw error;
         }
     }
+
+    async getUserInfo(accessToken, fields = ['open_id', 'union_id', 'avatar_url', 'display_name']) {
+        try {
+            const fieldsParam = fields.join(',');
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const url = `https://open.tiktokapis.com/v2/user/info/?fields=${fieldsParam}`;
+
+            const response = await fetch(corsProxy + url, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Failed to get user info: ${errorData.error?.message || `HTTP error ${response.status}`}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting user info:', error);
+            throw error;
+        }
+    }
 }
-
-// Usage example
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Instantiate authentication
-//     const authentication = new Authentication({
-//         client_key: 'sbawgv8e7j4nbi22wy', 
-//         client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
-//     });
-
-//     // URI TikTok will send the user to after they login
-//     // Must match what you have in your app dashboard
-//     const redirectUri = 'https://path/to/tiktok/login/redirect.html';
-
-//     // A list of approved scopes by TikTok for your app
-//     const scopes = [
-//         'user.info.basic',
-//         'video.upload'
-//     ];
-
-//     // Get TikTok login URL
-//     const authenticationUrl = authentication.getAuthenticationUrl(redirectUri, scopes);
-
-//     // Create login button with TikTok branding
-//     const loginButton = document.getElementById('tiktok-login-button');
-//     if (loginButton) {
-//         loginButton.href = authenticationUrl;
-//     }
-// });

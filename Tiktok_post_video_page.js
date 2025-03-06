@@ -40,10 +40,36 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     // Check if there's an access token in localStorage
-    const hasAccessToken = localStorage.getItem('tiktokAccessToken');
-    if (!hasAccessToken) {
+    const accessToken = localStorage.getItem('tiktokAccessToken');
+    if (!accessToken) {
         logoutButton.style.display = 'none';
-        
+    }
+    else {
+        try {
+            // Fetch user info
+            const userInfoResponse = await authentication.getUserInfo(accessToken);
+
+            if (userInfoResponse && userInfoResponse.data && userInfoResponse.data.user) {
+                const user = userInfoResponse.data.user;
+
+                // Update UI with user info
+                const userProfile = document.getElementById('userProfile');
+                const userAvatar = document.getElementById('userAvatar');
+                const userName = document.getElementById('userName');
+
+                // Set avatar and name
+                userAvatar.src = user.avatar_url;
+                userName.textContent = user.display_name;
+
+                // Show profile section
+                userProfile.style.display = 'flex';
+
+                console.log('User profile loaded:', user);
+            }
+        } catch (error) {
+            console.error('Failed to load user profile:', error);
+            alert('Failed to load user profile. Please try again.');
+        }
     }
 
 
