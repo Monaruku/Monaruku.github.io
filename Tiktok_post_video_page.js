@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const hasAccessToken = localStorage.getItem('tiktokAccessToken');
     if (!hasAccessToken) {
         logoutButton.style.display = 'none';
+        
     }
 
 

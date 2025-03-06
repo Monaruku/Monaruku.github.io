@@ -8,12 +8,45 @@ class Fields {
     static SOURCE_INFO = 'source_info';
     static SOURCE = 'source';
     static VIDEO_URL = 'video_url';
+    static DISABLE_DUET = 'disable_duet';
+    static DISABLE_STITCH = 'disable_stitch';
+    static DISABLE_COMMENT = 'disable_comment';
+    static BRAND_ORGANIC = 'brand_organic';
+    static BRAND_CONTENT = 'brand_content';
 }
 
 class Post {
     constructor(config) {
         this.accessToken = config.access_token;
         this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
+        this.statusUrl = 'https://open.tiktokapis.com/v2/post/publish/status/fetch/';
+        this.creatorInfo = null;
+    }
+
+    async getCreatorInfo() {
+        try {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.creatorInfoUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => 'No error details available');
+                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
+            }
+
+            this.creatorInfo = await response.json();
+            return this.creatorInfo;
+        } catch (error) {
+            if (error.name === 'TypeError') {
+                throw new Error(`Network error: ${error.message} (Check CORS proxy availability)`);
+            }
+            throw error;
+        }
     }
 
     async publish(params) {

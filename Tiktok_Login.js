@@ -5,6 +5,7 @@ class Authentication {
         this.clientSecret = config.client_secret;
         this.tokenEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
         this.revokeEndpoint = 'https://open.tiktokapis.com/v2/oauth/revoke/';
+        this.refreshEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
     }
 
     getAuthenticationUrl(redirectUri, scopes) {
@@ -74,6 +75,51 @@ class Authentication {
             return false;
         }
         return true;
+    }
+
+    async refreshToken(accessToken) {
+        try {
+            const params = new URLSearchParams({
+                client_key: this.clientKey,
+                client_secret: this.clientSecret,
+                grant_type: 'refresh_token',
+                refresh_token: accessToken
+            });
+
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.tokenEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Cache-Control': 'no-cache'
+                },
+                body: params
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Refresh failed: ${errorData.error_description || `HTTP error ${response.status}`}`);
+            }
+
+            const tokenData = await response.json();
+
+            if (tokenData.access_token) {
+                localStorage.setItem('tiktokAccessToken', tokenData.access_token);
+                // Calculate expiry time (current time + expires_in seconds)
+                const expiryTime = Date.now() + (tokenData.expires_in * 1000);
+                localStorage.setItem('tiktokTokenExpiry', expiryTime);
+
+                // Store the new refresh token as well
+                if (tokenData.refresh_token) {
+                    localStorage.setItem('tiktokRefreshToken', tokenData.refresh_token);
+                }
+            }
+
+            return tokenData;
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            throw error;
+        }
     }
     
     async revokeToken(accessToken) {
