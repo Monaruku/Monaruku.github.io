@@ -10,18 +10,95 @@ document.addEventListener("DOMContentLoaded", function () {
     // window.open("https://facebook.com", "_blank");
     // });
     // }
+    const text_lang = {
+        'tiktok_p_en': "Share to",
+        'tiktok_p_cn': "分享至",
+        'tiktok_h_en': "TikTok",
+        'tiktok_h_cn': "TikTok",
+        'tiktok_b_en': "Share",
+        'tiktok_b_cn': "分享",
 
+        'rednote_p_en': "Follow us on",
+        'rednote_p_cn': "关注我们",
+        'rednote_h_en': "Red note",
+        'rednote_h_cn': "小红书",
+        'rednote_b_en': "Follow",
+        'rednote_b_cn': "关注",
+        
+        'google_p_en': "Review us on",
+        'google_p_cn': "给个好评",
+        'google_h_en': "Google review",
+        'google_h_cn': "谷歌评论",
+        'google_b_en': "Review",
+        'google_b_cn': "评论",
+
+        'fb_p_en': "Follow us on",
+        'fb_p_cn': "关注我们",
+        'fb_h_en': "Facebook",
+        'fb_h_cn': "脸书",
+        'fb_b_en': "Share",
+        'fb_b_cn': "关注",
+
+        'insta_p_en': "Follow us on",
+        'insta_p_cn': "关注我们",
+        'insta_h_en': "Instagram",
+        'insta_h_cn': "Instagram",
+        'insta_b_en': "Follow",
+        'insta_b_cn': "关注",
+
+        'others_p_en': "Press to",
+        'others_p_cn': "搓下按钮",
+        'others_h_en': "Share",
+        'others_h_cn': "分享",
+        'others_b_en': "Share",
+        'others_b_cn': "分享",
+
+        'lang_desc_en': "更改语言至...",
+        'lang_desc_cn': "Change language to...",
+
+        'lang_b_en': "中文",
+        'lang_b_cn': "English",
+    }
+
+    let isEnglish = true;
+
+    function load_lang (){
+        var currentLang = (isEnglish) ? "_en" : "_cn";
+        const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others'];
+        const elem_list = ['_p', '_h', '_b'];
+        media_list.forEach(media => {
+            elem_list.forEach(elem => {
+                //console.log(media + elem + currentLang);
+                document.getElementById(media + elem).textContent = text_lang[media + elem + currentLang];
+            });
+        });
+        document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
+        document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
+    };
+
+    window.onload = (event) => {
+        load_lang();
+    };
+
+    document.getElementById('lang_b').addEventListener('click', function (e) {
+        isEnglish = !isEnglish;
+        load_lang();
+    });
     
     // Define the links
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'Facebook': 'https://www.facebook.com/SQLEstream/',
+        "脸书": 'https://www.facebook.com/SQLEstream/',
         'FacebookIOS': 'fb://page/110600357296339',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
+        '谷歌评论': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note',
+        '小红书': 'Red note',
         'TikTok': 'TikTok',
-        'Share': 'Share'
+        'Share': 'Share',
+        '分享': 'Share'
     };
 
     // Tiktok Authentication class
@@ -112,14 +189,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     */
 
-        //Switch button Stuff
+    /*    //Switch button Stuff
     let isEnglish = true;
 
-    document.getElementById("toggleButton").addEventListener("click", function() {
+    document.getElementById("lang_b").addEventListener("click", function() {
        isEnglish = !isEnglish;
-       document.getElementById("toggleText").textContent = isEnglish ? "Share In English" : "Share in Chinese";
+       document.getElementById("lang_desc").textContent = isEnglish ? "Share In English" : "Share in Chinese";
     });
-
+    */
 
 
 
@@ -179,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
-                alert("Text copied! Paste it onto Google Review.");
+                alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
             }
             else if(mode == 2) {
                 const textTC = randomLines.toString();
