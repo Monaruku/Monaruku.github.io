@@ -42,12 +42,55 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get TikTok login URL
     const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
-    //Share Stuff
-    //Define Image Link
-    const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
+    async function fetchImageAsFile(url, fileName) {
+      try {
+        const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const blob = await response.blob();
+        return new File([blob], fileName, { type: blob.type });
+      } catch (error) {
+        console.error("Error fetching image:", error);
+        return null;
+      }
+    }
 
-    //Define Share text
-    const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
+    var imageUrls;
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const line = text.split('\n').filter(line => line.trim() !== '');
+            imageUrls = line;
+            console.log(imageUrls);
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+
+    async function shareImages() {
+
+      // Fetch images and convert to File objects
+      const filePromises = imageUrls.map((url, index) =>
+        fetchImageAsFile(url, `image${index + 1}.jpg`)
+      );
+
+      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+
+      // Check if multiple file sharing is supported
+      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            title: "Check out these images!",
+            text: getLines(2),
+            files
+          });
+          console.log("Shared successfully!");
+        } catch (error) {
+          console.error("Sharing failed", error);
+        }
+      } else {
+        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
+    }
 
 
 
@@ -62,10 +105,90 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     */
 
+    /**
     function copyText() {
         const text = "This place is good and helpful. Accounting made easy!";
         navigator.clipboard.writeText(text);
     }
+    */
+
+        //Switch button Stuff
+    let isEnglish = true;
+
+    document.getElementById("toggleButton").addEventListener("click", function() {
+       isEnglish = !isEnglish;
+       document.getElementById("toggleText").textContent = isEnglish ? "Share In English" : "Share in Chinese";
+    });
+
+
+
+
+    var line;
+    var lineCN;
+
+    //Had to hardlink the text file now because of CORS security policy
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 10) {
+                document.getElementById('output').textContent = "File has fewer than 10 lines.";
+                return;
+            }
+            line = lines;
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const linesCN = text.split('\n').filter(line => line.trim() !== '');
+            if (linesCN.length < 10) {
+                document.getElementById('output').textContent = "File has fewer than 10 lines.";
+                return;
+            }
+            lineCN = linesCN;
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    function getLines(mode) {
+            const randomLines = [];
+            const usedIndexes = new Set();
+
+            while (randomLines.length < 1) {
+                if(isEnglish){
+                    const randomIndex = Math.floor(Math.random() * line.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(line[randomIndex]);
+                    }
+                }
+                else {
+                     const randomIndex = Math.floor(Math.random() * lineCN.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(lineCN[randomIndex]);
+                    }
+                }
+
+            }
+
+            //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
+            if(mode == 1) {
+                const textTC = randomLines.toString();
+                console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
+                alert("Text copied! Paste it onto Google Review.");
+            }
+            else if(mode == 2) {
+                const textTC = randomLines.toString();
+                console.log(textTC);
+                return textTC;
+            }
+
+    }
+
 
 
     // Add active state for touch devices
@@ -104,8 +227,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 //lazy way of doing this
                 else if(links[platform] == links['Google review']) {
-                    copyText();
-                    alert("Text copied! Paste it onto Google Review.");
+                    //Had to hardcode https link to read text file, or else chrome's security policy will block it
+                    getLines(1)
                     window.open(links['Google review'], '_blank');
                 }
                 else if(links[platform] == links['Facebook']) {
@@ -141,26 +264,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 //how many else if do I need
                 else if(links[platform] == links['Share']) {
+                    //Check if can use web share API level 2
+                    if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                     //Copy Share Text
-                    navigator.clipboard.writeText(shareText);
-                    alert("Text copied! Please use it as the content for the post");
-                        if (navigator.share) {
-                        fetch(imageURL) // Replace with your image URL
-                            .then(response => response.blob())
-                            .then(blob => {
-                                const file = new File([blob], 'image.jpg', { type: blob.type });
-                
-                                navigator.share({
-                                    files: [file]
-                                    //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
-                                }).then(() => {
-                                    console.log('Content shared successfully!');
-                                }).catch((error) => {
-                                    console.error('Error sharing:', error);
-                                });
-                            }).catch(error => console.error('Error fetching image:', error));
+                    getLines();
+                    shareImages();
+                    return true;
                     } else {
-                        alert('Web Share API is not supported in your browser.');
+                        alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                        return false;
                     }
                 }
                 else{
