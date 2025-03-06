@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
-            const textTC = randomLines;
+            const textTC = randomLines.toString();
             console.log(textTC);
             navigator.clipboard.writeText(textTC);
 
