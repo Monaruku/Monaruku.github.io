@@ -49,6 +49,49 @@ document.addEventListener("DOMContentLoaded", function () {
     //Define Share text
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
+    async function fetchImageAsFile(url, fileName) {
+      try {
+        const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const blob = await response.blob();
+        return new File([blob], fileName, { type: blob.type });
+      } catch (error) {
+        console.error("Error fetching image:", error);
+        return null;
+      }
+    }
+
+    async function shareImages() {
+      // URLs of the images to fetch
+      const imageUrls = [
+        "https://cdn.sql.com.my/wp-content/uploads/2024/03/lhdn-e-invoice-seminar.jpg",
+        "https://cdn.sql.com.my/wp-content/uploads/2024/02/E-Invoice-Webinar-Poster-scaled.jpg"
+      ];
+
+      // Fetch images and convert to File objects
+      const filePromises = imageUrls.map((url, index) =>
+        fetchImageAsFile(url, `image${index + 1}.jpg`)
+      );
+
+      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+
+      // Check if multiple file sharing is supported
+      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            title: "Check out these images!",
+            text: "Here are some photos to check out.",
+            files
+          });
+          console.log("Shared successfully!");
+        } catch (error) {
+          console.error("Sharing failed", error);
+        }
+      } else {
+        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
+    }
+
 
 
     /**
@@ -83,8 +126,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching the file:", error));
 
     function getLines() {
-
-
             const randomLines = [];
             const usedIndexes = new Set();
 
@@ -179,26 +220,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 //how many else if do I need
                 else if(links[platform] == links['Share']) {
                     //Copy Share Text
-                    navigator.clipboard.writeText(shareText);
-                    alert("Text copied! Please use it as the content for the post");
-                        if (navigator.share) {
-                        fetch(imageURL) // Replace with your image URL
-                            .then(response => response.blob())
-                            .then(blob => {
-                                const file = new File([blob], 'image.jpg', { type: blob.type });
-                
-                                navigator.share({
-                                    files: [file]
-                                    //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
-                                }).then(() => {
-                                    console.log('Content shared successfully!');
-                                }).catch((error) => {
-                                    console.error('Error sharing:', error);
-                                });
-                            }).catch(error => console.error('Error fetching image:', error));
-                    } else {
-                        alert('Web Share API is not supported in your browser.');
-                    }
+                    getLines();
+                    shareImages();
                 }
                 else{
                    window.open(links[platform], '_blank');
