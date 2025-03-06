@@ -34,39 +34,6 @@ document.addEventListener("DOMContentLoaded",async function () {
     const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
     const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
 
-    
-
-    // const revokeButton = document.getElementById('tiktok-revoke-button');
-    // if (!localStorage.getItem('tiktokAccessToken')) {
-    //     revokeButton.style.display = 'none';
-    // }
-    // else {
-    //     revokeButton.style.display = 'inline-block';
-    //     // loginButton.style.display = 'none';
-    // }
-    // if (revokeButton) {
-    //     revokeButton.addEventListener('click', async function () {
-    //         try {
-    //             const accessToken = localStorage.getItem('tiktokAccessToken');
-
-    //             if (!accessToken) {
-    //                 alert('No access token found. You are not logged in to TikTok.');
-    //                 return;
-    //             }
-
-    //             // Use the authentication class method instead of direct fetch
-    //             const result = await authentication.revokeToken(accessToken);
-
-    //             // Clear the token from storage
-    //             localStorage.removeItem('tiktokAccessToken');
-    //             alert('Successfully logged out from TikTok!');
-    //             window.location.reload();
-    //         } catch (error) {
-    //             console.error('Error revoking token:', error);
-    //             alert('Failed to logout: ' + error.message);
-    //         }
-    //     });
-    // }
 
     /**
     function shareToRedNote() {

@@ -26,9 +26,11 @@ class Post {
     async getCreatorInfo() {
         try {
             //not done
-            const corsProxy = 'https://corsproxy.io/?url=';
-            const response = await fetch(corsProxy + encodeURIComponent(this.creatorInfoUrl), {
-                method: 'GET',
+            // const corsProxy = 'https://corsproxy.io/?url=';
+            // const response = await fetch(corsProxy + encodeURIComponent(this.creatorInfoUrl), {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.creatorInfoUrl, {
+            method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${this.accessToken}`
@@ -52,8 +54,10 @@ class Post {
 
     async publish(params) {
         try {
-            const corsProxy = 'https://corsproxy.io/?url=';
-            const response = await fetch(corsProxy + encodeURIComponent(this.apiBaseUrl), {
+            // const corsProxy = 'https://corsproxy.io/?url=';
+            // const response = await fetch(corsProxy + encodeURIComponent(this.apiBaseUrl), {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.apiBaseUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
