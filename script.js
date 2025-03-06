@@ -42,13 +42,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get TikTok login URL
     const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
-    //Share Stuff
-    //Define Image Link
-    const imageURL = 'https://static.wixstatic.com/media/a4bb8c_3c067dae40a8430387b5b3fe904c9a62~mv2.png'
-
-    //Define Share text
-    const shareText = 'I have a good time here, thank you so much SQL! #SQLEStream'
-
     async function fetchImageAsFile(url, fileName) {
       try {
         const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
@@ -61,12 +54,19 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
+    var imageUrls;
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const line = text.split('\n').filter(line => line.trim() !== '');
+            imageUrls = line;
+            console.log(imageUrls);
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+
     async function shareImages() {
-      // URLs of the images to fetch
-      const imageUrls = [
-        "https://cdn.sql.com.my/wp-content/uploads/2024/03/lhdn-e-invoice-seminar.jpg",
-        "https://cdn.sql.com.my/wp-content/uploads/2024/02/E-Invoice-Webinar-Poster-scaled.jpg"
-      ];
 
       // Fetch images and convert to File objects
       const filePromises = imageUrls.map((url, index) =>
@@ -111,9 +111,23 @@ document.addEventListener("DOMContentLoaded", function () {
         navigator.clipboard.writeText(text);
     }
     */
-    var line = [];
 
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/TestLine.txt") // Replace with actual file path
+        //Switch button Stuff
+    let isEnglish = true;
+
+    document.getElementById("toggleButton").addEventListener("click", function() {
+       isEnglish = !isEnglish;
+       document.getElementById("toggleText").textContent = isEnglish ? "Share In English" : "Share in Chinese";
+    });
+
+
+
+
+    var line;
+    var lineCN;
+
+    //Had to hardlink the text file now because of CORS security policy
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -125,16 +139,38 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const linesCN = text.split('\n').filter(line => line.trim() !== '');
+            if (linesCN.length < 10) {
+                document.getElementById('output').textContent = "File has fewer than 10 lines.";
+                return;
+            }
+            lineCN = linesCN;
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
     function getLines(mode) {
             const randomLines = [];
             const usedIndexes = new Set();
 
             while (randomLines.length < 1) {
-                const randomIndex = Math.floor(Math.random() * line.length);
-                if (!usedIndexes.has(randomIndex)) {
-                    usedIndexes.add(randomIndex);
-                    randomLines.push(line[randomIndex]);
+                if(isEnglish){
+                    const randomIndex = Math.floor(Math.random() * line.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(line[randomIndex]);
+                    }
                 }
+                else {
+                     const randomIndex = Math.floor(Math.random() * lineCN.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(lineCN[randomIndex]);
+                    }
+                }
+
             }
 
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
@@ -147,10 +183,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             else if(mode == 2) {
                 const textTC = randomLines.toString();
+                console.log(textTC);
                 return textTC;
             }
 
     }
+
 
 
     // Add active state for touch devices
@@ -226,9 +264,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 //how many else if do I need
                 else if(links[platform] == links['Share']) {
+                    //Check if can use web share API level 2
+                    if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                     //Copy Share Text
                     getLines();
                     shareImages();
+                    return true;
+                    } else {
+                        alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                        return false;
+                    }
                 }
                 else{
                    window.open(links[platform], '_blank');
