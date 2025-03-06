@@ -99,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
             const textTC = randomLines.toString();
             console.log(textTC);
+            window.focus();
             navigator.clipboard.writeText(textTC);
             alert("Text copied! Paste it onto Google Review.");
     }
