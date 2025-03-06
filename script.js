@@ -100,6 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const textTC = randomLines.toString();
             console.log(textTC);
             navigator.clipboard.writeText(textTC);
+            alert("Text copied! Paste it onto Google Review.");
     }
 
 
@@ -141,7 +142,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 else if(links[platform] == links['Google review']) {
                     //Had to hardcode https link to read text file, or else chrome's security policy will block it
                     getLines()
-                    alert("Text copied! Paste it onto Google Review.");
                     window.open(links['Google review'], '_blank');
                 }
                 else if(links[platform] == links['Facebook']) {
