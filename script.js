@@ -62,9 +62,41 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     */
 
+    /**
     function copyText() {
         const text = "This place is good and helpful. Accounting made easy!";
         navigator.clipboard.writeText(text);
+    }
+    */
+
+    function getLines(filename) {
+        fetch(filename) // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length < 10) {
+                document.getElementById('output').textContent = "File has fewer than 10 lines.";
+                return;
+            }
+
+            const randomLines = [];
+            const usedIndexes = new Set();
+
+            while (randomLines.length < 1) {
+                const randomIndex = Math.floor(Math.random() * lines.length);
+                if (!usedIndexes.has(randomIndex)) {
+                    usedIndexes.add(randomIndex);
+                    randomLines.push(lines[randomIndex]);
+                }
+            }
+
+            //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
+            const textTC = randomLines;
+            console.log(textTC);
+            navigator.clipboard.writeText(textTC);
+
+        })
+        .catch(error => console.error("Error fetching the file:", error));
     }
 
 
@@ -104,7 +136,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
                 //lazy way of doing this
                 else if(links[platform] == links['Google review']) {
-                    copyText();
+                    //Had to hardcode https link to read text file, or else chrome's security policy will block it
+                    getLines("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/TestLine.txt")
                     alert("Text copied! Paste it onto Google Review.");
                     window.open(links['Google review'], '_blank');
                 }
