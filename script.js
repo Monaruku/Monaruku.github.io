@@ -68,9 +68,9 @@ document.addEventListener("DOMContentLoaded", function () {
         navigator.clipboard.writeText(text);
     }
     */
+    var line = [];
 
-    function getLines(filename) {
-        fetch(filename) // Replace with actual file path
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/TestLine.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -78,15 +78,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById('output').textContent = "File has fewer than 10 lines.";
                 return;
             }
+            line = lines;
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    function getLines() {
+
 
             const randomLines = [];
             const usedIndexes = new Set();
 
             while (randomLines.length < 1) {
-                const randomIndex = Math.floor(Math.random() * lines.length);
+                const randomIndex = Math.floor(Math.random() * line.length);
                 if (!usedIndexes.has(randomIndex)) {
                     usedIndexes.add(randomIndex);
-                    randomLines.push(lines[randomIndex]);
+                    randomLines.push(line[randomIndex]);
                 }
             }
 
@@ -94,9 +100,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const textTC = randomLines.toString();
             console.log(textTC);
             navigator.clipboard.writeText(textTC);
-
-        })
-        .catch(error => console.error("Error fetching the file:", error));
     }
 
 
@@ -137,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //lazy way of doing this
                 else if(links[platform] == links['Google review']) {
                     //Had to hardcode https link to read text file, or else chrome's security policy will block it
-                    getLines("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/TestLine.txt")
+                    getLines()
                     alert("Text copied! Paste it onto Google Review.");
                     window.open(links['Google review'], '_blank');
                 }
