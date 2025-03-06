@@ -4,12 +4,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     const statusMessage = document.getElementById('statusMessage');
     const videoTitleInput = document.getElementById('videoTitle');
 
-    // Check if there's an access token in localStorage
-    const hasAccessToken = localStorage.getItem('tiktokAccessToken');
-    if (!hasAccessToken) {
-        logoutButton.style.display = 'none';
-    }
-
     // Initialize Authentication class for token revocation
     const authentication = new Authentication({
         client_key: 'sbawgv8e7j4nbi22wy',
@@ -27,6 +21,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             const userToken = tokenFromCode.access_token;
             // Store the token for later use
             localStorage.setItem('tiktokAccessToken', userToken);
+            localStorage.setItem('tiktokTokenExpiry', Date.now() + (tokenFromCode.expires_in * 1000));
 
             // Clear the 'code' parameter from the URL without refreshing the page
             const url = new URL(window.location.href);
@@ -43,6 +38,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             alert('Authentication failed. Please try again.');
         }
     }
+
+    // Check if there's an access token in localStorage
+    const hasAccessToken = localStorage.getItem('tiktokAccessToken');
+    if (!hasAccessToken) {
+        logoutButton.style.display = 'none';
+    }
+
 
     // Logout button functionality
     logoutButton.addEventListener('click', async function () {
