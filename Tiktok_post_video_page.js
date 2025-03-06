@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Post video functionality
     postButton.addEventListener('click', async function () {
         try {
-            await publishVideoToTikTok();
+            await publishVideoToTikTok().then(result => console.log(result));
             showSuccess('Video published successfully to TikTok!');
 
             // Open TikTok app or web
