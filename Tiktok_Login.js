@@ -42,7 +42,7 @@ class Authentication {
             });
 
             // Make POST request to token endpoint
-            const corsProxy = ' https://corsproxy.io/?url=';
+            const corsProxy = 'https://corsproxy.io/';
             const response = await fetch(corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
@@ -86,7 +86,7 @@ class Authentication {
                 refresh_token: accessToken
             });
 
-            const corsProxy = ' https://corsproxy.io/?url=';
+            const corsProxy = 'https://corsproxy.io/';
             const response = await fetch(corsProxy + this.tokenEndpoint, {
                 method: 'POST',
                 headers: {
@@ -131,7 +131,7 @@ class Authentication {
             params.append('token', accessToken);
 
             // Make the revocation request
-            const corsProxy = ' https://corsproxy.io/?url=';
+            const corsProxy = 'https://corsproxy.io/';
             const response = await fetch(corsProxy + this.revokeEndpoint, {
                 method: 'POST',
                 headers: {
@@ -156,7 +156,7 @@ class Authentication {
     async getUserInfo(accessToken, fields = ['open_id', 'union_id', 'avatar_url', 'display_name']) {
         try {
             const fieldsParam = fields.join(',');
-            const corsProxy = ' https://corsproxy.io/?url=';
+            const corsProxy = 'https://corsproxy.io/';
             const url = `https://open.tiktokapis.com/v2/user/info/?fields=${fieldsParam}`;
 
             const response = await fetch(corsProxy + url, {

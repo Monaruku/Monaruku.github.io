@@ -20,11 +20,38 @@ class Post {
         this.accessToken = config.access_token;
         this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
         this.statusUrl = 'https://open.tiktokapis.com/v2/post/publish/status/fetch/';
+        this.creatorInfo = null;
+    }
+
+    async getCreatorInfo() {
+        try {
+            const corsProxy = 'https://corsproxy.io/';
+            const response = await fetch(corsProxy + this.creatorInfoUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.accessToken}`
+                }
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => 'No error details available');
+                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
+            }
+
+            this.creatorInfo = await response.json();
+            return this.creatorInfo;
+        } catch (error) {
+            if (error.name === 'TypeError') {
+                throw new Error(`Network error: ${error.message} (Check CORS proxy availability)`);
+            }
+            throw error;
+        }
     }
 
     async publish(params) {
         try {
-            const corsProxy = ' https://corsproxy.io/?url=';
+            const corsProxy = 'https://corsproxy.io/';
             const response = await fetch(corsProxy + this.apiBaseUrl, {
                 method: 'POST',
                 headers: {
