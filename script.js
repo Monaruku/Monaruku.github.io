@@ -152,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedUrls = shuffledUrls.slice(0, 3);
         console.log(selectedUrls);
 
+
       // Fetch images and convert to File objects
       const filePromises = selectedUrls.map((url, index) =>
         fetchImageAsFile(url, `image${index + 1}.jpg`)
