@@ -210,10 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 10) {
-                document.getElementById('output').textContent = "File has fewer than 10 lines.";
-                return;
-            }
             line = lines;
         })
     .catch(error => console.error("Error fetching the file:", error));
@@ -222,10 +218,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.text())
         .then(text => {
             const linesCN = text.split('\n').filter(line => line.trim() !== '');
-            if (linesCN.length < 10) {
-                document.getElementById('output').textContent = "File has fewer than 10 lines.";
-                return;
-            }
             lineCN = linesCN;
         })
     .catch(error => console.error("Error fetching the file:", error));
