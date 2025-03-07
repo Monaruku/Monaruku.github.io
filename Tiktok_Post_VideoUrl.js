@@ -69,8 +69,12 @@ class Post {
 
             if (!response.ok) {
                 const errorText = await response.text().catch(() => 'No error details available');
-                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
-                // throw new Error(`HTTP error! Status: ${response.status}`);
+                console.error(`HTTP error!(${response.status}): ${errorText}`);
+                // Return error object instead of throwing
+                return {
+                    success: false,
+                    error: `HTTP error!(${response.status})`
+                };
             }
 
             return await response.json();
