@@ -206,3 +206,35 @@ label {
     font-size: 14px;
     opacity: 0.8;
 }
+
+/* Privacy dropdown styling */
+.privacy-dropdown {
+    width: 100%;
+    padding: 12px;
+    border-radius: 25px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+}
+
+.privacy-dropdown:focus {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.privacy-dropdown option {
+    background: #9370DB;
+    color: white;
+}
+
+small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.8;
+}

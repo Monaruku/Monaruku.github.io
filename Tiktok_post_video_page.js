@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const logoutButton = document.getElementById('logoutButton');
     const statusMessage = document.getElementById('statusMessage');
     const videoTitleInput = document.getElementById('videoTitle');
+    const privacyLevelDropdown = document.getElementById('privacyLevel');
     let creatorInfoResponse = null;
     let userInfoResponse = null;
 
@@ -85,12 +86,59 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const userAvatar = document.getElementById('userAvatar');
                 const userName = document.getElementById('userName');
 
-                // Set avatar and name
                 userAvatar.src = creator.creator_avatar_url;
                 userName.textContent = creator.creator_username;
 
                 // Show profile section
                 userProfile.style.display = 'flex';
+
+                // Populate privacy level options dropdown
+                if (creator.privacy_level_options && creator.privacy_level_options.length > 0) {
+                    // Clear any existing options except the placeholder
+                    while (privacyLevelDropdown.options.length > 1) {
+                        privacyLevelDropdown.remove(1);
+                    }
+
+                    // Add options from creator info
+                    creator.privacy_level_options.forEach(option => {
+                        const optionElement = document.createElement('option');
+                        optionElement.value = option;
+
+                        // Format the option text to be more readable
+                        let displayText;
+                        switch (option) {
+                            case 'PUBLIC_TO_EVERYONE':
+                                displayText = 'Public - Everyone';
+                                break;
+                            case 'MUTUAL_FOLLOW_FRIENDS':
+                                displayText = 'Friends - Mutual followers only';
+                                break;
+                            case 'SELF_ONLY':
+                                displayText = 'Private - Only me';
+                                break;
+                            case 'FOLLOWER_OF_CREATOR':
+                                displayText = 'Followers - Followers only';
+                                break;
+                            default:
+                                displayText = option.replace(/_/g, ' ').toLowerCase()
+                                    .split(' ')
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                    .join(' ');
+                        }
+
+                        optionElement.textContent = displayText;
+                        privacyLevelDropdown.appendChild(optionElement);
+                    });
+
+                    // Enable the dropdown
+                    privacyLevelDropdown.disabled = false;
+                } else {
+                    // If no privacy options available, disable the dropdown
+                    privacyLevelDropdown.disabled = true;
+                    const optionElement = document.createElement('option');
+                    optionElement.textContent = 'No privacy options available';
+                    privacyLevelDropdown.appendChild(optionElement);
+                }
 
                 console.log('User profile loaded:', creator);
             }
@@ -134,6 +182,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Post video functionality
     postButton.addEventListener('click', async function () {
         try {
+            // Check if privacy level is selected
+            if (!privacyLevelDropdown.value) {
+                showError('Please select a privacy level');
+                return;
+            }
             // check whether user is able to post video
             if (!creatorInfoResponse || !creatorInfoResponse.data) {
                 showError('Creator information not available. Please refresh and try again.');
@@ -150,7 +203,10 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return;
             }
 
-            await publishVideoToTikTok().then(result => console.log(result));
+            const privacyLevel = privacyLevelDropdown.value;
+            const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
+
+            await publishVideoToTikTok(privacyLevel, videoTitle).then(result => console.log("Publish Video result: ", result));
             showSuccess('Video published successfully to TikTok!');
 
             // Open TikTok app or web

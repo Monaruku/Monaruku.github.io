@@ -84,7 +84,7 @@ class Post {
 }
 
 // Usage example
-async function publishVideoToTikTok() {
+async function publishVideoToTikTok(privacyLevel, videoTitle) {
     // Instantiation config params
     const config = {
         access_token: localStorage.getItem('tiktokAccessToken'),
@@ -99,8 +99,8 @@ async function publishVideoToTikTok() {
 
     const params = {
         [Fields.POST_INFO]: JSON.stringify({
-            [Fields.PRIVACY_LEVEL]: 'SELF_ONLY',
-            [Fields.TITLE]: 'SQL BOLEH!!!',
+            [Fields.PRIVACY_LEVEL]: privacyLevel,
+            [Fields.TITLE]: videoTitle,
             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000 // spot in video to use as cover photo
         }),
         [Fields.SOURCE_INFO]: JSON.stringify({
