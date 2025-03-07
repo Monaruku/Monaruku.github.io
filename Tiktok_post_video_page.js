@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
                 // Set avatar and name
                 userAvatar.src = creator.creator_avatar_url;
-                userName.textContent = creator.creator_nickename;
+                userName.textContent = creator.creator_username;
 
                 // Show profile section
                 userProfile.style.display = 'flex';
