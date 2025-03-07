@@ -99,18 +99,18 @@ async function publishVideoToTikTok(privacyLevel, videoTitle, disableComment, di
     const videoUrl = sourceElement.src;
 
     const params = {
-        [Fields.POST_INFO]: JSON.stringify({
+        [Fields.POST_INFO]: {
             [Fields.TITLE]: videoTitle,
             [Fields.PRIVACY_LEVEL]: privacyLevel,
             [Fields.DISABLE_DUET]: disableDuet,
             [Fields.DISABLE_COMMENT]: disableComment,
             [Fields.DISABLE_STITCH]: disableStitch,
             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000 // spot in video to use as cover photo
-        }),
-        [Fields.SOURCE_INFO]: JSON.stringify({
+        },
+        [Fields.SOURCE_INFO]: {
             [Fields.SOURCE]: 'PULL_FROM_URL',
             [Fields.VIDEO_URL]: videoUrl // video URL that is publicly accessible
-        })
+        }
     };
 
     console.log('Param for publish : ', params);
