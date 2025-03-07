@@ -18,8 +18,9 @@ class Fields {
 class Post {
     constructor(config) {
         this.accessToken = config.access_token;
-        this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
+        // this.apiBaseUrl = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
         this.statusUrl = 'https://open.tiktokapis.com/v2/post/publish/status/fetch/';
+        this.postVideoUrl = 'https://open.tiktokapis.com/v2/post/publish/video/init/';
         this.creatorInfo = null;
     }
 
@@ -57,7 +58,7 @@ class Post {
             // const corsProxy = 'https://corsproxy.io/?url=';
             // const response = await fetch(corsProxy + encodeURIComponent(this.apiBaseUrl), {
             const corsProxy = 'https://cors-anywhere.herokuapp.com/';
-            const response = await fetch(corsProxy + this.apiBaseUrl, {
+            const response = await fetch(corsProxy + this.postVideoUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
