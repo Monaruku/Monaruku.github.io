@@ -101,8 +101,6 @@ https://picsum.photos/id/203/4032/3024
 https://picsum.photos/id/204/5000/3333
 https://picsum.photos/id/206/2880/1800
 
-=== Code Execution Successful ===
-
 #Chinese
 https://cdn.sql.com.my/wp-content/uploads/2024/03/lhdn-e-invoice-seminar.jpg
 https://picsum.photos/id/0/5000/3333
