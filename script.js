@@ -159,6 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 randomUrls.push(imageUrls[randomIndex]);
                 }
         }
+        console.log(randomUrls.length);
 
       // Fetch images and convert to File objects
       const filePromises = randomUrls.map((url, index) =>
