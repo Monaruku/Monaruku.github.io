@@ -93,6 +93,10 @@ async function publishVideoToTikTok() {
     // Instantiate a new post
     const post = new Post(config);
 
+    const videoElement = document.getElementById('videoPreview');
+    const sourceElement = videoElement.querySelector('source');
+    const videoUrl = sourceElement.src;
+
     const params = {
         [Fields.POST_INFO]: JSON.stringify({
             [Fields.PRIVACY_LEVEL]: 'SELF_ONLY',
@@ -101,7 +105,7 @@ async function publishVideoToTikTok() {
         }),
         [Fields.SOURCE_INFO]: JSON.stringify({
             [Fields.SOURCE]: 'PULL_FROM_URL',
-            [Fields.VIDEO_URL]: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' // video URL that is publicly accessible
+            [Fields.VIDEO_URL]: videoUrl // video URL that is publicly accessible
             // e.g. http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
         })
     };

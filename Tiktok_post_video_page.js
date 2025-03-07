@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     const logoutButton = document.getElementById('logoutButton');
     const statusMessage = document.getElementById('statusMessage');
     const videoTitleInput = document.getElementById('videoTitle');
+    let creatorInfoResponse = null;
+    let userInfoResponse = null;
 
     // Initialize Authentication class for token revocation
     const authentication = new Authentication({
@@ -45,12 +47,38 @@ document.addEventListener('DOMContentLoaded', async function () {
         logoutButton.style.display = 'none';
     }
     else {
-        try {
-            // Fetch user info
-            const userInfoResponse = await authentication.getUserInfo(accessToken);
+        // try {
+        //     // Fetch user info
+        //     const userInfoResponse = await authentication.getUserInfo(accessToken);
 
-            if (userInfoResponse && userInfoResponse.data && userInfoResponse.data.user) {
-                const user = userInfoResponse.data.user;
+        //     if (userInfoResponse && userInfoResponse.data && userInfoResponse.data.user) {
+        //         const user = userInfoResponse.data.user;
+
+        //         // Update UI with user info
+        //         const userProfile = document.getElementById('userProfile');
+        //         const userAvatar = document.getElementById('userAvatar');
+        //         const userName = document.getElementById('userName');
+
+        //         // Set avatar and name
+        //         userAvatar.src = user.avatar_url;
+        //         userName.textContent = user.display_name;
+
+        //         // Show profile section
+        //         userProfile.style.display = 'flex';
+
+        //         console.log('User profile loaded:', user);
+        //     }
+        // } catch (error) {
+        //     console.error('Failed to load user profile:', error);
+        //     alert('Failed to load user profile. Please try again.');
+        // }
+
+        try {
+            // Fetch creator info
+            creatorInfoResponse = await authentication.queryCreatorInfo(accessToken);
+
+            if (creatorInfoResponse && creatorInfoResponse.data) {
+                const creator = creatorInfoResponse.data;
 
                 // Update UI with user info
                 const userProfile = document.getElementById('userProfile');
@@ -58,13 +86,13 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const userName = document.getElementById('userName');
 
                 // Set avatar and name
-                userAvatar.src = user.avatar_url;
-                userName.textContent = user.display_name;
+                userAvatar.src = creator.creator_avatar_url;
+                userName.textContent = creator.creator_nickename;
 
                 // Show profile section
                 userProfile.style.display = 'flex';
 
-                console.log('User profile loaded:', user);
+                console.log('User profile loaded:', creator);
             }
         } catch (error) {
             console.error('Failed to load user profile:', error);
@@ -85,7 +113,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // Use the authentication class to revoke the token
             const result = await authentication.revokeToken(accessToken);
-
+            console.log('Token revoked:', result);
             // Clear the token from storage
             localStorage.removeItem('tiktokAccessToken');
             showSuccess('Successfully logged out from TikTok!');
@@ -106,6 +134,22 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Post video functionality
     postButton.addEventListener('click', async function () {
         try {
+            // check whether user is able to post video
+            if (!creatorInfoResponse || !creatorInfoResponse.data) {
+                showError('Creator information not available. Please refresh and try again.');
+                return;
+            }
+
+            const creator = creatorInfoResponse.data;
+
+            const videoDuration = await getVideoDuration('videoPreview'); // Use correct ID
+            console.log(`Video duration: ${videoDuration} seconds`);
+
+            if (creator.max_video_post_duration_sec < videoDuration) {
+                showError(`Sorry, you do not allowed to post. Video exceeds maximum allowed duration of ${creator.max_video_post_duration_sec} seconds by your account.`);
+                return;
+            }
+
             await publishVideoToTikTok().then(result => console.log(result));
             showSuccess('Video published successfully to TikTok!');
 
@@ -132,5 +176,37 @@ document.addEventListener('DOMContentLoaded', async function () {
         statusMessage.textContent = message;
         statusMessage.className = 'status-message error';
         statusMessage.style.display = 'block';
+    }
+
+    function getVideoDuration(videoElementId) {
+        return new Promise((resolve, reject) => {
+            const videoElement = document.getElementById(videoElementId);
+
+            if (!videoElement) {
+                reject(new Error(`Video element with ID '${videoElementId}' not found`));
+                return;
+            }
+
+            // If video metadata is already loaded, return duration immediately
+            if (videoElement.readyState >= 1) {
+                resolve(videoElement.duration);
+                return;
+            }
+
+            // Otherwise, wait for metadata to load
+            videoElement.addEventListener('loadedmetadata', () => {
+                resolve(videoElement.duration);
+            });
+
+            // Handle errors
+            videoElement.addEventListener('error', () => {
+                reject(new Error('Failed to load video metadata'));
+            });
+
+            // Ensure video starts loading if it hasn't already
+            if (videoElement.readyState === 0) {
+                videoElement.load();
+            }
+        });
     }
 });

@@ -7,6 +7,7 @@ class Authentication {
         this.revokeEndpoint = 'https://open.tiktokapis.com/v2/oauth/revoke/';
         this.refreshEndpoint = 'https://open.tiktokapis.com/v2/oauth/token/';
         this.getUserInfoEndpoint = 'https://open.tiktokapis.com/v2/user/info/';
+        this.queryCreatorInfoEndpoint = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
         // this.corsProxy = 'https://corsproxy.io/?url=';
         this.corsProxy = 'https://cors-anywhere.herokuapp.com/';
     }
@@ -177,6 +178,31 @@ class Authentication {
             return await response.json();
         } catch (error) {
             console.error('Error getting user info:', error);
+            throw error;
+        }
+    }
+
+    // This method is limited to 20 requests per min for each user access token
+    async queryCreatorInfo(accessToken) {
+        try {
+            const url = this.queryCreatorInfoEndpoint;
+            // const response = await fetch(this.corsProxy + encodeURIComponent(url), {
+            const response = await fetch(this.corsProxy + url, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json; charset=UTF-8'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Failed to get creator info: ${errorData.error?.message || `HTTP error ${response.status}`}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error getting creator info:', error);
             throw error;
         }
     }
