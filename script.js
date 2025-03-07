@@ -216,7 +216,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             line = lines;
         })
-        .catch(error => console.error("Error fetching the file:", error));
+    .catch(error => console.error("Error fetching the file:", error));
 
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
         .then(response => response.text())
@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             lineCN = linesCN;
         })
-        .catch(error => console.error("Error fetching the file:", error));
+    .catch(error => console.error("Error fetching the file:", error));
 
     /* <-------------------> */
 
@@ -256,6 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
+            //Basically now the two mode is just to prompt alert or not
             if(mode == 1) {
                 const textTC = randomLines.toString();
                 console.log(textTC);
