@@ -147,8 +147,21 @@ document.addEventListener("DOMContentLoaded", function () {
     //The actual share Image function, basically call download and send them to share
     async function shareImages() {
 
+        //Randomly choose pictures
+        const randomUrls = [];
+        const usedIndexes = new Set();
+        const picAmt = 3;
+
+        while (randomUrls.length < picAmt) {
+            const randomIndex = Math.floor(Math.random() * imageUrls.length);
+                if (!usedIndexes.has(randomUrls)) {
+                usedIndexes.add(randomUrls);
+                randomUrls.push(imageUrls[randomIndex]);
+                }
+        }
+
       // Fetch images and convert to File objects
-      const filePromises = imageUrls.map((url, index) =>
+      const filePromises = randomUrls.map((url, index) =>
         fetchImageAsFile(url, `image${index + 1}.jpg`)
       );
 
