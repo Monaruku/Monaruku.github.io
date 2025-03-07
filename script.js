@@ -1,15 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    // if (isMobile) {
-    //     document.querySelector(".facebook").addEventListener("click", function() {
-    //         window.open("fb://page/110600357296339", "_blank");
-    //     });
-    // }
-    // else {
-    //         document.querySelector(".facebook").addEventListener("click", function() {
-    // window.open("https://facebook.com", "_blank");
-    // });
-    // }
+ 
+    /*----------------------- Change Language Module ------------------------- */
+
+    // Language text holder
     const text_lang = {
         'tiktok_p_en': "Share to",
         'tiktok_p_cn': "分享至",
@@ -60,8 +53,10 @@ document.addEventListener("DOMContentLoaded", function () {
         'lang_b_cn': "English",
     }
 
+    // Language toggle
     let isEnglish = true;
 
+    // Language loader
     function load_lang (){
         var currentLang = (isEnglish) ? "_en" : "_cn";
         const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others'];
@@ -76,14 +71,20 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
     };
 
+    // Load language once on window load
     window.onload = (event) => {
         load_lang();
     };
 
+    // Load language when change language
     document.getElementById('lang_b').addEventListener('click', function (e) {
         isEnglish = !isEnglish;
         load_lang();
     });
+
+    /*----------------------- End of Change Language Module ------------------------- */
+
+    /*----------------------- Actual Linking Module ------------------------- */
     
     // Define the links
     const links = {
@@ -121,20 +122,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     //Download image from url thru CORS proxy
     async function fetchImageAsFile(url, fileName) {
-      try {
-        const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
-        const response = await fetch(proxyUrl + encodeURIComponent(url));
-        const blob = await response.blob();
-        return new File([blob], fileName, { type: blob.type });
-      } catch (error) {
-        console.error("Error fetching image:", error);
-        return null;
-      }
+        try {
+            const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
+            const response = await fetch(proxyUrl + encodeURIComponent(url));
+            const blob = await response.blob();
+            return new File([blob], fileName, { type: blob.type });
+        } catch (error) {
+            console.error("Error fetching image:", error);
+            return null;
+        }
     }
 
+    // Preloaded Image URL Holder
     var imageUrls;
 
-    //Preload ImageURLs from text file
+    // Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
@@ -144,67 +146,37 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
-    //The actual share Image function, basically call download and send them to share
+    // The actual share Image function, basically call download and send them to share
     async function shareImages() {
 
-      // Fetch images and convert to File objects
-      const filePromises = imageUrls.map((url, index) =>
-        fetchImageAsFile(url, `image${index + 1}.jpg`)
-      );
+        // Fetch images and convert to File objects
+        const filePromises = imageUrls.map((url, index) =>
+            fetchImageAsFile(url, `image${index + 1}.jpg`)
+        );
 
-      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+        const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
 
-      // Check if multiple file sharing is supported
-      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-        try {
-          await navigator.share({
-            text: getLines(2),
-            files
-          });
-          console.log("Shared successfully!");
-        } catch (error) {
-          console.error("Sharing failed", error);
+        // Check if multiple file sharing is supported
+        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+            try {
+                await navigator.share({
+                    text: getLines(2),
+                    files
+                });
+                console.log("Shared successfully!");
+            } catch (error) {
+                console.error("Sharing failed", error);
+            }
+        } else {
+            console.log("Your browser does not support sharing multiple files or image fetch failed.");
         }
-      } else {
-        console.log("Your browser does not support sharing multiple files or image fetch failed.");
-      }
     }
 
-
-
-    /**
-    function shareToRedNote() {
-    if (navigator.share) {
-        navigator.share({
-            url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
-        }).catch(error => console.log('Error sharing:', error));
-    } else {
-        alert('Sharing not supported on this browser.');
-    }
-    */
-
-    /**
-    function copyText() {
-        const text = "This place is good and helpful. Accounting made easy!";
-        navigator.clipboard.writeText(text);
-    }
-    */
-
-    /*    //Switch button Stuff
-    let isEnglish = true;
-
-    document.getElementById("lang_b").addEventListener("click", function() {
-       isEnglish = !isEnglish;
-       document.getElementById("lang_desc").textContent = isEnglish ? "Share In English" : "Share in Chinese";
-    });
-    */
-
-
-    //Preloaded content
+    // Preloaded Content Holder
     var line;
     var lineCN;
 
-    /** <--- Preload Content ---> **/
+    /* --------------------------- Fetch Preloaded Content --------------------*/
     //Had to hardlink the text file now because of CORS security policy
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
         .then(response => response.text())
@@ -222,51 +194,46 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     .catch(error => console.error("Error fetching the file:", error));
 
-    /* <-------------------> */
+    /* --------------------------- End of Fetch Preloaded Content --------------------*/
 
-    //Get Random Line from preloaded contents
+    // Get Random Line from preloaded contents
     function getLines(mode) {
-            const randomLines = [];
-            const usedIndexes = new Set();
+        const randomLines = [];
+        const usedIndexes = new Set();
 
-            while (randomLines.length < 1) {
-                if(isEnglish){
-                    const randomIndex = Math.floor(Math.random() * line.length);
-                        if (!usedIndexes.has(randomIndex)) {
-                        usedIndexes.add(randomIndex);
-                        randomLines.push(line[randomIndex]);
-                    }
+        while (randomLines.length < 1) {
+            if(isEnglish){
+                const randomIndex = Math.floor(Math.random() * line.length);
+                if (!usedIndexes.has(randomIndex)) {
+                    usedIndexes.add(randomIndex);
+                    randomLines.push(line[randomIndex]);
                 }
-                else {
-                     const randomIndex = Math.floor(Math.random() * lineCN.length);
-                        if (!usedIndexes.has(randomIndex)) {
-                        usedIndexes.add(randomIndex);
-                        randomLines.push(lineCN[randomIndex]);
-                    }
+            }
+            else {
+                const randomIndex = Math.floor(Math.random() * lineCN.length);
+                if (!usedIndexes.has(randomIndex)) {
+                    usedIndexes.add(randomIndex);
+                    randomLines.push(lineCN[randomIndex]);
                 }
-
             }
+        }
 
-            //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
-            //Basically now the two mode is just to prompt alert or not
-            if(mode == 1) {
-                const textTC = randomLines.toString();
-                console.log(textTC);
-                window.focus();
-                navigator.clipboard.writeText(textTC);
-                alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
-            }
-            else if(mode == 2) {
-                const textTC = randomLines.toString();
-                console.log(textTC);
-                window.focus();
-                navigator.clipboard.writeText(textTC);
-                return textTC;
-            }
-
+        // Basically now the two mode is just to prompt alert or not
+        if(mode == 1) {
+            const textTC = randomLines.toString();
+            console.log(textTC);
+            window.focus();
+            navigator.clipboard.writeText(textTC);
+            alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
+        }
+        else if(mode == 2) {
+            const textTC = randomLines.toString();
+            console.log(textTC);
+            window.focus();
+            navigator.clipboard.writeText(textTC);
+            return textTC;
+        }
     }
-
-
 
     // Add active state for touch devices
     document.querySelectorAll('.action-button').forEach(button => {
@@ -289,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (links[platform]) {
                 if(links[platform] == 'Red note'){
                     
-                    //Check if the device have Rednote installed or not before redirecting
+                    // Check if the device have Rednote installed or not before redirecting
                     var fallbackToStore = function() {
                       window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                     };
@@ -299,38 +266,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
-                    
-                    //shareToRedNote();
                 }
-                //lazy way of doing this
+                // lazy way of doing this
                 else if(links[platform] == links['Google review']) {
-                    //Had to hardcode https link to read text file, or else chrome's security policy will block it
+                    // Had to hardcode https link to read text file, or else chrome's security policy will block it
                     getLines(1)
                     window.open(links['Google review'], '_blank');
                 }
                 else if(links[platform] == links['Facebook']) {
                     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-                        if (/android/i.test(userAgent)) {
-                            window.open(links['Facebook'], '_blank');
-                        }
+                    if (/android/i.test(userAgent)) {
+                        window.open(links['Facebook'], '_blank');
+                    }
 
-                        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-                        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                            //Check if the device have Rednote installed or not before redirecting
-                            var fallbackToStore = function() {
-                              window.location = links['Facebook'];
-                            };
-                            var openApp = function() {
-                              window.location = links['FacebookIOS'];
-                            };
+                    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+                    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                        // Check if the device have Rednote installed or not before redirecting
+                        var fallbackToStore = function() {
+                            window.location = links['Facebook'];
+                        };
+                        var openApp = function() {
+                            window.location = links['FacebookIOS'];
+                        };
 
-                            openApp();
-                            setTimeout(fallbackToStore, 1700);
-
-
-                            //window.open(links['FacebookIOS'], '_blank');
-                        }
+                        openApp();
+                        setTimeout(fallbackToStore, 1700);
+                    }
                 }
                 else if (links[platform] == links['TikTok']) {
                     if (tiktokAuthentication.checkTikTokToken()) {
@@ -339,11 +301,12 @@ document.addEventListener("DOMContentLoaded", function () {
                         window.location = tiktokAuthenticationUrl;
                     }
                 }
-                //how many else if do I need
+                // how many else if do I need
                 else if(links[platform] == links['Share']) {
-                    //Check if can use web share API level 2
+
+                    // Check if can use web share API level 2
                     if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
-                    //Copy Share Text
+                    // Copy Share Text
                     getLines();
                     shareImages();
                     return true;
@@ -353,7 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }
                 else{
-                   window.open(links[platform], '_blank');
+                    window.open(links[platform], '_blank');
                 }
             } else {
                 const actionType = this.textContent;
@@ -363,33 +326,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    // Also add direct click functionality to the card for Facebook and Instagram
-    // document.querySelectorAll('.card').forEach(card => {
-    //     const platform = card.querySelector('h3').textContent.trim();
-
-    //     if (links[platform]) {
-    //         card.style.cursor = 'pointer';
-
-    //         // Add tap/click functionality
-    //         card.addEventListener('click', function (e) {
-    //             // Only trigger if they didn't click the button directly
-    //             if (!e.target.classList.contains('action-button')) {
-    //                 window.open(links[platform], '_blank');
-    //             }
-    //         });
-
-    //         // Add active state for touch
-    //         card.addEventListener('touchstart', function () {
-    //             if (!this.querySelector('.action-button:active')) {
-    //                 this.classList.add('card-active');
-    //             }
-    //         }, { passive: true });
-
-    //         card.addEventListener('touchend', function () {
-    //             this.classList.remove('card-active');
-    //         }, { passive: true });
-    //     }
-    // });
+    /*----------------------- End of Actual Linking Module ------------------------- */
 
     // Prevent zoom on double tap for iOS
     document.addEventListener('touchend', function (event) {
