@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 const userName = document.getElementById('userName');
 
                 userAvatar.src = creator.creator_avatar_url;
-                userName.textContent = creator.creator_username;
+                userName.textContent = creator.creator_nickname;
 
                 // Show profile section
                 userProfile.style.display = 'flex';
