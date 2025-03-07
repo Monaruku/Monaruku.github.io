@@ -144,6 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
+
     //The actual share Image function, basically call download and send them to share
     async function shareImages() {
       
@@ -176,34 +177,105 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
+    /*------------- This section is currently under testing, so it looks real stupid -------------*/
+    const flag = "#English"; // Change this to the desired flag
+    const flagCN = "#Chinese";
+    let imageUrlsEN = [];
+    let imageUrlsCN = [];
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinksFlagged.txt")
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n');
+            let capture = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const trimmed = lines[i].trim();
+                    if (trimmed.startsWith("#")) {
+                        capture = trimmed === flag; // Start capturing if it matches the flag
+                        continue;
+                    }
+                    if (capture && trimmed !== "") {
+                        imageUrlsEN.push(trimmed); // Collect all URLs under the flag
+                    }
+                    if (capture && (i + 1 < lines.length && lines[i + 1].startsWith("#"))) {
+                        break; // Stop capturing when the next flag appears
+                    }
+            }
+
+            console.log(imageUrlsEN); // Output filtered URLs
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinksFlagged.txt")
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n');
+            let capture = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const trimmed = lines[i].trim();
+                    if (trimmed.startsWith("#")) {
+                        capture = trimmed === flagCN; // Start capturing if it matches the flag
+                        continue;
+                    }
+                    if (capture && trimmed !== "") {
+                        imageUrlsCN.push(trimmed); // Collect all URLs under the flag
+                    }
+                    if (capture && (i + 1 < lines.length && lines[i + 1].startsWith("#"))) {
+                        break; // Stop capturing when the next flag appears
+                    }
+            }
+
+            console.log(imageUrlsCN); // Output filtered URLs
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    async function shareAlternative() {
+        // Shuffle and pick 3 random images
+        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+        const selectedUrls = shuffledUrls.slice(0, 3);
+        if(isEnglish){
+            let number = Math.min(selectedUrls.length, imageUrlsEN.length);
+            for (let i = 0; i < number; i++) {
+                selectedUrls[i] = imageUrlsEN[i];
+            }
+        }
+        else {
+            let number = Math.min(selectedUrls.length, imageUrlsCN.length);
+            for (let i = 0; i < number; i++) {
+                selectedUrls[i] = imageUrlsCN[i];
+            }
+        }
+        console.log(selectedUrls);
 
 
-    /**
-    function shareToRedNote() {
-    if (navigator.share) {
-        navigator.share({
-            url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
-        }).catch(error => console.log('Error sharing:', error));
-    } else {
-        alert('Sharing not supported on this browser.');
+      // Fetch images and convert to File objects
+      const filePromises = selectedUrls.map((url, index) =>
+        fetchImageAsFile(url, `image${index + 1}.jpg`)
+      );
+
+      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+
+      // Check if multiple file sharing is supported
+      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            text: getLines(2),
+            files
+          });
+          console.log("Shared successfully!");
+        } catch (error) {
+          console.error("Sharing failed", error);
+        }
+      } else {
+        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
     }
-    */
+        
+    document.getElementById("shareAlt").addEventListener("click", shareAlternative);
 
-    /**
-    function copyText() {
-        const text = "This place is good and helpful. Accounting made easy!";
-        navigator.clipboard.writeText(text);
-    }
-    */
-
-    /*    //Switch button Stuff
-    let isEnglish = true;
-
-    document.getElementById("lang_b").addEventListener("click", function() {
-       isEnglish = !isEnglish;
-       document.getElementById("lang_desc").textContent = isEnglish ? "Share In English" : "Share in Chinese";
-    });
-    */
+    /*--------------------------------------------------------------------------------------------*/
 
 
     //Preloaded content
