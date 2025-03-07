@@ -112,6 +112,7 @@ async function publishVideoToTikTok(privacyLevel, videoTitle, disableComment, di
         })
     };
 
+    console.log('Param for publish : ', params);
     return await post.publish(params);
 }
 

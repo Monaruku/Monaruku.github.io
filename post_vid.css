@@ -253,14 +253,18 @@ label {
 
 .checkbox-container {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    gap: 5px;
 }
 
 .checkbox-item {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+    min-width: 100px;
 }
 
 .interaction-checkbox {
@@ -273,6 +277,7 @@ label {
 .checkbox-label {
     margin-bottom: 0;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 /* Style for disabled checkboxes */
@@ -284,4 +289,17 @@ label {
 .interaction-checkbox:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Responsive adjustments for very small screens */
+@media (max-width: 475px) {
+    .checkbox-container {
+        flex-direction: column;
+        /* Fall back to column on very small screens */
+        align-items: center;
+    }
+
+    .checkbox-item {
+        width: 100%;
+    }
 }
