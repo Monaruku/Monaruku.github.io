@@ -84,7 +84,7 @@ class Post {
 }
 
 // Usage example
-async function publishVideoToTikTok(privacyLevel, videoTitle) {
+async function publishVideoToTikTok(privacyLevel, videoTitle, disableComment, disableDuet, disableStitch) {
     // Instantiation config params
     const config = {
         access_token: localStorage.getItem('tiktokAccessToken'),
@@ -99,14 +99,16 @@ async function publishVideoToTikTok(privacyLevel, videoTitle) {
 
     const params = {
         [Fields.POST_INFO]: JSON.stringify({
-            [Fields.PRIVACY_LEVEL]: privacyLevel,
             [Fields.TITLE]: videoTitle,
+            [Fields.PRIVACY_LEVEL]: privacyLevel,
+            [Fields.DISABLE_DUET]: disableDuet,
+            [Fields.DISABLE_COMMENT]: disableComment,
+            [Fields.DISABLE_STITCH]: disableStitch,
             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000 // spot in video to use as cover photo
         }),
         [Fields.SOURCE_INFO]: JSON.stringify({
             [Fields.SOURCE]: 'PULL_FROM_URL',
             [Fields.VIDEO_URL]: videoUrl // video URL that is publicly accessible
-            // e.g. http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4
         })
     };
 

@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     let creatorInfoResponse = null;
     let userInfoResponse = null;
 
+    const allowCommentCheckbox = document.getElementById('allowComment');
+    const allowDuetCheckbox = document.getElementById('allowDuet');
+    const allowStitchCheckbox = document.getElementById('allowStitch');
+
     // Initialize Authentication class for token revocation
     const authentication = new Authentication({
         client_key: 'sbawgv8e7j4nbi22wy',
@@ -140,6 +144,33 @@ document.addEventListener('DOMContentLoaded', async function () {
                     privacyLevelDropdown.appendChild(optionElement);
                 }
 
+                // Comment settings
+                if (creator.comment_disabled) {
+                    allowCommentCheckbox.disabled = true;
+                    allowCommentCheckbox.checked = false;
+                    allowCommentCheckbox.parentElement.title = "Comments are disabled in your TikTok app settings";
+                } else {
+                    allowCommentCheckbox.disabled = false;
+                }
+
+                // Duet settings
+                if (creator.duet_disabled) {
+                    allowDuetCheckbox.disabled = true;
+                    allowDuetCheckbox.checked = false;
+                    allowDuetCheckbox.parentElement.title = "Duets are disabled in your TikTok app settings";
+                } else {
+                    allowDuetCheckbox.disabled = false;
+                }
+
+                // Stitch settings
+                if (creator.stitch_disabled) {
+                    allowStitchCheckbox.disabled = true;
+                    allowStitchCheckbox.checked = false;
+                    allowStitchCheckbox.parentElement.title = "Stitches are disabled in your TikTok app settings";
+                } else {
+                    allowStitchCheckbox.disabled = false;
+                }
+
                 console.log('User profile loaded:', creator);
             }
         } catch (error) {
@@ -203,10 +234,14 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return;
             }
 
+            const disableComment = !allowCommentCheckbox.checked;
+            const disableDuet = !allowDuetCheckbox.checked;
+            const disableStitch = !allowStitchCheckbox.checked;
+
             const privacyLevel = privacyLevelDropdown.value;
             const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
 
-            await publishVideoToTikTok(privacyLevel, videoTitle).then(result => console.log("Publish Video result: ", result));
+            await publishVideoToTikTok(privacyLevel, videoTitle, disableComment, disableDuet, disableStitch).then(result => console.log("Publish Video result: ", result));
             showSuccess('Video published successfully to TikTok!');
 
             // Open TikTok app or web

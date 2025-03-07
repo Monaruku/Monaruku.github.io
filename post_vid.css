@@ -173,7 +173,7 @@ label {
 .container {
     position: relative;
 }
-
+/* User Profile styling */
 .user-profile {
     display: flex;
     align-items: center;
@@ -220,6 +220,9 @@ label {
     appearance: none;
     cursor: pointer;
     outline: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
 }
 
 .privacy-dropdown:focus {
@@ -232,9 +235,53 @@ label {
     color: white;
 }
 
-small {
-    display: block;
-    margin-top: 5px;
-    font-size: 12px;
-    opacity: 0.8;
+/* Interaction settings styling */
+.interaction-settings {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.interaction-settings h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.checkbox-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.interaction-checkbox {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+/* Style for disabled checkboxes */
+.interaction-checkbox:disabled+.checkbox-label {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.interaction-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
