@@ -290,6 +290,26 @@ label {
     opacity: 0.5;
     cursor: not-allowed;
 }
+/* Fix for long text/words breaking layout */
+.container,
+.input-container,
+.title-input,
+.user-info,
+.user-info h2,
+.user-info p,
+.interaction-settings,
+.checkbox-label,
+.status-message {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-word;
+    word-break: break-all;
+    hyphens: auto;
+}
+
+.title-input {
+    text-overflow: ellipsis;
+}
 
 /* Responsive adjustments for very small screens */
 @media (max-width: 475px) {
@@ -302,4 +322,27 @@ label {
     .checkbox-item {
         width: 100%;
     }
+
+        .container {
+            padding: 20px 15px;
+            width: 90%;
+        }
+    
+        h1 {
+            font-size: 24px;
+        }
+    
+        .user-info h2 {
+            font-size: 16px;
+        }
+    
+        .button-container {
+            width: 100%;
+        }
+    
+        .post-button,
+        .logout-button {
+            width: 100%;
+            padding: 14px 20px;
+        }
 }
