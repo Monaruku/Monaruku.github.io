@@ -154,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         while (randomUrls.length < picAmt) {
             const randomIndex = Math.floor(Math.random() * imageUrls.length);
-                if (!usedIndexes.has(randomUrls)) {
+                if (!usedIndexes.has(randomIndex)) {
                 usedIndexes.add(randomUrls);
                 randomUrls.push(imageUrls[randomIndex]);
                 }
