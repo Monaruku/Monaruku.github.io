@@ -374,11 +374,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         function validateDisclosureOptions() {
             if (commercialDisclosure.checked && !yourBrand.checked && !brandedContent.checked) {
-                disablePostButton("You need to indicate if your content promotes yourself, a third party, or both");
+                disablePostButton("You need to indicate if your content promotes yourself, a third party, or both");              
             } else if (commercialDisclosure.checked) {
                 enablePostButton();
-                updateDisclosureMessage();
             }
+            updateDisclosureMessage();
         }
 
         function updatePrivacyOptions() {
@@ -403,12 +403,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
 
         function updateDisclosureMessage() {
-            if (yourBrand.checked && brandedContent.checked) {
-                setMessage("Your photo/video will be labeled as 'Paid partnership'");
-            } else if (brandedContent.checked) {
-                setMessage("Your photo/video will be labeled as 'Paid partnership'");
+            const fixedMsg = "This cannot be changed once your video is posted.";
+            if ((yourBrand.checked && brandedContent.checked) || brandedContent.checked) {
+                setMessage("Your video will be labeled as 'Paid partnership'.\n" + fixedMsg);
             } else if (yourBrand.checked) {
-                setMessage("Your photo/video will be labeled as 'Promotional content'");
+                setMessage("Your video will be labeled as 'Promotional content'.\n" + fixedMsg);
             } else {
                 clearMessage();
             }
