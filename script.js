@@ -10,18 +10,95 @@ document.addEventListener("DOMContentLoaded", function () {
     // window.open("https://facebook.com", "_blank");
     // });
     // }
+    const text_lang = {
+        'tiktok_p_en': "Share to",
+        'tiktok_p_cn': "分享至",
+        'tiktok_h_en': "TikTok",
+        'tiktok_h_cn': "TikTok",
+        'tiktok_b_en': "Share",
+        'tiktok_b_cn': "分享",
 
+        'rednote_p_en': "Follow us on",
+        'rednote_p_cn': "关注我们",
+        'rednote_h_en': "Red note",
+        'rednote_h_cn': "小红书",
+        'rednote_b_en': "Follow",
+        'rednote_b_cn': "关注",
+        
+        'google_p_en': "Review us on",
+        'google_p_cn': "给个好评",
+        'google_h_en': "Google review",
+        'google_h_cn': "谷歌评论",
+        'google_b_en': "Review",
+        'google_b_cn': "评论",
+
+        'fb_p_en': "Follow us on",
+        'fb_p_cn': "关注我们",
+        'fb_h_en': "Facebook",
+        'fb_h_cn': "脸书",
+        'fb_b_en': "Share",
+        'fb_b_cn': "关注",
+
+        'insta_p_en': "Follow us on",
+        'insta_p_cn': "关注我们",
+        'insta_h_en': "Instagram",
+        'insta_h_cn': "Instagram",
+        'insta_b_en': "Follow",
+        'insta_b_cn': "关注",
+
+        'others_p_en': "Press to",
+        'others_p_cn': "搓下按钮",
+        'others_h_en': "Share",
+        'others_h_cn': "分享",
+        'others_b_en': "Share",
+        'others_b_cn': "分享",
+
+        'lang_desc_en': "更改语言至...",
+        'lang_desc_cn': "Change language to...",
+
+        'lang_b_en': "中文",
+        'lang_b_cn': "English",
+    }
+
+    let isEnglish = true;
+
+    function load_lang (){
+        var currentLang = (isEnglish) ? "_en" : "_cn";
+        const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others'];
+        const elem_list = ['_p', '_h', '_b'];
+        media_list.forEach(media => {
+            elem_list.forEach(elem => {
+                //console.log(media + elem + currentLang);
+                document.getElementById(media + elem).textContent = text_lang[media + elem + currentLang];
+            });
+        });
+        document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
+        document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
+    };
+
+    window.onload = (event) => {
+        load_lang();
+    };
+
+    document.getElementById('lang_b').addEventListener('click', function (e) {
+        isEnglish = !isEnglish;
+        load_lang();
+    });
     
     // Define the links
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'Facebook': 'https://www.facebook.com/SQLEstream/',
+        "脸书": 'https://www.facebook.com/SQLEstream/',
         'FacebookIOS': 'fb://page/110600357296339',
         'Instagram': 'https://www.instagram.com/sqlestream/?hl=ms',
         'Google review': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
+        '谷歌评论': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
         'Red note': 'Red note',
+        '小红书': 'Red note',
         'TikTok': 'TikTok',
-        'Share': 'Share'
+        'Share': 'Share',
+        '分享': 'Share'
     };
 
     // Tiktok Authentication class
@@ -42,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get TikTok login URL
     const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
+    //Download image from url thru CORS proxy
     async function fetchImageAsFile(url, fileName) {
       try {
         const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
@@ -56,6 +134,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var imageUrls;
 
+    //Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
@@ -66,10 +145,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching the file:", error));
 
 
+    //The actual share Image function, basically call download and send them to share
     async function shareImages() {
+      
+        // Shuffle and pick 3 random images
+        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+        const selectedUrls = shuffledUrls.slice(0, 3);
+        console.log(selectedUrls);
+
 
       // Fetch images and convert to File objects
-      const filePromises = imageUrls.map((url, index) =>
+      const filePromises = selectedUrls.map((url, index) =>
         fetchImageAsFile(url, `image${index + 1}.jpg`)
       );
 
@@ -79,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
       if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
         try {
           await navigator.share({
-            title: "Check out these images!",
             text: getLines(2),
             files
           });
@@ -92,65 +177,132 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
 
+    /*------------- This section is currently under testing, so it looks real stupid -------------*/
+    const flag = "#English"; // Change this to the desired flag
+    const flagCN = "#Chinese";
+    let imageUrlsEN = [];
+    let imageUrlsCN = [];
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinksFlagged.txt")
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n');
+            let capture = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const trimmed = lines[i].trim();
+                    if (trimmed.startsWith("#")) {
+                        capture = trimmed === flag; // Start capturing if it matches the flag
+                        continue;
+                    }
+                    if (capture && trimmed !== "") {
+                        imageUrlsEN.push(trimmed); // Collect all URLs under the flag
+                    }
+                    if (capture && (i + 1 < lines.length && lines[i + 1].startsWith("#"))) {
+                        break; // Stop capturing when the next flag appears
+                    }
+            }
+
+            console.log(imageUrlsEN); // Output filtered URLs
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinksFlagged.txt")
+        .then(response => response.text())
+        .then(text => {
+            const lines = text.split('\n');
+            let capture = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const trimmed = lines[i].trim();
+                    if (trimmed.startsWith("#")) {
+                        capture = trimmed === flagCN; // Start capturing if it matches the flag
+                        continue;
+                    }
+                    if (capture && trimmed !== "") {
+                        imageUrlsCN.push(trimmed); // Collect all URLs under the flag
+                    }
+                    if (capture && (i + 1 < lines.length && lines[i + 1].startsWith("#"))) {
+                        break; // Stop capturing when the next flag appears
+                    }
+            }
+
+            console.log(imageUrlsCN); // Output filtered URLs
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+
+    async function shareAlternative() {
+        // Shuffle and pick 3 random images
+        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+        const selectedUrls = shuffledUrls.slice(0, 3);
+        if(isEnglish){
+            let number = Math.min(selectedUrls.length, imageUrlsEN.length);
+            for (let i = 0; i < number; i++) {
+                selectedUrls[i] = imageUrlsEN[i];
+            }
+        }
+        else {
+            let number = Math.min(selectedUrls.length, imageUrlsCN.length);
+            for (let i = 0; i < number; i++) {
+                selectedUrls[i] = imageUrlsCN[i];
+            }
+        }
+        console.log(selectedUrls);
 
 
-    /**
-    function shareToRedNote() {
-    if (navigator.share) {
-        navigator.share({
-            url: 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605'
-        }).catch(error => console.log('Error sharing:', error));
-    } else {
-        alert('Sharing not supported on this browser.');
+      // Fetch images and convert to File objects
+      const filePromises = selectedUrls.map((url, index) =>
+        fetchImageAsFile(url, `image${index + 1}.jpg`)
+      );
+
+      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+
+      // Check if multiple file sharing is supported
+      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            text: getLines(2),
+            files
+          });
+          console.log("Shared successfully!");
+        } catch (error) {
+          console.error("Sharing failed", error);
+        }
+      } else {
+        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
     }
-    */
+        
+    document.getElementById("shareAlt").addEventListener("click", shareAlternative);
 
-    /**
-    function copyText() {
-        const text = "This place is good and helpful. Accounting made easy!";
-        navigator.clipboard.writeText(text);
-    }
-    */
-
-        //Switch button Stuff
-    let isEnglish = true;
-
-    document.getElementById("toggleButton").addEventListener("click", function() {
-       isEnglish = !isEnglish;
-       document.getElementById("toggleText").textContent = isEnglish ? "Share In English" : "Share in Chinese";
-    });
+    /*--------------------------------------------------------------------------------------------*/
 
 
-
-
+    //Preloaded content
     var line;
     var lineCN;
 
+    /** <--- Preload Content ---> **/
     //Had to hardlink the text file now because of CORS security policy
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 10) {
-                document.getElementById('output').textContent = "File has fewer than 10 lines.";
-                return;
-            }
             line = lines;
         })
-        .catch(error => console.error("Error fetching the file:", error));
+    .catch(error => console.error("Error fetching the file:", error));
 
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
             const linesCN = text.split('\n').filter(line => line.trim() !== '');
-            if (linesCN.length < 10) {
-                document.getElementById('output').textContent = "File has fewer than 10 lines.";
-                return;
-            }
             lineCN = linesCN;
         })
-        .catch(error => console.error("Error fetching the file:", error));
+    .catch(error => console.error("Error fetching the file:", error));
 
+    /* <-------------------> */
+
+    //Get Random Line from preloaded contents
     function getLines(mode) {
             const randomLines = [];
             const usedIndexes = new Set();
@@ -174,16 +326,19 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
+            //Basically now the two mode is just to prompt alert or not
             if(mode == 1) {
                 const textTC = randomLines.toString();
                 console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
-                alert("Text copied! Paste it onto Google Review.");
+                alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
             }
             else if(mode == 2) {
                 const textTC = randomLines.toString();
                 console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
                 return textTC;
             }
 

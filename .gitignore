@@ -1,0 +1,7 @@
+
+*.vsidx
+/.vs/Monaruku.github.io/v17
+.vs/ProjectSettings.json
+.vs/slnx.sqlite
+.vs/VSWorkspaceState.json
+.vscode/settings.json
