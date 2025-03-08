@@ -318,8 +318,9 @@ label {
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
+    width: 50px; 
     height: 24px;
+    flex-shrink: 0;
 }
 
 .switch input {
@@ -428,7 +429,7 @@ input:checked+.slider:before {
     }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 425px) {
     .brand-options .checkbox-item {
         flex-direction: row;
         align-items: flex-start;
@@ -447,11 +448,6 @@ input:checked+.slider:before {
 
     .disclosure-desc {
         font-size: 13px;
-    }
-
-    .toggle-container {
-        flex-direction: column;
-        align-items: flex-start;
     }
 
     .toggle-container .switch {
