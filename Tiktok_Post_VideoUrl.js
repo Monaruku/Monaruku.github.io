@@ -66,7 +66,7 @@ class Post {
                 },
                 body: JSON.stringify(params)
             });
-
+            console.log('Response : ', response);
             if (!response.ok) {
                 const errorText = await response.text().catch(() => 'No error details available');
                 switch (response.error.code) {
