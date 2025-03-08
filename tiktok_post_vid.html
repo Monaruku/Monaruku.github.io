@@ -43,6 +43,7 @@
             <select id="privacyLevel" class="privacy-dropdown">
                 <option value="" disabled selected>Select privacy level</option>
             </select>
+            <div id="privacyTooltip" class="tooltip-text" style="display: none;">Branded content visibility cannot be set to private</div>
         </div>
 
         <!-- Interaction settings -->
@@ -61,6 +62,33 @@
                     <input type="checkbox" id="allowStitch" class="interaction-checkbox">
                     <label for="allowStitch" class="checkbox-label">Stitches</label>
                 </div>
+            </div>
+        </div>
+
+        <!-- Commercial content disclosure section -->
+        <div class="disclosure-container">
+            <div class="toggle-container">
+                <label for="commercialDisclosure" class="toggle-label">Commercial Content Disclosure</label>
+                <label class="switch">
+                    <input type="checkbox" id="commercialDisclosure">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        
+            <div id="brandOptions" class="brand-options" style="display: none;">
+                <p class="disclosure-desc">Indicate whether this content promotes yourself, a brand, product or service</p>
+        
+                <div class="checkbox-item">
+                    <input type="checkbox" id="yourBrand" class="brand-checkbox">
+                    <label for="yourBrand" class="checkbox-label">Your brand (promoting yourself or your business)</label>
+                </div>
+        
+                <div class="checkbox-item">
+                    <input type="checkbox" id="brandedContent" class="brand-checkbox">
+                    <label for="brandedContent" class="checkbox-label">Branded content (promoting another brand)</label>
+                </div>
+        
+                <div id="disclosureMessage" class="disclosure-message"></div>
             </div>
         </div>
 

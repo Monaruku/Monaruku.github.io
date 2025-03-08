@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const allowDuetCheckbox = document.getElementById('allowDuet');
     const allowStitchCheckbox = document.getElementById('allowStitch');
 
+    initializeDisclosureControls();
     // Initialize Authentication class for token revocation
     const authentication = new Authentication({
         client_key: 'sbawgv8e7j4nbi22wy',
@@ -234,14 +235,36 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return;
             }
 
-            const disableComment = !allowCommentCheckbox.checked;
-            const disableDuet = !allowDuetCheckbox.checked;
-            const disableStitch = !allowStitchCheckbox.checked;
-
             const privacyLevel = privacyLevelDropdown.value;
             const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
 
-            await publishVideoToTikTok(privacyLevel, videoTitle, disableComment, disableDuet, disableStitch).then(result => console.log("Publish Video result: ", result));
+            const isDisableComment = !allowCommentCheckbox.checked;
+            const isDisableDuet = !allowDuetCheckbox.checked;
+            const isDisableStitch = !allowStitchCheckbox.checked;
+
+            const commercialDisclosure = document.getElementById('commercialDisclosure');
+            const yourBrand = document.getElementById('yourBrand');
+            const brandedContent = document.getElementById('brandedContent');
+
+            if (commercialDisclosure.checked && !yourBrand.checked && !brandedContent.checked) {
+                showError('Please indicate if your content promotes yourself, a third party, or both');
+                return;
+            }
+
+            // Add commercial disclosure info
+            const isBrandOrganic = commercialDisclosure.checked && yourBrand.checked;
+            const isBrandedContent = commercialDisclosure.checked && brandedContent.checked;
+
+            statusMessage.style.display = 'none'; // Hide any previous messages
+            await publishVideoToTikTok(
+                privacyLevel, 
+                videoTitle, 
+                isDisableComment, 
+                isDisableDuet, 
+                isDisableStitch,
+                isBrandOrganic,
+                isBrandedContent
+            ).then(result => console.log("Publish Video result: ", result));
             showSuccess('Video published successfully to TikTok!');
 
             // Open TikTok app or web
@@ -299,5 +322,118 @@ document.addEventListener('DOMContentLoaded', async function () {
                 videoElement.load();
             }
         });
+    }
+
+    function initializeDisclosureControls() {
+        const commercialDisclosure = document.getElementById('commercialDisclosure');
+        const brandOptions = document.getElementById('brandOptions');
+        const yourBrand = document.getElementById('yourBrand');
+        const brandedContent = document.getElementById('brandedContent');
+        const privacyLevel = document.getElementById('privacyLevel');
+        const postButton = document.getElementById('postVideoButton');
+        const disclosureMessage = document.getElementById('disclosureMessage');
+        const privacyTooltip = document.getElementById('privacyTooltip');
+
+        // Toggle disclosure options
+        commercialDisclosure.addEventListener('change', function () {
+            if (this.checked) {
+                brandOptions.style.display = 'block';
+                validateDisclosureOptions();
+            } else {
+                brandOptions.style.display = 'none';
+                enablePostButton();
+                clearMessage();
+            }
+        });
+
+        // Handle brand option changes
+        yourBrand.addEventListener('change', validateDisclosureOptions);
+        brandedContent.addEventListener('change', function () {
+            validateDisclosureOptions();
+            updatePrivacyOptions();
+        });
+
+        // Validate privacy level when it changes
+        privacyLevel.addEventListener('change', function () {
+            if (brandedContent.checked && this.value === 'SELF_ONLY') {
+                this.value = 'PUBLIC_TO_EVERYONE';
+                alert('Privacy level automatically changed to public as branded content cannot be private.');
+            }
+        });
+
+        // Hover effect for privacy level when branded content is selected
+        privacyLevel.addEventListener('mouseover', function () {
+            if (brandedContent.checked) {
+                privacyTooltip.style.display = 'block';
+            }
+        });
+
+        privacyLevel.addEventListener('mouseout', function () {
+            privacyTooltip.style.display = 'none';
+        });
+
+        function validateDisclosureOptions() {
+            if (commercialDisclosure.checked && !yourBrand.checked && !brandedContent.checked) {
+                disablePostButton("You need to indicate if your content promotes yourself, a third party, or both");
+            } else if (commercialDisclosure.checked) {
+                enablePostButton();
+                updateDisclosureMessage();
+            }
+        }
+
+        function updatePrivacyOptions() {
+            // Get all options in the privacy dropdown
+            const options = privacyLevel.querySelectorAll('option');
+
+            options.forEach(option => {
+                if (option.value === 'SELF_ONLY' && brandedContent.checked) {
+                    option.disabled = true;
+                    option.title = "Branded content visibility cannot be set to private";
+                } else {
+                    option.disabled = false;
+                    option.title = "";
+                }
+            });
+
+            // If currently selected option is private and branded content is checked, change to public
+            if (privacyLevel.value === 'SELF_ONLY' && brandedContent.checked) {
+                privacyLevel.value = 'PUBLIC_TO_EVERYONE';
+                alert('Privacy level automatically changed to public as branded content cannot be private.');
+            }
+        }
+
+        function updateDisclosureMessage() {
+            if (yourBrand.checked && brandedContent.checked) {
+                setMessage("Your photo/video will be labeled as 'Paid partnership'");
+            } else if (brandedContent.checked) {
+                setMessage("Your photo/video will be labeled as 'Paid partnership'");
+            } else if (yourBrand.checked) {
+                setMessage("Your photo/video will be labeled as 'Promotional content'");
+            } else {
+                clearMessage();
+            }
+        }
+
+        function setMessage(msg) {
+            disclosureMessage.textContent = msg;
+            disclosureMessage.style.display = 'block';
+        }
+
+        function clearMessage() {
+            disclosureMessage.textContent = '';
+            disclosureMessage.style.display = 'none';
+        }
+
+        function disablePostButton(reason) {
+            postButton.disabled = true;
+            postButton.title = reason;
+            postButton.classList.add('disabled-button');
+        }
+
+        function enablePostButton() {
+            postButton.disabled = false;
+            postButton.title = '';
+            postButton.classList.remove('disabled-button');
+        }
     }
 });

@@ -96,7 +96,15 @@ class Post {
 }
 
 // Usage example
-async function publishVideoToTikTok(privacyLevel, videoTitle, disableComment, disableDuet, disableStitch) {
+async function publishVideoToTikTok(
+    privacyLevel, 
+    videoTitle, 
+    isDisableComment, 
+    isDisableDuet, 
+    isDisableStitch,
+    isBrandOrganic,
+    isBrandedContent
+) {
     // Instantiation config params
     const config = {
         access_token: localStorage.getItem('tiktokAccessToken'),
@@ -113,10 +121,12 @@ async function publishVideoToTikTok(privacyLevel, videoTitle, disableComment, di
         [Fields.POST_INFO]: {
             [Fields.TITLE]: videoTitle,
             [Fields.PRIVACY_LEVEL]: privacyLevel,
-            [Fields.DISABLE_DUET]: disableDuet,
-            [Fields.DISABLE_COMMENT]: disableComment,
-            [Fields.DISABLE_STITCH]: disableStitch,
-            [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000 // spot in video to use as cover photo
+            [Fields.DISABLE_DUET]: isDisableDuet,
+            [Fields.DISABLE_COMMENT]: isDisableComment,
+            [Fields.DISABLE_STITCH]: isDisableStitch,
+            [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000, // spot in video to use as cover photo
+            [Fields.BRAND_ORGANIC]: isBrandOrganic,
+            [Fields.BRAND_CONTENT]: isBrandedContent
         },
         [Fields.SOURCE_INFO]: {
             [Fields.SOURCE]: 'PULL_FROM_URL',
