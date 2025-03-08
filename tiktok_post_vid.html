@@ -9,14 +9,25 @@
 </head>
 
 <body>
+
     <div class="container">
         <a href="index.html" class="back-button">&#8592;</a>
         <h1>Share Video to TikTok</h1>
 
+        <div class="user-profile" id="userProfile" style="display: none;">
+            <img id="userAvatar" class="user-avatar" src="" alt="Profile picture">
+            <div class="user-info">
+                <h2 id="userName">Loading...</h2>
+                <p>Posting as this TikTok account</p>
+            </div>
+        </div>
+
+        <h3>Video Prepared to Post</h3>
         <!-- Video preview -->
         <div class="video-container">
             <video id="videoPreview" controls>
-                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                <source
+                    src="https://sf16-va.tiktokcdn.com/obj/eden-va2/uvpapzpbxjH-aulauvJ-WV[[/ljhwZthlaukjlkulzlp/3min.mp4"
                     type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -28,13 +39,71 @@
             <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
         </div>
 
+        <!-- Privacy level selection -->
+        <div class="input-container">
+            <label for="privacyLevel">Who can view this video</label>
+            <select id="privacyLevel" class="privacy-dropdown">
+                <option value="" disabled selected>**SELECT PRIVACY LEVEL**</option>
+            </select>
+            <div id="privacyTooltip" class="tooltip-text" style="display: none;">Branded content visibility cannot be
+                set to private</div>
+        </div>
+
+        <!-- Interaction settings -->
+        <div class="interaction-settings">
+            <h3>Allow users to</h3>
+            <div class="checkbox-container">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="allowComment" class="interaction-checkbox">
+                    <label for="allowComment" class="checkbox-label">Comments</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="allowDuet" class="interaction-checkbox">
+                    <label for="allowDuet" class="checkbox-label">Duets</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="allowStitch" class="interaction-checkbox">
+                    <label for="allowStitch" class="checkbox-label">Stitches</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commercial content disclosure section -->
+        <div class="disclosure-container">
+            <div class="toggle-container">
+                <label for="commercialDisclosure" class="toggle-label">Commercial Content Disclosure</label>
+                <label class="switch">
+                    <input type="checkbox" id="commercialDisclosure">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <div id="brandOptions" class="brand-options" style="display: none;">
+                <p class="disclosure-desc">Indicate whether this content promotes yourself, a brand, product or service
+                </p>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="yourBrand" class="brand-checkbox">
+                    <label for="yourBrand" class="checkbox-label">Your brand (promoting yourself or your
+                        business)</label>
+                </div>
+
+                <div class="checkbox-item">
+                    <input type="checkbox" id="brandedContent" class="brand-checkbox">
+                    <label for="brandedContent" class="checkbox-label">Branded content (promoting another brand)</label>
+                </div>
+
+                <div id="disclosureMessage" class="disclosure-message"></div>
+            </div>
+        </div>
+
         <div class="button-container">
             <button id="postVideoButton" class="post-button">Post to TikTok</button>
         </div>
 
         <div id="statusMessage" class="status-message"></div>
     </div>
-    
+
     <button id="logoutButton" class="logout-button">Logout from TikTok</button>
 
     <script src="Tiktok_Post_VideoUrl.js"></script>
