@@ -265,14 +265,22 @@ document.addEventListener('DOMContentLoaded', async function () {
                 isBrandOrganic,
                 isBrandedContent
             ).then(result => console.log("Publish Video result: ", result));
-            showSuccess('Video published successfully to TikTok!');
+            showSuccess('Content successfully published to TikTok! \n' +
+                'It may take a few minutes to visible in your profile.\n' +
+                'You will be redirected to TikTok shortly.'
+            );
+            
 
             // Open TikTok app or web
             const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             if (isMobileDevice) {
-                window.location.href = 'snssdk1233://user/profile';
+                setTimeout(() => {
+                    window.location.href = 'snssdk1233://user/profile';
+                }, 3000); 
             } else {
-                window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                setTimeout(() => {
+                    window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                }, 3000); 
             }
         } catch (error) {
             showError('Failed to publish video: ' + error.message);
