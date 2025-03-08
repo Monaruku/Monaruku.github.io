@@ -69,17 +69,18 @@ class Post {
             console.log('Response : ', response);
             if (!response.ok) {
                 const errorText = await response.text().catch(() => 'No error details available');
-                // switch (response.error.code) {
-                //     case "spam_risk_too_many_posts":
-                //         throw new Error('You have reached the limit of posts you can make in a day. Please try again tomorrow.');
-                //     case "spam_risk_user_banned_from_posting":
-                //         throw new Error('You have been banned from posting. Please contact TikTok support for more information.');
-                //     case "reached_active_user_cap":
-                //         throw new Error('Daily publishing quota reached: The maximum number of users allowed to publish content via this application today has been reached. Please try again tomorrow when the quota resets.');
-                //     case "unaudited_client_can_only_post_to_private_accounts": 
-                //         throw new Error("Unaudited client can only post to private accounts. Please choose 'Private - Only Me' as the privacy level.");
-                //     case "unaudited_client_can_only_post_to_private_accounts":
-                //     }
+                const errorTextList = errorText.split('\"');
+                switch (errorTextList[5]) {
+                    case "spam_risk_too_many_posts":
+                        throw new Error('You have reached the limit of posts you can make in a day. Please try again tomorrow.');
+                    case "spam_risk_user_banned_from_posting":
+                        throw new Error('You have been banned from posting. Please contact TikTok support for more information.');
+                    case "reached_active_user_cap":
+                        throw new Error('Daily publishing quota reached: The maximum number of users allowed to publish content via this application today has been reached. Please try again tomorrow when the quota resets.');
+                    case "unaudited_client_can_only_post_to_private_accounts": 
+                        throw new Error("Unaudited client can only post to private accounts. Please choose 'Private - Only Me' as the privacy level.");
+                    case "unaudited_client_can_only_post_to_private_accounts":
+                    }
                 throw new Error(`HTTP error!(${response.status}): ${errorText}`);
                 // throw new Error(`HTTP error! Status: ${response.status}`);
             }
