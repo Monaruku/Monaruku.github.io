@@ -292,10 +292,11 @@ document.addEventListener('DOMContentLoaded', async function () {
                     }
                 }, 3000);
             }
-            enableButton();
         } catch (error) {
             showError('Failed to publish video: ' + error.message);
             console.error('Error:', error);
+        } finally {
+            enableButton();
         }
     });
 
@@ -320,11 +321,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     function disableButton() {
         postButton.disabled = true;
         postButton.textContent = 'Publishing...';
+        postButton.style.opacity = 0.5;
+        postButton.style.cursor = 'not-allowed';
     }
 
     function enableButton() {
         postButton.disabled = false;
         postButton.textContent = 'Post to TikTok';
+        postButton.style.opacity = 1;
+        postButton.style.cursor = 'pointer';
     }
 
     function getVideoDuration(videoElementId) {
