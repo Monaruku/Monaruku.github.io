@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const videoTitleInput = document.getElementById('videoTitle');
     const privacyLevelDropdown = document.getElementById('privacyLevel');
     let creatorInfoResponse = null;
-    let userInfoResponse = null;
+    // let userInfoResponse = null;
 
     const allowCommentCheckbox = document.getElementById('allowComment');
     const allowDuetCheckbox = document.getElementById('allowDuet');
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     privacyLevelDropdown.appendChild(optionElement);
                 }
 
-                // Comment settings
+                // Comment, Duet & Stitch settings
                 if (creator.comment_disabled) {
                     allowCommentCheckbox.disabled = true;
                     allowCommentCheckbox.checked = false;
@@ -154,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                     allowCommentCheckbox.disabled = false;
                 }
 
-                // Duet settings
                 if (creator.duet_disabled) {
                     allowDuetCheckbox.disabled = true;
                     allowDuetCheckbox.checked = false;
@@ -163,7 +162,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                     allowDuetCheckbox.disabled = false;
                 }
 
-                // Stitch settings
                 if (creator.stitch_disabled) {
                     allowStitchCheckbox.disabled = true;
                     allowStitchCheckbox.checked = false;
@@ -231,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.log(`Video duration: ${videoDuration} seconds`);
 
             if (creator.max_video_post_duration_sec < videoDuration) {
-                showError(`Sorry, you do not allowed to post. Video exceeds maximum allowed duration of ${creator.max_video_post_duration_sec} seconds by your account.`);
+                showError(`Sorry, you do not allowed to post. Video exceeds maximum aceptable duration of ${creator.max_video_post_duration_sec} seconds by your account.`);
                 return;
             }
 
@@ -397,8 +395,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Validate privacy level when it changes
         privacyLevel.addEventListener('change', function () {
             if (brandedContent.checked && this.value === 'SELF_ONLY') {
-                this.value = 'PUBLIC_TO_EVERYONE';
-                alert('Privacy level automatically changed to public as branded content cannot be private.');
+                const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
+                if (hasNoPublicOption) {
+                    this.value = 'FOLLOWER_OF_CREATOR'; 
+                    alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+                } else {
+                    this.value = 'PUBLIC_TO_EVERYONE';
+                    alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
+                }
             }
         });
 
@@ -437,9 +441,13 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
 
             // If currently selected option is private and branded content is checked, change to public
-            if (privacyLevel.value === 'SELF_ONLY' && brandedContent.checked) {
-                privacyLevel.value = 'PUBLIC_TO_EVERYONE';
-                alert('Privacy level automatically changed to public as branded content cannot be private.');
+            const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
+            if (hasNoPublicOption) {
+                this.value = 'FOLLOWER_OF_CREATOR';
+                alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+            } else {
+                this.value = 'PUBLIC_TO_EVERYONE';
+                alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
             }
         }
 
@@ -476,6 +484,4 @@ document.addEventListener('DOMContentLoaded', async function () {
             postButton.classList.remove('disabled-button');
         }
     }
-
-    
 });
