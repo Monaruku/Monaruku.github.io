@@ -168,7 +168,7 @@ async function publishVideoToTikTok(
 }
 
 async function checkPublishStatus(publishId) {
-    const maxAttempts = 5; // Maximum number of attempts
+    const maxAttempts = 10; // Maximum number of attempts
     const initialDelay = 2000; // Initial delay in milliseconds
 
     const config = {
@@ -198,7 +198,7 @@ async function checkPublishStatus(publishId) {
                 return;
             } else {
                 // Unknown status
-                for (let i = 2; i > 0; i--) {
+                for (let i = 3; i > 0; i--) {
                     setTimeout(console.log(`Current status: ${status}. Checking again in ${i}...`), 1000);
                 }
             }
@@ -208,7 +208,7 @@ async function checkPublishStatus(publishId) {
                 showError('Status check failed. Your video may still be processing. Check TikTok app later.');
                 return;
             } else {
-                for (let i = 2; i > 0; i--) {
+                for (let i = 3; i > 0; i--) {
                     setTimeout(console.log(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
                 }
             }
