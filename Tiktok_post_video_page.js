@@ -251,12 +251,15 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return;
             }
 
+            // Disable the post button to prevent multiple submissions
+            disableButton();
+
             // Add commercial disclosure info
             const isBrandOrganic = commercialDisclosure.checked && yourBrand.checked;
             const isBrandedContent = commercialDisclosure.checked && brandedContent.checked;
 
-            statusMessage.style.display = 'none'; // Hide any previous messages
-            await publishVideoToTikTok(
+            statusMessage.style.display = 'none'; // Hide any previous messages0
+            const publishResponse = await publishVideoToTikTok(
                 privacyLevel, 
                 videoTitle, 
                 isDisableComment, 
@@ -264,16 +267,32 @@ document.addEventListener('DOMContentLoaded', async function () {
                 isDisableStitch,
                 isBrandOrganic,
                 isBrandedContent
-            ).then(result => console.log("Publish Video result: ", result));
-            showSuccess('Video published successfully to TikTok!');
+            ).then(result => console.log("Initial publish response: ", result));
 
-            // Open TikTok app or web
-            const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (isMobileDevice) {
-                window.location.href = 'snssdk1233://user/profile';
-            } else {
-                window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+            showInfo('Publishing video... Please wait.');
+            // showSuccess('Content successfully published to TikTok! \n' +
+            //     'It may take a few minutes to visible in your profile.\n' +
+            //     'You will be redirected to TikTok shortly.'
+            // );
+            const publishId = publishResponse.data.publish_id;
+
+            // Check publish status
+            const statusResponse = await checkPublishStatus(publishId);
+            console.log("Status response: ", statusResponse);
+
+            if (statusResponse.data.status === 'PUBLISH_COMPLETE') {
+                showSuccess('Content successfully published to TikTok! Redirecting to your profile...');
+                // Redirect to TikTok after a short delay
+                const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+                setTimeout(() => {
+                    if (isMobileDevice) {
+                        window.location.href = 'snssdk1233://user/profile';
+                    } else {
+                        window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    }
+                }, 3000);
             }
+            enableButton();
         } catch (error) {
             showError('Failed to publish video: ' + error.message);
             console.error('Error:', error);
@@ -290,6 +309,22 @@ document.addEventListener('DOMContentLoaded', async function () {
         statusMessage.textContent = message;
         statusMessage.className = 'status-message error';
         statusMessage.style.display = 'block';
+    }
+
+    function showInfo(message) {
+        statusMessage.textContent = message;
+        statusMessage.className = 'status-message info';
+        statusMessage.style.display = 'block';
+    }
+
+    function disableButton() {
+        postButton.disabled = true;
+        postButton.textContent = 'Publishing...';
+    }
+
+    function enableButton() {
+        postButton.disabled = false;
+        postButton.textContent = 'Post to TikTok';
     }
 
     function getVideoDuration(videoElementId) {
@@ -435,4 +470,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             postButton.classList.remove('disabled-button');
         }
     }
+
+    
 });

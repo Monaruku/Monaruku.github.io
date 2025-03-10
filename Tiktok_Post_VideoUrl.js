@@ -77,10 +77,10 @@ class Post {
                         throw new Error('You have been banned from posting. Please contact TikTok support for more information.');
                     case "reached_active_user_cap":
                         throw new Error('Daily publishing quota reached: The maximum number of users allowed to publish content via this application today has been reached. Please try again tomorrow when the quota resets.');
-                    case "unaudited_client_can_only_post_to_private_accounts": 
+                    case "unaudited_client_can_only_post_to_private_accounts":
                         throw new Error("Unaudited client can only post to private accounts. Please choose 'Private - Only Me' as the privacy level.");
                     case "unaudited_client_can_only_post_to_private_accounts":
-                    }
+                }
                 throw new Error(`HTTP error!(${response.status}): ${errorText}`);
                 // throw new Error(`HTTP error! Status: ${response.status}`);
             }
@@ -94,14 +94,42 @@ class Post {
             throw error;
         }
     }
+
+    async requestPublishStatus(publishId) {
+        try {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.statusUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.accessToken}`
+                },
+                body: JSON.stringify({
+                    "publish_id": publishId
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => 'No error details available');
+                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error.name === 'TypeError') {
+                throw new Error(`Network error: ${error.message} (Check CORS proxy availability)`);
+            }
+            throw error;
+        }
+    }
 }
 
 // Usage example
 async function publishVideoToTikTok(
-    privacyLevel, 
-    videoTitle, 
-    isDisableComment, 
-    isDisableDuet, 
+    privacyLevel,
+    videoTitle,
+    isDisableComment,
+    isDisableDuet,
     isDisableStitch,
     isBrandOrganic,
     isBrandedContent
@@ -139,5 +167,55 @@ async function publishVideoToTikTok(
     return await post.publish(params);
 }
 
+async function checkPublishStatus(publishId) {
+    const maxAttempts = 5; // Maximum number of attempts
+    const initialDelay = 2000; // Initial delay in milliseconds
+
+    const config = {
+        access_token: localStorage.getItem('tiktokAccessToken'),
+    };
+
+    // Instantiate a new post
+    const post = new Post(config);
+
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
+        try {
+            const statusResponse = await post.requestPublishStatus(publishId);
+            console.log(`Status check attempt ${attempts}:`, statusResponse);
+
+            if (!statusResponse || !statusResponse.data) {
+                throw new Error('Invalid status response');
+            }
+
+            const status = statusResponse.data.status;
+
+            if (status === 'PUBLISH_COMPLETE') {
+                return statusResponse;
+            } else if (status === 'FAILED') {
+                // Publishing failed
+                const failReason = statusResponse.data.fail_reason || 'Unknown reason';
+                showError(`Publishing failed: ${failReason}`);
+                return;
+            } else {
+                // Unknown status
+                for (let i = 2; i > 0; i--) {
+                    setTimeout(showInfo(`Current status: ${status}. Checking again in ${i}...`), 1000);
+                }
+            }
+        } catch (error) {
+            console.error('Error checking status:', error);
+            if (attempts >= maxAttempts - 1) {
+                showError('Status check failed. Your video may still be processing. Check TikTok app later.');
+                return;
+            } else {
+                for (let i = 2; i > 0; i--) {
+                    setTimeout(showInfo(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
+                }
+            }
+        }
+    }
+
+    return await post.requestPublishStatus(publishId);
+}
 // Call the function when needed
 // publishVideoToTikTok().then(result => console.log(result));
