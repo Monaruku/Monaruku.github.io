@@ -36,9 +36,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             url.searchParams.delete('code');
             history.replaceState({}, document.title, url.toString());
 
-            console.log('Access token retrieved successfully');
-            alert('Authentication successful!');
-
             // Show logout button as we're now logged in
             logoutButton.style.display = 'block';
         } catch (error) {
