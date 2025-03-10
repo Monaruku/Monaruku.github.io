@@ -194,8 +194,7 @@ async function checkPublishStatus(publishId) {
             } else if (status === 'FAILED') {
                 // Publishing failed
                 const failReason = statusResponse.data.fail_reason || 'Unknown reason';
-                showError(`Publishing failed: ${failReason}`);
-                return;
+                throw Error(`Publishing failed: ${failReason}`);
             } else {
                 // Unknown status
                 for (let i = 3; i > 0; i--) {
@@ -205,8 +204,7 @@ async function checkPublishStatus(publishId) {
         } catch (error) {
             console.error('Error checking status:', error);
             if (attempts >= maxAttempts - 1) {
-                showError('Status check failed. Your video may still be processing. Check TikTok app later.');
-                return;
+                throw Error('Status check failed. Your video may still be processing. Check TikTok app later.');
             } else {
                 for (let i = 3; i > 0; i--) {
                     setTimeout(console.log(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
