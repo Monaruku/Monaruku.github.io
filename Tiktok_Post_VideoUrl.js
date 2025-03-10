@@ -11,8 +11,8 @@ class Fields {
     static DISABLE_DUET = 'disable_duet';
     static DISABLE_STITCH = 'disable_stitch';
     static DISABLE_COMMENT = 'disable_comment';
-    static BRAND_ORGANIC = 'brand_organic';
-    static BRAND_CONTENT = 'brand_content';
+    static BRAND_ORGANIC_TOGGLE = 'brand_organic_toggle';
+    static BRAND_CONTENT_TOGGLE = 'brand_content_toggle';
 }
 
 class Post {
@@ -154,12 +154,12 @@ async function publishVideoToTikTok(
             [Fields.DISABLE_COMMENT]: isDisableComment,
             [Fields.DISABLE_STITCH]: isDisableStitch,
             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000, // spot in video to use as cover photo
-            [Fields.BRAND_ORGANIC]: isBrandOrganic,
-            [Fields.BRAND_CONTENT]: isBrandedContent
+            [Fields.BRAND_ORGANIC_TOGGLE]: isBrandOrganic,
+            [Fields.BRAND_CONTENT_TOGGLE]: isBrandedContent
         },
         [Fields.SOURCE_INFO]: {
             [Fields.SOURCE]: 'PULL_FROM_URL',
-            [Fields.VIDEO_URL]: videoUrl // video URL that is publicly accessible
+            [Fields.VIDEO_URL]: videoUrl // video URL that TikTok verified 
         }
     };
 
