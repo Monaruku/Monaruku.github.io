@@ -258,10 +258,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             statusMessage.style.display = 'none'; // Hide any previous messages0
             const publishResponse = await publishVideoToTikTok(
-                privacyLevel, 
-                videoTitle, 
-                isDisableComment, 
-                isDisableDuet, 
+                privacyLevel,
+                videoTitle,
+                isDisableComment,
+                isDisableDuet,
                 isDisableStitch,
                 isBrandOrganic,
                 isBrandedContent
@@ -400,7 +400,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (brandedContent.checked && this.value === 'SELF_ONLY') {
                 const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
                 if (hasNoPublicOption) {
-                    this.value = 'FOLLOWER_OF_CREATOR'; 
+                    this.value = 'FOLLOWER_OF_CREATOR';
                     alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
                 } else {
                     this.value = 'PUBLIC_TO_EVERYONE';
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         function validateDisclosureOptions() {
             if (commercialDisclosure.checked && !yourBrand.checked && !brandedContent.checked) {
-                disablePostButton("You need to indicate if your content promotes yourself, a third party, or both");              
+                disablePostButton("You need to indicate if your content promotes yourself, a third party, or both");
             } else if (commercialDisclosure.checked) {
                 enablePostButton();
             }
@@ -443,13 +443,14 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // If currently selected option is private and branded content is checked, change to public
             const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
-                if (hasNoPublicOption) {
-                    privacyLevel.value = 'FOLLOWER_OF_CREATOR'; 
-                    alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
-                } else {
-                    privacyLevel.value = 'PUBLIC_TO_EVERYONE';
-                    alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
-                }
+            if (brandedContent.checked && privacyLevel.value === 'SELF_ONLY' && hasNoPublicOption) {
+                privacyLevel.value = 'FOLLOWER_OF_CREATOR';
+                alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+            }
+            else if (brandedContent.checked && privacyLevel.value === 'SELF_ONLY') {
+                privacyLevel.value = 'PUBLIC_TO_EVERYONE';
+                alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
+            }
         }
 
         function updateDisclosureMessage() {
