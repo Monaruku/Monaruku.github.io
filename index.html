@@ -61,6 +61,8 @@
                 <p id="google_p">Review us on</p>
                 <h3 id="google_h">Google review</h3>
                 <button class="action-button" id="google_b">Review us</button>
+                <button onclick="redirectIOS()"> Share IOS </button>
+                <button onclick="redirectAnd()"> Share Android </button>
             </div>
             
             <!-- Facebook Alt -->
@@ -104,6 +106,16 @@
     <script src="script.js"></script>
 
     <script src="Tiktok_Login.js"></script>
+
+    <!-- App store Test -->
+    <script>
+    function redirectIOS() {
+        window.location = "https://apps.apple.com/my/app/sql-hrms/id6478105264";
+    }
+    function redirectAnd() {
+        window.location = "https://play.google.com/store/apps/details?id=my.com.sql.app.hrms&hl=en";
+    }
+    </script>
 
 </body>
 </html>

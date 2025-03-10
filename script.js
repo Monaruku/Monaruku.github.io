@@ -133,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     var imageUrls;
+    const imageAmt = 3;
 
     //Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
@@ -148,9 +149,9 @@ document.addEventListener("DOMContentLoaded", function () {
     //The actual share Image function, basically call download and send them to share
     async function shareImages() {
       
-        // Shuffle and pick 3 random images
+        // Shuffle and pick imageAmt of random images
         const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
-        const selectedUrls = shuffledUrls.slice(0, 3);
+        const selectedUrls = shuffledUrls.slice(0, imageAmt);
         console.log(selectedUrls);
 
 
@@ -232,9 +233,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching the file:", error));
 
     async function shareAlternative() {
-        // Shuffle and pick 3 random images
+        // Shuffle and pick imageAmt of random images
         const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
-        const selectedUrls = shuffledUrls.slice(0, 3);
+        var selectedUrls = shuffledUrls.slice(0, imageAmt);
         if(isEnglish){
             let number = Math.min(selectedUrls.length, imageUrlsEN.length);
             for (let i = 0; i < number; i++) {
@@ -247,6 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedUrls[i] = imageUrlsCN[i];
             }
         }
+        selectedUrls = selectedUrls.sort(() => 0.5 - Math.random());
         console.log(selectedUrls);
 
 
