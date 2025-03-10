@@ -199,7 +199,7 @@ async function checkPublishStatus(publishId) {
             } else {
                 // Unknown status
                 for (let i = 2; i > 0; i--) {
-                    setTimeout(showInfo(`Current status: ${status}. Checking again in ${i}...`), 1000);
+                    setTimeout(console.log(`Current status: ${status}. Checking again in ${i}...`), 1000);
                 }
             }
         } catch (error) {
@@ -209,7 +209,7 @@ async function checkPublishStatus(publishId) {
                 return;
             } else {
                 for (let i = 2; i > 0; i--) {
-                    setTimeout(showInfo(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
+                    setTimeout(console.log(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
                 }
             }
         }
