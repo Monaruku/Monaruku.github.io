@@ -442,13 +442,13 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             // If currently selected option is private and branded content is checked, change to public
             const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
-            if (hasNoPublicOption) {
-                this.value = 'FOLLOWER_OF_CREATOR';
-                alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
-            } else {
-                this.value = 'PUBLIC_TO_EVERYONE';
-                alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
-            }
+                if (hasNoPublicOption) {
+                    privacyLevel.value = 'FOLLOWER_OF_CREATOR'; 
+                    alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+                } else {
+                    privacyLevel.value = 'PUBLIC_TO_EVERYONE';
+                    alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
+                }
         }
 
         function updateDisclosureMessage() {
