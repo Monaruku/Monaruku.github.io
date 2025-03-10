@@ -61,8 +61,7 @@
                 <p id="google_p">Review us on</p>
                 <h3 id="google_h">Google review</h3>
                 <button class="action-button" id="google_b">Review us</button>
-                <button onclick="redirectIOS()"> Share IOS </button>
-                <button onclick="redirectAnd()"> Share Android </button>
+                <button onclick="redirect()"> Direct to App/Play Store </button>
             </div>
             
             <!-- Facebook Alt -->
@@ -109,12 +108,21 @@
 
     <!-- App store Test -->
     <script>
-    function redirectIOS() {
-        window.location = "https://apps.apple.com/my/app/sql-hrms/id6478105264";
+    function redirect() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            if (/android/i.test(userAgent)) {
+                window.location = "https://play.google.com/store/apps/details?id=my.com.sql.app.hrms&hl=en";
+            }
+
+            // iOS detection from: http://stackoverflow.com/a/9039885/177710
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location = "https://apps.apple.com/my/app/sql-hrms/id6478105264";
+            }
+            
     }
-    function redirectAnd() {
-        window.location = "https://play.google.com/store/apps/details?id=my.com.sql.app.hrms&hl=en";
-    }
+
+
     </script>
 
 </body>
