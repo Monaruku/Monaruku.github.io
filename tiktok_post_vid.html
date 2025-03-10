@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    
+
     <div class="container">
         <a href="index.html" class="back-button">&#8592;</a>
         <h1>Share Video to TikTok</h1>
@@ -21,12 +21,13 @@
                 <p>Posting as this TikTok account</p>
             </div>
         </div>
-        
+
         <h3>Video Prepared to Post</h3>
         <!-- Video preview -->
         <div class="video-container">
             <video id="videoPreview" controls>
-                <source src="https://sf16-va.tiktokcdn.com/obj/eden-va2/uvpapzpbxjH-aulauvJ-WV[[/ljhwZthlaukjlkulzlp/3min.mp4"
+                <source
+                    src="https://sf16-va.tiktokcdn.com/obj/eden-va2/uvpapzpbxjH-aulauvJ-WV[[/ljhwZthlaukjlkulzlp/3min.mp4"
                     type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -44,7 +45,8 @@
             <select id="privacyLevel" class="privacy-dropdown">
                 <option value="" disabled selected>**SELECT PRIVACY LEVEL**</option>
             </select>
-            <div id="privacyTooltip" class="tooltip-text" style="display: none;">Branded content visibility cannot be set to private</div>
+            <div id="privacyTooltip" class="tooltip-text" style="display: none;">Branded content visibility cannot be
+                set to private</div>
         </div>
 
         <!-- Interaction settings -->
@@ -75,20 +77,33 @@
                     <span class="slider round"></span>
                 </label>
             </div>
-        
+
             <div id="brandOptions" class="brand-options" style="display: none;">
-                <p class="disclosure-desc">Indicate whether this content promotes yourself, a brand, product or service</p>
-        
-                <div class="checkbox-item">
-                    <input type="checkbox" id="yourBrand" class="brand-checkbox">
-                    <label for="yourBrand" class="checkbox-label">Your brand (promoting yourself or your business)</label>
+                <p class="disclosure-desc">Indicate whether this content promotes yourself, a brand, product or service
+                </p>
+
+                <div class="checkbox-item-new">
+                    <div class="checkbox-content">
+                        <h4 class="checkbox-title">Your brand</h4>
+                        <p class="checkbox-description">Promoting yourself or your own business</p>
+                    </div>
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="yourBrand" class="brand-checkbox">
+                        <label for="yourBrand" class="checkbox-control-label"></label>
+                    </div>
                 </div>
-        
-                <div class="checkbox-item">
-                    <input type="checkbox" id="brandedContent" class="brand-checkbox">
-                    <label for="brandedContent" class="checkbox-label">Branded content (promoting another brand)</label>
+
+                <div class="checkbox-item-new">
+                    <div class="checkbox-content">
+                        <h4 class="checkbox-title">Branded content</h4>
+                        <p class="checkbox-description">Promoting another brand or a third party</p>
+                    </div>
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="brandedContent" class="brand-checkbox">
+                        <label for="brandedContent" class="checkbox-control-label"></label>
+                    </div>
                 </div>
-        
+
                 <div id="disclosureMessage" class="disclosure-message"></div>
             </div>
         </div>
@@ -99,7 +114,7 @@
 
         <div id="statusMessage" class="status-message"></div>
     </div>
-    
+
     <button id="logoutButton" class="logout-button">Logout from TikTok</button>
 
     <script src="Tiktok_Post_VideoUrl.js"></script>

@@ -295,9 +295,8 @@ label {
 .disclosure-container {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
-    padding: 15px;
+    padding: 18px 15px;
     margin: 20px 0;
-    text-align: left;
 }
 
 .toggle-container {
@@ -372,11 +371,11 @@ input:checked+.slider:before {
 }
 
 .disclosure-desc {
-    font-size: 14px;
-    margin-bottom: 10px;
-    color: rgba(255, 255, 255, 0.8);
+    font-size: 15px;
+    margin-bottom: 15px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
 }
-
 .brand-checkbox {
     margin-right: 10px;
     width: 18px;
@@ -390,14 +389,12 @@ input:checked+.slider:before {
 
 .disclosure-message {
     margin-top: 15px;
-    padding: 12px;
-    background: rgba(255, 255, 255, 0.1);
+    padding: 12px 15px;
+    background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
     font-size: 14px;
     line-height: 1.5;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    hyphens: auto;
+    border-left: 3px solid #2196F3;
 }
 
 .tooltip-text {
@@ -414,6 +411,47 @@ input:checked+.slider:before {
 .disabled-button {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.checkbox-item-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.checkbox-content {
+    flex: 1;
+    padding-right: 10px;
+}
+
+.checkbox-title {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.checkbox-description {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.3;
+}
+
+.checkbox-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 8px;
+}
+
+.brand-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
 }
 
 /* Responsive adjustments for very small screens */
@@ -462,6 +500,20 @@ input:checked+.slider:before {
     }
 
     .brand-options .checkbox-label {
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .checkbox-item-new {
+        padding: 10px;
+    }
+
+    .checkbox-title {
+        font-size: 15px;
+    }
+
+    .checkbox-description {
         font-size: 13px;
     }
 }
