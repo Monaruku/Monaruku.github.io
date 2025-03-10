@@ -431,12 +431,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             const options = privacyLevel.querySelectorAll('option');
 
             options.forEach(option => {
-                if (option.value === 'SELF_ONLY' && brandedContent.checked) {
+                if (option.value === 'SELF_ONLY' && brandedContent.checked || option.value === '') {
                     option.disabled = true;
-                    option.title = "Branded content visibility cannot be set to private";
                 } else {
                     option.disabled = false;
-                    option.title = "";
                 }
             });
 
