@@ -267,7 +267,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 isDisableStitch,
                 isBrandOrganic,
                 isBrandedContent
-            ).then(result => console.log("Initial publish response: ", result));
+            );
+            console.log('Initial Publish response:', publishResponse);
 
             showInfo('Publishing video... Please wait.');
             // showSuccess('Content successfully published to TikTok! \n' +
