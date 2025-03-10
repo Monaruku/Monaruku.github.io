@@ -382,6 +382,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                 brandOptions.style.display = 'none';
                 enablePostButton();
                 clearMessage();
+                privacyLevel.querySelector('option[value="SELF_ONLY"]').disabled = false;
+                brandedContent.checked = false;
+                yourBrand.checked = false;
             }
         });
 
