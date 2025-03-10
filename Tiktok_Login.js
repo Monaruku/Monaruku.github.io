@@ -202,7 +202,7 @@ class Authentication {
 
             return await response.json();
         } catch (error) {
-            console.error('Error getting creator info:', error);
+            console.error(error);
             throw error;
         }
     }

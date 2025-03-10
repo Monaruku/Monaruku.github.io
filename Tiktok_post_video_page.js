@@ -175,8 +175,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 console.log('User profile loaded:', creator);
             }
         } catch (error) {
-            console.error('Failed to load user profile:', error);
-            alert('Failed to load user profile. Please try again.');
+            console.error(error);
+            alert('Failed to load user profile.' + error.message);
         }
     }
 
