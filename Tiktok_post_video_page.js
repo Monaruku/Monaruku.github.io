@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             logoutButton.style.display = 'block';
         } catch (error) {
             console.error('Authentication failed:', error);
-            alert('Authentication failed. Please try again.');
+            alert('Authentication failed. Please try again.\n' + error.message);
         }
     }
 
