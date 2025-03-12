@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const statusMessage = document.getElementById('statusMessage');
     const videoTitleTextarea = document.getElementById('videoTitle');
     const privacyLevelDropdown = document.getElementById('privacyLevel');
+    const privacyLevelErroMessage = document.getElementById('privacyErrorMessage');
     let creatorInfoResponse = null;
     // let userInfoResponse = null;
 
@@ -211,7 +212,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         try {
             // Check if privacy level is selected
             if (!privacyLevelDropdown.value) {
-                showError('Please select a privacy level');
+                showPrivacyError('Please select a privacy level');
 
                 // Scroll to the privacy dropdown
                 privacyLevelDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -319,6 +320,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         statusMessage.style.display = 'block';
     }
 
+    function showPrivacyError(message) {
+        privacyLevelErroMessage.textContent = message;
+        privacyLevelErroMessage.className = 'status-message error';
+        privacyLevelErroMessage.style.display = 'block';
+    }
+
     function showInfo(message) {
         statusMessage.textContent = message;
         statusMessage.className = 'status-message info';
@@ -380,6 +387,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const postButton = document.getElementById('postVideoButton');
         const disclosureMessage = document.getElementById('disclosureMessage');
         const privacyTooltip = document.getElementById('privacyTooltip');
+        const privacyLevelErroMessage = document.getElementById('privacyErrorMessage');
 
         // Toggle disclosure options
         commercialDisclosure.addEventListener('change', function () {
@@ -415,6 +423,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
                 }
             }
+            privacyLevelErroMessage.style.display = 'none';
         });
 
         // Hover effect for privacy level when branded content is selected
