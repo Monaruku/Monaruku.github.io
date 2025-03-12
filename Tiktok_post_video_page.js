@@ -2,10 +2,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     const postButton = document.getElementById('postVideoButton');
     const logoutButton = document.getElementById('logoutButton');
     const statusMessage = document.getElementById('statusMessage');
-    const videoTitleInput = document.getElementById('videoTitle');
+    const videoTitleTextarea = document.getElementById('videoTitle');
     const privacyLevelDropdown = document.getElementById('privacyLevel');
+    const privacyLevelErroMessage = document.getElementById('privacyErrorMessage');
     let creatorInfoResponse = null;
-    let userInfoResponse = null;
+    // let userInfoResponse = null;
 
     const allowCommentCheckbox = document.getElementById('allowComment');
     const allowDuetCheckbox = document.getElementById('allowDuet');
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const code = urlParams.get('code');
     if (code && !localStorage.getItem('tiktokAccessToken')) {
         try {
-            const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://monaruku.github.io/tiktok_post_vid.html');
+            const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://applecakes14.github.io/SQL-Link-Tree/tiktok_post_vid.html');
             console.log('Access token from code:', tokenFromCode);
             // Access token from the response
             const userToken = tokenFromCode.access_token;
@@ -36,14 +37,11 @@ document.addEventListener('DOMContentLoaded', async function () {
             url.searchParams.delete('code');
             history.replaceState({}, document.title, url.toString());
 
-            console.log('Access token retrieved successfully');
-            alert('Authentication successful!');
-
             // Show logout button as we're now logged in
             logoutButton.style.display = 'block';
         } catch (error) {
             console.error('Authentication failed:', error);
-            alert('Authentication failed. Please try again.');
+            alert('Authentication failed. Please try again.\n' + error.message);
         }
     }
 
@@ -145,7 +143,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     privacyLevelDropdown.appendChild(optionElement);
                 }
 
-                // Comment settings
+                // Comment, Duet & Stitch settings
                 if (creator.comment_disabled) {
                     allowCommentCheckbox.disabled = true;
                     allowCommentCheckbox.checked = false;
@@ -154,7 +152,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                     allowCommentCheckbox.disabled = false;
                 }
 
-                // Duet settings
                 if (creator.duet_disabled) {
                     allowDuetCheckbox.disabled = true;
                     allowDuetCheckbox.checked = false;
@@ -163,7 +160,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                     allowDuetCheckbox.disabled = false;
                 }
 
-                // Stitch settings
                 if (creator.stitch_disabled) {
                     allowStitchCheckbox.disabled = true;
                     allowStitchCheckbox.checked = false;
@@ -175,8 +171,8 @@ document.addEventListener('DOMContentLoaded', async function () {
                 console.log('User profile loaded:', creator);
             }
         } catch (error) {
-            console.error('Failed to load user profile:', error);
-            alert('Failed to load user profile. Please try again.');
+            console.error(error);
+            alert('Failed to load user profile.' + error.message);
         }
     }
 
@@ -216,7 +212,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         try {
             // Check if privacy level is selected
             if (!privacyLevelDropdown.value) {
-                showError('Please select a privacy level');
+                showPrivacyError('Please select a privacy level');
+
+                // Scroll to the privacy dropdown
+                privacyLevelDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Add highlight effect
+                privacyLevelDropdown.classList.add('highlight-attention');
+
+                // Remove highlight after 0.5 seconds
+                setTimeout(() => {
+                    privacyLevelDropdown.classList.remove('highlight-attention');
+                }, 500);
                 return;
             }
             // check whether user is able to post video
@@ -231,12 +238,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             console.log(`Video duration: ${videoDuration} seconds`);
 
             if (creator.max_video_post_duration_sec < videoDuration) {
-                showError(`Sorry, you do not allowed to post. Video exceeds maximum allowed duration of ${creator.max_video_post_duration_sec} seconds by your account.`);
+                showError(`Sorry, you do not allowed to post. Video exceeds maximum aceptable duration of ${creator.max_video_post_duration_sec} seconds by your account.`);
                 return;
             }
 
             const privacyLevel = privacyLevelDropdown.value;
-            const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
+            const videoTitle = videoTitleTextarea.value || 'SQL BOLEH!!!';
 
             const isDisableComment = !allowCommentCheckbox.checked;
             const isDisableDuet = !allowDuetCheckbox.checked;
@@ -251,12 +258,15 @@ document.addEventListener('DOMContentLoaded', async function () {
                 return;
             }
 
+            // Disable the post button to prevent multiple submissions
+            disableButton();
+
             // Add commercial disclosure info
             const isBrandOrganic = commercialDisclosure.checked && yourBrand.checked;
             const isBrandedContent = commercialDisclosure.checked && brandedContent.checked;
 
-            statusMessage.style.display = 'none'; // Hide any previous messages
-            await publishVideoToTikTok(
+            statusMessage.style.display = 'none'; // Hide any previous messages0
+            const publishResponse = await publishVideoToTikTok(
                 privacyLevel,
                 videoTitle,
                 isDisableComment,
@@ -264,27 +274,37 @@ document.addEventListener('DOMContentLoaded', async function () {
                 isDisableStitch,
                 isBrandOrganic,
                 isBrandedContent
-            ).then(result => console.log("Publish Video result: ", result));
-            showSuccess('Content successfully published to TikTok! \n' +
-                'It may take a few minutes to visible in your profile.\n' +
-                'You will be redirected to TikTok shortly.'
             );
-            
+            console.log('Initial Publish response:', publishResponse);
 
-            // Open TikTok app or web
-            const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            if (isMobileDevice) {
+            showInfo('Publishing video... Please wait.');
+            // showSuccess('Content successfully published to TikTok! \n' +
+            //     'It may take a few minutes to visible in your profile.\n' +
+            //     'You will be redirected to TikTok shortly.'
+            // );
+            const publishId = publishResponse.data.publish_id;
+
+            // Check publish status
+            const statusResponse = await checkPublishStatus(publishId);
+            console.log("Status response: ", statusResponse);
+
+            if (statusResponse.data.status === 'PUBLISH_COMPLETE') {
+                showSuccess('Content successfully published to TikTok! Redirecting to your profile...');
+                // Redirect to TikTok after a short delay
+                const isMobileDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
                 setTimeout(() => {
-                    window.location.href = 'snssdk1233://user/profile';
-                }, 3000); 
-            } else {
-                setTimeout(() => {
-                    window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
-                }, 3000); 
+                    if (isMobileDevice) {
+                        window.location.href = 'snssdk1233://user/profile';
+                    } else {
+                        window.location.href = 'https://www.tiktok.com/@sqlaccounthq_oe';
+                    }
+                }, 3000);
             }
         } catch (error) {
             showError('Failed to publish video: ' + error.message);
             console.error('Error:', error);
+        } finally {
+            enableButton();
         }
     });
 
@@ -298,6 +318,32 @@ document.addEventListener('DOMContentLoaded', async function () {
         statusMessage.textContent = message;
         statusMessage.className = 'status-message error';
         statusMessage.style.display = 'block';
+    }
+
+    function showPrivacyError(message) {
+        privacyLevelErroMessage.textContent = message;
+        privacyLevelErroMessage.className = 'status-message error';
+        privacyLevelErroMessage.style.display = 'block';
+    }
+
+    function showInfo(message) {
+        statusMessage.textContent = message;
+        statusMessage.className = 'status-message info';
+        statusMessage.style.display = 'block';
+    }
+
+    function disableButton() {
+        postButton.disabled = true;
+        postButton.textContent = 'Publishing...';
+        postButton.style.opacity = 0.5;
+        postButton.style.cursor = 'not-allowed';
+    }
+
+    function enableButton() {
+        postButton.disabled = false;
+        postButton.textContent = 'Post to TikTok';
+        postButton.style.opacity = 1;
+        postButton.style.cursor = 'pointer';
     }
 
     function getVideoDuration(videoElementId) {
@@ -341,6 +387,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const postButton = document.getElementById('postVideoButton');
         const disclosureMessage = document.getElementById('disclosureMessage');
         const privacyTooltip = document.getElementById('privacyTooltip');
+        const privacyLevelErroMessage = document.getElementById('privacyErrorMessage');
 
         // Toggle disclosure options
         commercialDisclosure.addEventListener('change', function () {
@@ -351,6 +398,9 @@ document.addEventListener('DOMContentLoaded', async function () {
                 brandOptions.style.display = 'none';
                 enablePostButton();
                 clearMessage();
+                privacyLevel.querySelector('option[value="SELF_ONLY"]').disabled = false;
+                brandedContent.checked = false;
+                yourBrand.checked = false;
             }
         });
 
@@ -364,9 +414,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Validate privacy level when it changes
         privacyLevel.addEventListener('change', function () {
             if (brandedContent.checked && this.value === 'SELF_ONLY') {
-                this.value = 'PUBLIC_TO_EVERYONE';
-                alert('Privacy level automatically changed to public as branded content cannot be private.');
+                const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
+                if (hasNoPublicOption) {
+                    this.value = 'FOLLOWER_OF_CREATOR';
+                    alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+                } else {
+                    this.value = 'PUBLIC_TO_EVERYONE';
+                    alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
+                }
             }
+            privacyLevelErroMessage.style.display = 'none';
         });
 
         // Hover effect for privacy level when branded content is selected
@@ -394,19 +451,22 @@ document.addEventListener('DOMContentLoaded', async function () {
             const options = privacyLevel.querySelectorAll('option');
 
             options.forEach(option => {
-                if (option.value === 'SELF_ONLY' && brandedContent.checked) {
+                if (option.value === 'SELF_ONLY' && brandedContent.checked || option.value === '') {
                     option.disabled = true;
-                    option.title = "Branded content visibility cannot be set to private";
                 } else {
                     option.disabled = false;
-                    option.title = "";
                 }
             });
 
             // If currently selected option is private and branded content is checked, change to public
-            if (privacyLevel.value === 'SELF_ONLY' && brandedContent.checked) {
+            const hasNoPublicOption = privacyLevel.querySelector('option[value="FOLLOWER_OF_CREATOR"]');
+            if (brandedContent.checked && privacyLevel.value === 'SELF_ONLY' && hasNoPublicOption) {
+                privacyLevel.value = 'FOLLOWER_OF_CREATOR';
+                alert("Privacy level automatically changed to 'Followers' as branded content cannot be private.");
+            }
+            else if (brandedContent.checked && privacyLevel.value === 'SELF_ONLY') {
                 privacyLevel.value = 'PUBLIC_TO_EVERYONE';
-                alert('Privacy level automatically changed to public as branded content cannot be private.');
+                alert("Privacy level automatically changed to 'Public' as branded content cannot be private.");
             }
         }
 
