@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const postButton = document.getElementById('postVideoButton');
     const logoutButton = document.getElementById('logoutButton');
     const statusMessage = document.getElementById('statusMessage');
-    const videoTitleInput = document.getElementById('videoTitle');
+    const videoTitleTextarea = document.getElementById('videoTitle');
     const privacyLevelDropdown = document.getElementById('privacyLevel');
     let creatorInfoResponse = null;
     // let userInfoResponse = null;
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             }
 
             const privacyLevel = privacyLevelDropdown.value;
-            const videoTitle = videoTitleInput.value || 'SQL BOLEH!!!';
+            const videoTitle = videoTitleTextarea.value || 'SQL BOLEH!!!';
 
             const isDisableComment = !allowCommentCheckbox.checked;
             const isDisableDuet = !allowDuetCheckbox.checked;

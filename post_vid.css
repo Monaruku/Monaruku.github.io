@@ -112,26 +112,30 @@ video {
     margin: 20px 0;
 }
 
-.title-input {
+textarea.title-input {
     width: 100%;
-    padding-top: 12px;
-    padding-bottom: 12px;
-    border-radius: 25px;
-    border: none;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    padding: 12px 15px;
     font-size: 16px;
-    text-align: center;
-    outline: none;
+    border: none;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    margin-top: 5px;
+    resize: vertical;
+    min-height: 50px;
+    max-height: 120px;
+    line-height: 1.4;
+    font-family: inherit;
 }
 
 .title-input::placeholder {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.title-input:focus {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+textarea.title-input:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
 label {
