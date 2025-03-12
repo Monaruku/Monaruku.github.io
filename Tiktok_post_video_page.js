@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const code = urlParams.get('code');
     if (code && !localStorage.getItem('tiktokAccessToken')) {
         try {
-            const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://applecakes14.github.io/SQL-Link-Tree/tiktok_post_vid.html');
+            const tokenFromCode = await authentication.getAccessTokenFromCode(code, 'https://monaruku.github.io/tiktok_post_vid.html');
             console.log('Access token from code:', tokenFromCode);
             // Access token from the response
             const userToken = tokenFromCode.access_token;
