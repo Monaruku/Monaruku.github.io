@@ -212,6 +212,17 @@ document.addEventListener('DOMContentLoaded', async function () {
             // Check if privacy level is selected
             if (!privacyLevelDropdown.value) {
                 showError('Please select a privacy level');
+
+                // Scroll to the privacy dropdown
+                privacyLevelDropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                // Add highlight effect
+                privacyLevelDropdown.classList.add('highlight-attention');
+
+                // Remove highlight after 0.5 seconds
+                setTimeout(() => {
+                    privacyLevelDropdown.classList.remove('highlight-attention');
+                }, 500);
                 return;
             }
             // check whether user is able to post video

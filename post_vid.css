@@ -113,7 +113,7 @@ video {
 }
 
 textarea.title-input {
-    width: 100%;
+    width: 90%;
     padding: 12px 15px;
     font-size: 16px;
     border: none;
@@ -301,6 +301,7 @@ label {
     border-radius: 10px;
     padding: 18px 15px;
     margin: 20px 0;
+    text-align: left;
 }
 
 .toggle-container {
