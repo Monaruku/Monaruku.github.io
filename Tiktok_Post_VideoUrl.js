@@ -11,8 +11,8 @@ class Fields {
     static DISABLE_DUET = 'disable_duet';
     static DISABLE_STITCH = 'disable_stitch';
     static DISABLE_COMMENT = 'disable_comment';
-    static BRAND_ORGANIC = 'brand_organic';
-    static BRAND_CONTENT = 'brand_content';
+    static BRAND_ORGANIC_TOGGLE = 'brand_organic_toggle';
+    static BRAND_CONTENT_TOGGLE = 'brand_content_toggle';
 }
 
 class Post {
@@ -94,6 +94,34 @@ class Post {
             throw error;
         }
     }
+
+    async requestPublishStatus(publishId) {
+        try {
+            const corsProxy = 'https://cors-anywhere.herokuapp.com/';
+            const response = await fetch(corsProxy + this.statusUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.accessToken}`
+                },
+                body: JSON.stringify({
+                    "publish_id": publishId
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text().catch(() => 'No error details available');
+                throw new Error(`HTTP error!(${response.status}): ${errorText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            if (error.name === 'TypeError') {
+                throw new Error(`Network error: ${error.message} (Check CORS proxy availability)`);
+            }
+            throw error;
+        }
+    }
 }
 
 // Usage example
@@ -126,12 +154,12 @@ async function publishVideoToTikTok(
             [Fields.DISABLE_COMMENT]: isDisableComment,
             [Fields.DISABLE_STITCH]: isDisableStitch,
             [Fields.VIDEO_COVER_TIMESTAMP_MS]: 1000, // spot in video to use as cover photo
-            [Fields.BRAND_ORGANIC]: isBrandOrganic,
-            [Fields.BRAND_CONTENT]: isBrandedContent
+            [Fields.BRAND_ORGANIC_TOGGLE]: isBrandOrganic,
+            [Fields.BRAND_CONTENT_TOGGLE]: isBrandedContent
         },
         [Fields.SOURCE_INFO]: {
             [Fields.SOURCE]: 'PULL_FROM_URL',
-            [Fields.VIDEO_URL]: videoUrl // video URL that is publicly accessible
+            [Fields.VIDEO_URL]: videoUrl // video URL that TikTok verified 
         }
     };
 
@@ -139,5 +167,53 @@ async function publishVideoToTikTok(
     return await post.publish(params);
 }
 
+async function checkPublishStatus(publishId) {
+    const maxAttempts = 10; // Maximum number of attempts
+    const initialDelay = 2000; // Initial delay in milliseconds
+
+    const config = {
+        access_token: localStorage.getItem('tiktokAccessToken'),
+    };
+
+    // Instantiate a new post
+    const post = new Post(config);
+
+    for (let attempts = 0; attempts < maxAttempts; attempts++) {
+        try {
+            const statusResponse = await post.requestPublishStatus(publishId);
+            console.log(`Status check attempt ${attempts}:`, statusResponse);
+
+            if (!statusResponse || !statusResponse.data) {
+                throw new Error('Invalid status response');
+            }
+
+            const status = statusResponse.data.status;
+
+            if (status === 'PUBLISH_COMPLETE') {
+                return statusResponse;
+            } else if (status === 'FAILED') {
+                // Publishing failed
+                const failReason = statusResponse.data.fail_reason || 'Unknown reason';
+                throw Error(`Publishing failed: ${failReason}`);
+            } else {
+                // Unknown status
+                for (let i = 3; i > 0; i--) {
+                    setTimeout(console.log(`Current status: ${status}. Checking again in ${i}...`), 1000);
+                }
+            }
+        } catch (error) {
+            console.error('Error checking status:', error);
+            if (attempts >= maxAttempts - 1) {
+                throw Error('Status check failed. Your video may still be processing. Check TikTok app later.');
+            } else {
+                for (let i = 3; i > 0; i--) {
+                    setTimeout(console.log(`Error checking status: ${error.message}. Retrying in ${i}..`), 1000);
+                }
+            }
+        }
+    }
+
+    return await post.requestPublishStatus(publishId);
+}
 // Call the function when needed
 // publishVideoToTikTok().then(result => console.log(result));

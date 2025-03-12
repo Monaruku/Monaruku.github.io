@@ -35,8 +35,9 @@
 
         <!-- Title input -->
         <div class="input-container">
-            <label for="postTitle">Post Title</label>
-            <input type="text" id="videoTitle" class="title-input" placeholder="Enter video title" value="SQL BOLEH!!!">
+            <label for="videoTitle">Post Title</label>
+            <textarea id="videoTitle" class="title-input" placeholder="Enter video title"
+                rows="2">SQL BOLEH!!!</textarea>
         </div>
 
         <!-- Privacy level selection -->
@@ -48,6 +49,7 @@
             <div id="privacyTooltip" class="tooltip-text" style="display: none;">Branded content visibility cannot be
                 set to private</div>
         </div>
+        <div id="privacyErrorMessage" class="status-message"></div>
 
         <!-- Interaction settings -->
         <div class="interaction-settings">
@@ -55,15 +57,15 @@
             <div class="checkbox-container">
                 <div class="checkbox-item">
                     <input type="checkbox" id="allowComment" class="interaction-checkbox">
-                    <label for="allowComment" class="checkbox-label">Comments</label>
+                    <label for="allowComment" class="checkbox-label">Comment</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="allowDuet" class="interaction-checkbox">
-                    <label for="allowDuet" class="checkbox-label">Duets</label>
+                    <label for="allowDuet" class="checkbox-label">Duet</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="allowStitch" class="interaction-checkbox">
-                    <label for="allowStitch" class="checkbox-label">Stitches</label>
+                    <label for="allowStitch" class="checkbox-label">Stitch</label>
                 </div>
             </div>
         </div>
@@ -82,15 +84,26 @@
                 <p class="disclosure-desc">Indicate whether this content promotes yourself, a brand, product or service
                 </p>
 
-                <div class="checkbox-item">
-                    <input type="checkbox" id="yourBrand" class="brand-checkbox">
-                    <label for="yourBrand" class="checkbox-label">Your brand (promoting yourself or your
-                        business)</label>
+                <div class="checkbox-item-new">
+                    <div class="checkbox-content">
+                        <h4 class="checkbox-title">Your brand</h4>
+                        <p class="checkbox-description">Promoting yourself or your own business</p>
+                    </div>
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="yourBrand" class="brand-checkbox">
+                        <label for="yourBrand" class="checkbox-control-label"></label>
+                    </div>
                 </div>
 
-                <div class="checkbox-item">
-                    <input type="checkbox" id="brandedContent" class="brand-checkbox">
-                    <label for="brandedContent" class="checkbox-label">Branded content (promoting another brand)</label>
+                <div class="checkbox-item-new">
+                    <div class="checkbox-content">
+                        <h4 class="checkbox-title">Branded content</h4>
+                        <p class="checkbox-description">Promoting another brand or a third party</p>
+                    </div>
+                    <div class="checkbox-control">
+                        <input type="checkbox" id="brandedContent" class="brand-checkbox">
+                        <label for="brandedContent" class="checkbox-control-label"></label>
+                    </div>
                 </div>
 
                 <div id="disclosureMessage" class="disclosure-message"></div>
