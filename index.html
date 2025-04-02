@@ -21,7 +21,8 @@
         <h1>SQL Link Tree</h1>
         
         <div class="buttons-grid">
-            <!-- TikTok -->
+            <!--
+            <a!-- TikTok -a->
             <div class="card">
                 <div class="icon-container tiktok-icon">
                     <img src="Image/tiktok_logo.svg"  alt="Tiktok logo" >
@@ -32,7 +33,7 @@
             </div>
             
 
-             <!-- Facebook 
+             <a!-- Facebook 
             <div class="card">
                 <div class="icon-container facebook-icon">
                     <i class="fab fa-facebook-f"></i>
@@ -41,9 +42,9 @@
                 <h3>Facebook Page</h3>
                 <button class="action-button">Share</button>
             </div>
-            -->
+            -a->
             
-            <!-- Red Note -->
+            <a!-- Red Note -a->
             <div class="card">
                 <div class="icon-container rednote-icon">
                     <img src="Image/xiaohongshu_logo.svg"  alt="Red note logo" >
@@ -53,7 +54,7 @@
                 <button class="action-button" id="rednote_b">Follow</button>
             </div>
             
-            <!-- Google -->
+            <a!-- Google -a->
             <div class="card">
                 <div class="icon-container google-icon">
                     <img src="Image/google_logo.svg" alt="Google logo">
@@ -64,7 +65,7 @@
                 <button onclick="redirect()"> Direct to App/Play Store </button>
             </div>
             
-            <!-- Facebook Alt -->
+            <a!-- Facebook Alt -a->
             <div class="card">
                 <div class="icon-container facebook-icon">
                     <img src="Image/facebook_logo.svg" alt="facebook logo">
@@ -74,7 +75,7 @@
                 <button class="action-button" id="fb_b">Follow us</button>
             </div>
             
-            <!-- Instagram -->
+            <a!-- Instagram -a->
             <div class="card">
                 <div class="icon-container instagram-icon">
                     <img src="Image/Instagram_logo.svg" alt="instagram logo">
@@ -84,7 +85,7 @@
                 <button class="action-button" id="insta_b">Follow us</button>
             </div>
             
-            <!-- Wi-Fi -->
+            <a!-- Wi-Fi -a->
             <div class="card">
                 <div class="icon-container wifi-icon">
                     <img src="Image/share_logo.svg" alt="share logo">
@@ -94,35 +95,72 @@
                 <button class="action-button" id="others_b">Share</button>
                 <button id="shareAlt">Share Alt</button>
             </div>
+            -->
+            <div class="card" id="fb">
+                <h3>SHARE</h3>
+                <div class="icon-container facebook-icon">
+                    <img src="Image/facebook_logo.svg" alt="Facebook logo">
+                </div>
+            </div>
+
+            <div class="card" id="google">
+                <h3>SHARE</h3>
+                <div class="icon-container google-icon">
+                    <img src="Image/google_logo.svg" alt="Google logo">
+                </div>
+            </div>
+
+            <div class="card" id="rednote">
+                <h3>SHARE</h3>
+                <div class="icon-container rednote-icon">
+                    <img src="Image/xiaohongshu_logo.svg" alt="Rednote logo">
+                </div>
+            </div>
+
+            <div class="card" id="insta">
+                <h3>SHARE</h3>
+                <div class="icon-container instagram-icon">
+                    <img src="Image/Instagram_logo.svg" alt="Instagram logo">
+                </div>
+            </div>
+
+            <div class="card" id="tiktok">
+                <h3>SHARE</h3>
+                <div class="icon-container tiktok-icon">
+                    <img src="Image/tiktok_logo.svg" alt="Tiktok logo">
+                </div>
+            </div>
+
+            <div class="card" id="store">
+                <h3>SHARE</h3>
+                <div class="icon-container store-icon">
+                    <img src="Image/google_play_logo.svg" alt="Google Play logo">
+                    <img src="Image/app_store_logo.svg" alt="App Store logo">
+                </div>
+            </div>
+
+            <div class="card" id="others">
+                <h3>SHARE</h3>
+                <div class="icon-container share-icon">
+                    <img src="Image/share_logo.svg" alt="Share logo">
+                </div>
+            </div>
+
+            <div class="card" id="others_fixed">
+                <h3>SHARE FIXED</h3>
+                <div class="icon-container share-icon">
+                    <img src="Image/share_logo.svg" alt="Share logo">
+                </div>
+            </div>
         </div>
         <div style="padding-top: 20px;">
             <h3 id="lang_desc">Share In English</h3>
-            <!-- I serious don't know why I need to use inline for this, goddamn HTMLLLLL -->
-            <button id="lang_b" style="background-color: blue; color: white; padding: 10px 20px; border: none; border-radius: 5px;">Switch</button>
+            <button id="lang_b">Switch</button>
         </div>
 
     </div>
     <script src="script.js"></script>
 
     <script src="Tiktok_Login.js"></script>
-
-    <!-- App store Test -->
-    <script>
-    function redirect() {
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        if (/android/i.test(userAgent)) {
-            window.location = "https://play.google.com/store/apps/details?id=my.com.sql.app.hrms";
-        }
-
-        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-            window.location = "https://apps.apple.com/my/app/sql-hrms/id6478105264?action=write-review";
-        }   
-    }
-
-
-    </script>
-
 </body>
 </html>

@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // window.open("https://facebook.com", "_blank");
     // });
     // }
-    const text_lang = {
+    /*const text_lang = {
         'tiktok_p_en': "Share to",
         'tiktok_p_cn': "分享至",
         'tiktok_h_en': "TikTok",
@@ -58,11 +58,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
         'lang_b_en': "中文",
         'lang_b_cn': "English",
+    }*/
+
+    function redirect() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (/android/i.test(userAgent)) {
+            window.location = "https://play.google.com/store/apps/details?id=my.com.sql.app.hrms";
+        }
+
+        // iOS detection from: http://stackoverflow.com/a/9039885/177710
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            window.location = "https://apps.apple.com/my/app/sql-hrms/id6478105264?action=write-review";
+        }   
+    }
+
+    const text_lang = {
+        'tiktok_en': "Share to",
+        'tiktok_cn': "分享至",
+
+        'rednote_en': "Follow us on",
+        'rednote_cn': "关注我们",
+        
+        'google_en': "Review us on",
+        'google_cn': "给个好评",
+
+        'fb_en': "Follow us on",
+        'fb_cn': "关注我们",
+
+        'insta_en': "Follow us on",
+        'insta_cn': "关注我们",
+
+        'others_en': "Share to others...",
+        'others_cn': "分享至其它...",
+
+        'store_en': "Review us on",
+        'store_cn': "给个好评",
+
+        'others_fixed_en': "Share to others...",
+        'others_fixed_cn': "分享至其它...",
+
+        'lang_desc_en': "更改语言至...",
+        'lang_desc_cn': "Change language to...",
+
+        'lang_b_en': "中文",
+        'lang_b_cn': "English",
     }
 
     let isEnglish = true;
 
-    function load_lang (){
+    /*function load_lang (){
         var currentLang = (isEnglish) ? "_en" : "_cn";
         const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others'];
         const elem_list = ['_p', '_h', '_b'];
@@ -74,10 +119,25 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
         document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
+    };*/
+
+    function load_lang () {
+        var currentLang = (isEnglish) ? "_en" : "_cn";
+        const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
+        media_list.forEach(media => {
+            document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
+        });
+        document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
+        document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
     };
 
     window.onload = (event) => {
         load_lang();
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+        if (!(/android/i.test(userAgent) || (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream))) {
+            document.getElementById('store').style.display = "none";
+        }  
     };
 
     document.getElementById('lang_b').addEventListener('click', function (e) {
@@ -86,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     
     // Define the links
+    /*
     const links = {
         'Facebook Page': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'Facebook': 'https://www.facebook.com/SQLEstream/',
@@ -99,6 +160,12 @@ document.addEventListener("DOMContentLoaded", function () {
         'TikTok': 'TikTok',
         'Share': 'Share',
         '分享': 'Share'
+    };*/
+
+    const links = {
+        'fb': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
+        'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
+        'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
     };
 
     // Tiktok Authentication class
@@ -275,7 +342,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
         
-    document.getElementById("shareAlt").addEventListener("click", shareAlternative);
+    //document.getElementById("shareAlt").addEventListener("click", shareAlternative);
 
     /*--------------------------------------------------------------------------------------------*/
 
@@ -346,8 +413,68 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            const platform = this.id;
+            if(platform == 'rednote'){
+                
+                //Check if the device have Rednote installed or not before redirecting
+                var fallbackToStore = function() {
+                    window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
+                };
+                var openApp = function() {
+                    window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                };
 
+                openApp();
+                setTimeout(fallbackToStore, 700);
+                
+                //shareToRedNote();
+            }
+            //lazy way of doing this
+            else if(platform == 'google') {
+                //Had to hardcode https link to read text file, or else chrome's security policy will block it
+                getLines(1)
+                window.open(links['google'], '_blank');
+            }
+            else if (platform == 'tiktok') {
+                if (tiktokAuthentication.checkTikTokToken()) {
+                    window.location.href = "tiktok_post_vid.html";
+                } else {
+                    window.location = tiktokAuthenticationUrl;
+                }
+            }
+            //how many else if do I need
+            else if(platform == 'others') {
+                //Check if can use web share API level 2
+                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                //Copy Share Text
+                getLines();
+                shareImages();
+                return true;
+                } else {
+                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                    return false;
+                }
+            }
+            else if (platform == 'store') {
+                redirect();
+            }
+            else if (platform == 'others_fixed') {
+                shareAlternative();
+            }
+            else if (links[platform]) {
+                window.open(links[platform], '_blank');
+            }
+            else {
+                const actionType = this.textContent;
+                alert(`You are about to ${actionType.toLowerCase()} on ${platform}!`);
+                // Here you would implement the functionality for other platforms
+            }
+        });
+    });
 
+    /*
     // Add active state for touch devices
     document.querySelectorAll('.action-button').forEach(button => {
         // Touch start - add active class
@@ -441,7 +568,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Here you would implement the functionality for other platforms
             }
         });
-    });
+    });*/
 
     // Also add direct click functionality to the card for Facebook and Instagram
     // document.querySelectorAll('.card').forEach(card => {
