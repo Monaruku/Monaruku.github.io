@@ -1,7 +1,7 @@
 body {
     font-family: 'Times New Roman', Times, serif;
     text-align: center;
-    background: linear-gradient(to bottom, #9370DB, #BA55D3);
+    background: radial-gradient(circle, #d43f4b 0%, #6d1d3b 60%);
     color: #fff;
     margin: 0;
     padding: 20px;
@@ -36,7 +36,7 @@ h1 {
 }
 
 .card {
-    background: white;
+    /*background: white;
     border-radius: 12px;
     padding: 15px 10px;
     display: flex;
@@ -44,13 +44,48 @@ h1 {
     align-items: center;
     color: black;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
+    transition: transform 0.2s;*/
+    
     width: 100%;
+    padding: 15px 10px;
+    background: #ececec;
+    border-radius: 15px;
+    box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.43);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background 0.2s;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .card:hover {
+    background: #ddd;
+}
+
+.card:active {
+    background: #bbb;
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+    transform: translate(0px, 3px);
+}
+
+.card:focus {
+    outline: none !important;
+}
+
+.card h3, .card img {
+    user-select: none;
+    pointer-events: none;
+}
+
+/*
+.card:hover {
     transform: translateY(-3px);
 }
+*/
 
 /* Profile part */
 .profile {
@@ -81,9 +116,31 @@ h1 {
     align-items: center;
     justify-content: center;
     margin-bottom: 5px;
-    font-size: 22px;
 }
 
+.icon-container img {
+    height: 100%;
+    width: 100%;
+}
+
+.tiktok-icon img{
+    background: #212121;
+    border-radius: 50%;
+}
+
+.rednote-icon img{
+    border-radius: 50%;
+}
+
+.instagram-icon img {
+    border-radius: 50%;
+}
+
+.store-icon img {
+    padding: 0px 3px;
+}
+
+/*
 .tiktok-icon img{
     background: #212121;
     color: white;
@@ -115,6 +172,7 @@ h1 {
     height: 100%;
     width: 100%;
 }
+*/
 
 p {
     margin: 5px 0 0;
@@ -126,8 +184,14 @@ h3 {
     margin: 3px 0 10px;
     font-size: 16px;
     font-weight: bold;
+    color: black;
 }
 
+h3[id=lang_desc] {
+    color: white;
+}
+
+/*
 .action-button {
     background: #007bff;
     color: white;
@@ -139,7 +203,9 @@ h3 {
     width: 90%;
     margin-top: auto;
 }
+*/
 
+/*
 #lang_b {
     background: #007bff;
     color: white;
@@ -151,11 +217,22 @@ h3 {
     width: 90%;
     margin-top: auto;
 }
+*/
 
+#lang_b {
+    background-color: #ececec;
+    color: black; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+/*
 .action-button:hover {
     background: #0056b3;
 }
+*/
 
 /* Media query for different device sizes */
 @media (max-width: 480px) {
@@ -188,10 +265,10 @@ h3 {
         font-size: 10px;
     }
 
-    .action-button {
+    /*.action-button {
         padding: 5px 15px;
         font-size: 12px;
-    }
+    }*/
 }
 
 /* Extra small devices */
@@ -219,10 +296,10 @@ h3 {
         font-size: 16px;
     }
 
-    .action-button {
+    /*.action-button {
         padding: 4px 12px;
         font-size: 11px;
-    }
+    }*/
 }
 
 /* For landscape orientation on small screens */
@@ -270,8 +347,8 @@ h3 {
         font-size: 14px;
     }
 
-    .action-button {
+    /*.action-button {
         padding: 8px 25px;
         font-size: 16px;
-    }
+    }*/
 }
