@@ -15,6 +15,12 @@ body {
 
 
 .container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+
     padding: 20px 10px;
     max-width: 600px;
     margin: 0 auto;
@@ -29,6 +35,8 @@ h1 {
 }
 
 .buttons-grid {
+   
+
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
@@ -237,7 +245,7 @@ h3[id=lang_desc] {
 /* Media query for different device sizes */
 @media (max-width: 480px) {
     .buttons-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
         gap: 10px;
     }
 
@@ -283,6 +291,7 @@ h3[id=lang_desc] {
     }
 
     .buttons-grid {
+        grid-template-columns: repeat(1, 1fr);
         gap: 8px;
     }
 
@@ -314,14 +323,14 @@ h3[id=lang_desc] {
     }
 
     .buttons-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 /* For larger tablets */
 @media (min-width: 768px) {
     .buttons-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .card {

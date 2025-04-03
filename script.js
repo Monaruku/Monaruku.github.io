@@ -74,14 +74,14 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const text_lang = {
-        'tiktok_en': "Share to",
+        /*'tiktok_en': "Share to",
         'tiktok_cn': "分享至",
+
+        'google_en': "Review us on",
+        'google_cn': "给个好评",*/
 
         'rednote_en': "Follow us on",
         'rednote_cn': "关注我们",
-        
-        'google_en': "Review us on",
-        'google_cn': "给个好评",
 
         'fb_en': "Follow us on",
         'fb_cn': "关注我们",
@@ -92,11 +92,11 @@ document.addEventListener("DOMContentLoaded", function () {
         'others_en': "Share to others...",
         'others_cn': "分享至其它...",
 
-        'store_en': "Review us on",
+        /*'store_en': "Review us on",
         'store_cn': "给个好评",
 
         'others_fixed_en': "Share to others...",
-        'others_fixed_cn': "分享至其它...",
+        'others_fixed_cn': "分享至其它...",*/
 
         'lang_desc_en': "更改语言至...",
         'lang_desc_cn': "Change language to...",
@@ -123,7 +123,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function load_lang () {
         var currentLang = (isEnglish) ? "_en" : "_cn";
-        const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
+        //const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
+        const media_list = ['rednote', 'fb', 'insta', 'others'];
         media_list.forEach(media => {
             document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
         });
@@ -162,11 +163,11 @@ document.addEventListener("DOMContentLoaded", function () {
         '分享': 'Share'
     };*/
 
-    const links = {
+    /*const links = {
         'fb': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
         'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
-    };
+    };*/
 
     // Tiktok Authentication class
     const tiktokAuthentication = new Authentication({
@@ -416,6 +417,26 @@ document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', function (e) {
             const platform = this.id;
+            if (platform == 'others_fixed') {
+                shareAlternative();
+            } else {
+                //Check if can use web share API level 2
+                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                    //Copy Share Text
+                    getLines();
+                    shareImages();
+                    return true;
+                } else {
+                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                    return false;
+                }
+            }
+        });
+    });
+
+    /*document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            const platform = this.id;
             if(platform == 'rednote'){
                 
                 //Check if the device have Rednote installed or not before redirecting
@@ -472,7 +493,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Here you would implement the functionality for other platforms
             }
         });
-    });
+    });*/
 
     /*
     // Add active state for touch devices
