@@ -80,14 +80,14 @@ document.addEventListener("DOMContentLoaded", function () {
         'google_en': "Review us on",
         'google_cn': "给个好评",*/
 
-        'rednote_en': "Follow us on",
-        'rednote_cn': "关注我们",
+        'rednote_en': "RedNote",
+        'rednote_cn': "小红书",
 
-        'fb_en': "Follow us on",
-        'fb_cn': "关注我们",
+        'fb_en': "Facebook",
+        'fb_cn': "脸书",
 
-        'insta_en': "Follow us on",
-        'insta_cn': "关注我们",
+        'insta_en': "Instagram",
+        'insta_cn': "Instagram",
 
         'others_en': "Share to others...",
         'others_cn': "分享至其它...",
@@ -128,23 +128,28 @@ document.addEventListener("DOMContentLoaded", function () {
         media_list.forEach(media => {
             document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
         });
-        document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
-        document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
+        //document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
+        //document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
+    };
+
+
+
+    function load_image() {
+        document.querySelectorAll('.card').forEach(card => {
+            console.log("url('Image/" + card.id + ".png')");
+            card.style.backgroundImage = "url('Image/" + card.id + ".png')";
+        });
     };
 
     window.onload = (event) => {
+        //load_image();
         load_lang();
-        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-        if (!(/android/i.test(userAgent) || (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream))) {
-            document.getElementById('store').style.display = "none";
-        }  
     };
 
-    document.getElementById('lang_b').addEventListener('click', function (e) {
+    /*document.getElementById('lang_b').addEventListener('click', function (e) {
         isEnglish = !isEnglish;
         load_lang();
-    });
+    });*/
     
     // Define the links
     /*

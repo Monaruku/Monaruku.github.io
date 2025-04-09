@@ -4,170 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SQL Link Tree</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <style>
+        body {
+            font-family: 'Montserrat';
+        }
+    </style>
+    <link href="style.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        
         <div class="profile">
             <a href="https://www.estream.com.my/" style="width: 8%; margin-right: 10px;">
-            <img src="Image/SQL_Logo.jpg" alt="SQL Company Logo">
-            </a>
-            <a href="https://www.estream.com.my/" style="text-decoration: none;">
-            <p>E Stream MSC SDN BHD</p>
+            <img src="Image/logo.png" alt="SQL Company Logo">
             </a>
         </div>
-        <h1>SQL Link Tree</h1>
+        <h1>SQL Accounting<br>Software</h1>
 
         <div class="buttons-grid">
-
-            
-            <!--
-            <a!-- TikTok -a->
-            <div class="card">
-                <div class="icon-container tiktok-icon">
-                    <img src="Image/tiktok_logo.svg"  alt="Tiktok logo" >
-                </div>
-                <p id="tiktok_p">Follow Our</p>
-                <h3 id="tiktok_h">TikTok</h3>
-                <button class="action-button" id="tiktok_b">Follow</button>
-            </div>
-            
-
-             <a!-- Facebook 
-            <div class="card">
-                <div class="icon-container facebook-icon">
-                    <i class="fab fa-facebook-f"></i>
-                </div>
-                <p>Share our</p>
-                <h3>Facebook Page</h3>
-                <button class="action-button">Share</button>
-            </div>
-            -a->
-            
-            <a!-- Red Note -a->
-            <div class="card">
-                <div class="icon-container rednote-icon">
-                    <img src="Image/xiaohongshu_logo.svg"  alt="Red note logo" >
-                </div>
-                <p id="rednote_p">Follow us on</p>
-                <h3 id="rednote_h">Red note</h3>
-                <button class="action-button" id="rednote_b">Follow</button>
-            </div>
-            
-            <a!-- Google -a->
-            <div class="card">
-                <div class="icon-container google-icon">
-                    <img src="Image/google_logo.svg" alt="Google logo">
-                </div>
-                <p id="google_p">Review us on</p>
-                <h3 id="google_h">Google review</h3>
-                <button class="action-button" id="google_b">Review us</button>
-                <button onclick="redirect()"> Direct to App/Play Store </button>
-            </div>
-            
-            <a!-- Facebook Alt -a->
-            <div class="card">
-                <div class="icon-container facebook-icon">
-                    <img src="Image/facebook_logo.svg" alt="facebook logo">
-                </div>
-                <p id="fb_p">Follow us on</p>
-                <h3 id="fb_h">Facebook</h3>
-                <button class="action-button" id="fb_b">Follow us</button>
-            </div>
-            
-            <a!-- Instagram -a->
-            <div class="card">
-                <div class="icon-container instagram-icon">
-                    <img src="Image/Instagram_logo.svg" alt="instagram logo">
-                </div>
-                <p id="insta_p">Follow us on</p>
-                <h3 id="insta_h">Instagram</h3>
-                <button class="action-button" id="insta_b">Follow us</button>
-            </div>
-            
-            <a!-- Wi-Fi -a->
-            <div class="card">
-                <div class="icon-container wifi-icon">
-                    <img src="Image/share_logo.svg" alt="share logo">
-                </div>
-                <p id="others_p">Press to</p>
-                <h3 id="others_h">Share</h3>
-                <button class="action-button" id="others_b">Share</button>
-                <button id="shareAlt">Share Alt</button>
-            </div>
-            -->
             <div class="card" id="fb">
-                <h3>SHARE</h3>
-                <div class="icon-container facebook-icon">
-                    <img src="Image/facebook_logo.svg" alt="Facebook logo">
-                </div>
+                <img src="Image/fb.png" alt="Facebook Logo">
+                <h3>Facebook</h3>
             </div>
-
-            <!--<div class="card" id="google">
-                <h3>SHARE</h3>
-                <div class="icon-container google-icon">
-                    <img src="Image/google_logo.svg" alt="Google logo">
-                </div>
-            </div>-->
 
             <div class="card" id="rednote">
-                <h3>SHARE</h3>
-                <div class="icon-container rednote-icon">
-                    <img src="Image/xiaohongshu_logo.svg" alt="Rednote logo">
-                </div>
+                <img src="Image/rednote.png" alt="Rednote logo">
+                <h3>Instagram</h3>
             </div>
 
             <div class="card" id="insta">
-                <h3>SHARE</h3>
-                <div class="icon-container instagram-icon">
-                    <img src="Image/Instagram_logo.svg" alt="Instagram logo">
-                </div>
+                <img src="Image/insta.png" alt="Instagram logo">
+                <h3>RedNote</h3>
             </div>
-
-            <!--<div class="card" id="tiktok">
-                <h3>SHARE</h3>
-                <div class="icon-container tiktok-icon">
-                    <img src="Image/tiktok_logo.svg" alt="Tiktok logo">
-                </div>
-            </div>-->
-
-            <!--<div class="card" id="store">
-                <h3>SHARE</h3>
-                <div class="icon-container store-icon">
-                    <img src="Image/google_play_logo.svg" alt="Google Play logo">
-                    <img src="Image/app_store_logo.svg" alt="App Store logo">
-                </div>
-            </div>-->
 
             <div class="card" id="others">
-                <h3>SHARE</h3>
-                <div class="icon-container share-icon">
-                    <img src="Image/share_logo.svg" alt="Share logo">
-                </div>
+                <img src="Image/others.png" alt="Share logo">
+                <h3>Share to others...</h3>
             </div>
 
-            <!--<div class="card" id="others_fixed">
-                <h3>SHARE FIXED</h3>
-                <div class="icon-container share-icon">
-                    <img src="Image/share_logo.svg" alt="Share logo">
-                </div>
-            </div>-->
-
-            
+            <div class="card" id="others_xhs">
+                <img src="Image/others.png" alt="Share logo">
+                <h3>Share to others...</h3>
+            </div>
         </div>
-
-        <div style="padding-top: 20px;">
-            <h3 id="lang_desc">Share In English</h3>
-            <button id="lang_b">Switch</button>
+        <div class="footer">
+            <p>切换语言至</p>
+            <div class="card" id="lang">
+                <img src="Image/empty.png" alt="Button Image">
+                <h3>中文</h3>
+            </div>
+            <p>Share now!</p>
         </div>
-        
-
     </div>
     <script src="script.js"></script>
-
     <script src="Tiktok_Login.js"></script>
 </body>
 </html>

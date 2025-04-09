@@ -1,10 +1,11 @@
 body {
-    font-family: 'Times New Roman', Times, serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    background: radial-gradient(circle, #d43f4b 0%, #6d1d3b 60%);
+    background: #651EFF;
     color: #fff;
     margin: 0;
-    padding: 20px;
     min-height: 100vh;
     box-sizing: border-box;
 }
@@ -13,37 +14,71 @@ body {
     box-sizing: border-box;
 }
 
-
 .container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+    align-items: center;
 
-    padding: 20px 10px;
+    padding: 10px 10px;
     max-width: 600px;
-    margin: 0 auto;
+    margin: auto;
     width: 100%;
 }
 
+/* Profile part */
+.profile {
+    align-items: center;
+    justify-content: center;
+}
+
+.profile img {
+    height: auto;
+    max-width: 20%;
+}
+
+h1, h3, p {
+    color: white;
+}
+
 h1 {
-    font-size: 28px;
-    margin-bottom: 30px;
+    font-size: 1.3rem;
+    margin: 0 0 10px;
     font-weight: bold;
     line-height: 1.3;
 }
 
 .buttons-grid {
-   
-
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
+    gap: 7px;
     width: 100%;
+    height: 40%;
+    align-items: center;
+    justify-content: center;
 }
 
 .card {
+    position: relative;
+    
+    display: block;
+    height: auto;
+
+    padding: 5px;
+    border-radius: 15px;
+
+    box-shadow: 0 0 0 0;
+
+    /*Orig: 101, 30, 255*/
+    /*white 145 93 254*/
+    /* slightly 132 88 238 */
+
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.buttons-grid .card {
     /*background: white;
     border-radius: 12px;
     padding: 15px 10px;
@@ -54,7 +89,7 @@ h1 {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;*/
     
-    width: 100%;
+    /*width: 100%;
     padding: 15px 10px;
     background: #ececec;
     border-radius: 15px;
@@ -67,9 +102,16 @@ h1 {
     transition: background 0.2s;
     cursor: pointer;
     user-select: none;
-    -webkit-tap-highlight-color: transparent;
+    -webkit-tap-highlight-color: transparent;*/
+    
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 75%;
 }
 
+/*
 .card:hover {
     background: #ddd;
 }
@@ -79,6 +121,7 @@ h1 {
     box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
     transform: translate(0px, 3px);
 }
+*/
 
 .card:focus {
     outline: none !important;
@@ -89,275 +132,128 @@ h1 {
     pointer-events: none;
 }
 
-/*
-.card:hover {
-    transform: translateY(-3px);
-}
-*/
-
-/* Profile part */
-.profile {
-    display: flex;
-    /* flex-direction: column; */
-    align-items: center;
-    justify-content: center;
-}
-
-.profile img {
+.card img {
     width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    margin-right: 10px;
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
-
-.profile p {
-    color: #FFFFFF;
-}
-
-/* Icon container styles */
-.icon-container {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 5px;
-}
-
-.icon-container img {
-    height: 100%;
-    width: 100%;
-}
-
-.tiktok-icon img{
-    background: #212121;
-    border-radius: 50%;
-}
-
-.rednote-icon img{
-    border-radius: 50%;
-}
-
-.instagram-icon img {
-    border-radius: 50%;
-}
-
-.store-icon img {
-    padding: 0px 3px;
-}
-
-/*
-.tiktok-icon img{
-    background: #212121;
+.buttons-grid .card h3 {
+    position: absolute;
+    top: 50%;
+    left: 65%;
+    transform: translate(-50%, -55%);
     color: white;
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-}
-
-.rednote-icon img{
-    background: #ffffff;
-    color: white;
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-}
-
-.google-icon img {
-    height: 100%;
-    width: 100%;
-}
-
-.instagram-icon img {
-    height: 100%;
-    width: 100%;
-    border-radius: 50%;
-}
-
-.wifi-icon img{
-    height: 100%;
-    width: 100%;
-}
-*/
-
-p {
-    margin: 5px 0 0;
-    font-size: 12px;
-    color: #666;
-}
-
-h3 {
-    margin: 3px 0 10px;
-    font-size: 16px;
+    font-size: 1.15rem;
     font-weight: bold;
-    color: black;
+    text-align: center;
+    margin: 3px 0 10px;
 }
 
-h3[id=lang_desc] {
-    color: white;
+.footer {
+    margin-top: 5%;
 }
 
-/*
-.action-button {
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 6px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 90%;
-    margin-top: auto;
-}
-*/
-
-/*
-#lang_b {
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 6px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    width: 90%;
-    margin-top: auto;
-}
-*/
-
-#lang_b {
-    background-color: #ececec;
-    color: black; 
-    padding: 10px 20px; 
-    border: none; 
-    border-radius: 5px;
-    cursor: pointer;
+.footer .card {
+    width: 100px;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
-/*
-.action-button:hover {
-    background: #0056b3;
+.footer .card h3 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -75%);
+    font-size: 0.8rem;
+    
+    font-weight: bold;
+    text-align: center;
+    margin: 3px 0 10px;
 }
-*/
 
-/* Media query for different device sizes */
-@media (max-width: 480px) {
+.footer p {
+    margin: 10px 0 0;
+    font-size: 1rem
+}
+
+/* For slightly small screens */
+@media (max-width: 768px) {
     .buttons-grid {
-        grid-template-columns: repeat(1, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(2, 1fr);
     }
 
-    .card {
-        padding: 12px 8px;
+    .buttons-grid .card {
+        width: 100%;
+        padding: 0;
     }
 
-    .icon-container {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+    .buttons-grid .card h3  {
+        font-size: 0.9rem;
     }
 
-    .google-icon img {
-        width: 22px;
-        height: 22px;
+    .footer p {
+        font-size: 0.9rem;
     }
-
-    h3 {
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-
-    p {
-        font-size: 10px;
-    }
-
-    /*.action-button {
-        padding: 5px 15px;
-        font-size: 12px;
-    }*/
-}
-
-/* Extra small devices */
-@media (max-width: 320px) {
-    .container {
-        padding: 15px 5px;
-    }
-
-    h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
-    }
-
-    .buttons-grid {
-        grid-template-columns: repeat(1, 1fr);
-        gap: 8px;
-    }
-
-    .card {
-        padding: 10px 5px;
-    }
-
-    .icon-container {
-        width: 36px;
-        height: 36px;
-        font-size: 16px;
-    }
-
-    /*.action-button {
-        padding: 4px 12px;
-        font-size: 11px;
-    }*/
 }
 
 /* For landscape orientation on small screens */
 @media (max-height: 450px) and (orientation: landscape) {
-    .container {
-        padding: 10px 5px;
-    }
-
-    h1 {
-        font-size: 22px;
-        margin-bottom: 15px;
-    }
-
     .buttons-grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .buttons-grid .card {
+        width: 75%;
+        padding: 10px;
+    }
+
+    .buttons-grid .card h3  {
+        font-size: 0.9rem;
+    }
+
+    .footer p {
+        font-size: 0.9rem;
     }
 }
 
-/* For larger tablets */
-@media (min-width: 768px) {
+/* For smaller screens */
+@media (max-width: 480px) {
     .buttons-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
     }
 
-    .card {
-        padding: 20px 15px;
+    .buttons-grid .card {
+        width: 56%;
+        padding: 0px;
     }
 
-    .icon-container {
-        width: 60px;
-        height: 60px;
-        font-size: 28px;
+    .buttons-grid .card h3  {
+        font-size: 1.1rem;
     }
 
-    .google-icon img {
-        width: 36px;
-        height: 36px;
+    .footer p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 320px) {
+    .buttons-grid {
+        grid-template-columns: repeat(1, 1fr);
     }
 
-    h3 {
-        font-size: 18px;
+    .buttons-grid .card {
+        width: 50%;
+        padding: 0px;
     }
 
-    p {
-        font-size: 14px;
+    .buttons-grid .card h3  {
+        font-size: 0.75rem;
     }
 
-    /*.action-button {
-        padding: 8px 25px;
-        font-size: 16px;
-    }*/
+    .footer p {
+        font-size: 0.9rem;
+    }
 }
