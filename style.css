@@ -61,15 +61,9 @@ h1 {
     display: block;
     height: auto;
 
-    padding: 5px;
-    border-radius: 15px;
+    padding: 10px;
 
-    box-shadow: 0 0 0 0;
-
-    /*Orig: 101, 30, 255*/
-    /*white 145 93 254*/
-    /* slightly 132 88 238 */
-
+    background: transparent;
     justify-content: center;
     align-items: center;
 
@@ -79,31 +73,6 @@ h1 {
 }
 
 .buttons-grid .card {
-    /*background: white;
-    border-radius: 12px;
-    padding: 15px 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    color: black;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;*/
-    
-    /*width: 100%;
-    padding: 15px 10px;
-    background: #ececec;
-    border-radius: 15px;
-    box-shadow: 7px 7px 0px rgba(0, 0, 0, 0.43);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    transition: background 0.2s;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;*/
-    
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -111,25 +80,23 @@ h1 {
     width: 75%;
 }
 
-/*
-.card:hover {
-    background: #ddd;
-}
-
-.card:active {
-    background: #bbb;
-    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
-    transform: translate(0px, 3px);
-}
-*/
-
-.card:focus {
-    outline: none !important;
-}
-
-.card h3, .card img {
+.card h3, .card{
     user-select: none;
     pointer-events: none;
+}
+
+.card img:hover {
+    border-radius: 15%;
+    box-shadow: 0 0 5px 5px rgb(166, 132, 244);
+}
+
+.card img:active {
+    border-radius: 15%;
+    box-shadow: 0 0 5px 5px rgb(190, 171, 233);
+}
+
+.card img:focus {
+    outline: none !important;
 }
 
 .card img {
@@ -137,6 +104,18 @@ h1 {
     height: auto;
     display: block;
     object-fit: contain;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+    
+    /*border-radius: 10px;border-radius: 15%;
+    box-shadow: 0 0 5px 5px rgba(145, 93, 254);*/
+    /*box-shadow: -5px 5px rgba(101, 30, 255), 
+    5px -5px rgba(101, 30, 255),
+    -5px -5px 5px 3px rgba(145, 93, 254),
+    5px 5px 5px 3px rgba(132, 88, 238);*/
+    /*Orig: 101, 30, 255*/
+    /*white 145 93 254*/
+    /* slightly 132 88 238 */
 }
 
 .buttons-grid .card h3 {

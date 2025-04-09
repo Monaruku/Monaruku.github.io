@@ -74,12 +74,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const text_lang = {
-        /*'tiktok_en': "Share to",
-        'tiktok_cn': "分享至",
-
-        'google_en': "Review us on",
-        'google_cn': "给个好评",*/
-
         'rednote_en': "RedNote",
         'rednote_cn': "小红书",
 
@@ -92,64 +86,41 @@ document.addEventListener("DOMContentLoaded", function () {
         'others_en': "Share to others...",
         'others_cn': "分享至其它...",
 
-        /*'store_en': "Review us on",
-        'store_cn': "给个好评",
+        'others_xhs_en': "Share to others...",
+        'others_xhs_cn': "分享至其它...",
 
-        'others_fixed_en': "Share to others...",
-        'others_fixed_cn': "分享至其它...",*/
-
-        'lang_desc_en': "更改语言至...",
+        'lang_desc_en': "切换语言至...",
         'lang_desc_cn': "Change language to...",
 
-        'lang_b_en': "中文",
-        'lang_b_cn': "English",
+        'lang_en': "中文",
+        'lang_cn': "English",
+
+        'cta_en': 'Share now!',
+        'cta_cn': '马上分享吧!',
     }
 
     let isEnglish = true;
 
-    /*function load_lang (){
-        var currentLang = (isEnglish) ? "_en" : "_cn";
-        const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others'];
-        const elem_list = ['_p', '_h', '_b'];
-        media_list.forEach(media => {
-            elem_list.forEach(elem => {
-                //console.log(media + elem + currentLang);
-                document.getElementById(media + elem).textContent = text_lang[media + elem + currentLang];
-            });
-        });
-        document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
-        document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
-    };*/
-
     function load_lang () {
         var currentLang = (isEnglish) ? "_en" : "_cn";
         //const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
-        const media_list = ['rednote', 'fb', 'insta', 'others'];
+        const media_list = ['rednote', 'fb', 'insta', 'others', 'others_xhs'];
         media_list.forEach(media => {
             document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
         });
-        //document.getElementById('lang_desc').textContent = text_lang['lang_desc' + currentLang];
-        //document.getElementById('lang_b').textContent = text_lang['lang_b' + currentLang];
-    };
-
-
-
-    function load_image() {
-        document.querySelectorAll('.card').forEach(card => {
-            console.log("url('Image/" + card.id + ".png')");
-            card.style.backgroundImage = "url('Image/" + card.id + ".png')";
-        });
+        document.querySelector('.footer').querySelector('.prompt').textContent = text_lang['lang_desc' + currentLang];
+        document.getElementById('lang').querySelector('h3').textContent = text_lang['lang' + currentLang];
+        document.querySelector('.footer').querySelector('.cta').textContent = text_lang['cta' + currentLang];
     };
 
     window.onload = (event) => {
-        //load_image();
         load_lang();
     };
 
-    /*document.getElementById('lang_b').addEventListener('click', function (e) {
+    document.getElementById('lang').querySelector('img').addEventListener('click', function (e) {
         isEnglish = !isEnglish;
         load_lang();
-    });*/
+    });
     
     // Define the links
     /*
@@ -425,6 +396,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const platform = this.id;
             if (platform == 'others_fixed') {
                 shareAlternative();
+            } else if (platform == 'lang') {
+                // Do nothing - this is language switcher
             } else {
                 //Check if can use web share API level 2
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
