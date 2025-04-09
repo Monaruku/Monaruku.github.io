@@ -168,11 +168,11 @@ document.addEventListener("DOMContentLoaded", function () {
         '分享': 'Share'
     };*/
 
-    /*const links = {
+    const links = {
         'fb': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
         'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
         'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
-    };*/
+    };
 
     // Tiktok Authentication class
     const tiktokAuthentication = new Authentication({
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     //The actual share Image function, basically call download and send them to share
-    async function shareImages() {
+    async function shareImages(mode) {
       
         // Shuffle and pick imageAmt of random images
         const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
@@ -237,19 +237,38 @@ document.addEventListener("DOMContentLoaded", function () {
       const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
 
       // Check if multiple file sharing is supported
-      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-        try {
-          await navigator.share({
-            text: getLines(2),
-            files
-          });
-          console.log("Shared successfully!");
-        } catch (error) {
-          console.error("Sharing failed", error);
-        }
-      } else {
-        console.log("Your browser does not support sharing multiple files or image fetch failed.");
-      }
+      if (mode == 1)            //Normal Mode
+    {
+        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+            try {
+                await navigator.share({
+                text: getLines(2),
+                files
+                });
+                console.log("Shared successfully!");
+            } catch (error) {
+                console.error("Sharing failed", error);
+            }
+            } else {
+            console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            }
+    }
+    else if (mode == 2) {
+        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+            try {
+                await navigator.share({
+                text: getLinesXHS(2),
+                files
+                });
+                console.log("Shared successfully!");
+            } catch (error) {
+                console.error("Sharing failed", error);
+            }
+            } else {
+            console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            }
+    }            
+
     }
 
     /*------------- This section is currently under testing, so it looks real stupid -------------*/
@@ -306,7 +325,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
-    async function shareAlternative() {
+    async function shareAlternative(mode) {
         // Shuffle and pick imageAmt of random images
         const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
         var selectedUrls = shuffledUrls.slice(0, imageAmt);
@@ -333,7 +352,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
 
-      // Check if multiple file sharing is supported
+      if (mode == 0){
+              // Check if multiple file sharing is supported
       if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
         try {
           await navigator.share({
@@ -346,6 +366,23 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       } else {
         console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
+      }
+      else if (mode == 1) {
+              // Check if multiple file sharing is supported
+      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+        try {
+          await navigator.share({
+            text: getLinesXHS(2),
+            files
+          });
+          console.log("Shared successfully!");
+        } catch (error) {
+          console.error("Sharing failed", error);
+        }
+      } else {
+        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+      }
       }
     }
         
@@ -373,6 +410,28 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(text => {
             const linesCN = text.split('\n').filter(line => line.trim() !== '');
             lineCN = linesCN;
+        })
+    .catch(error => console.error("Error fetching the file:", error));
+
+    var lineXHS;
+    var lineCNXHS;
+
+    /** <--- Preload Content ---> **/
+    //Had to hardlink the text file now because of CORS security policy
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish_XHS.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            //const linesXHS = text.split('\n').filter(line => line.trim() !== '');
+            lineXHS = text;
+            console.log(lineXHS);
+        })
+    .catch(error => console.error("Error fetching the file:", error));
+
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese_XHS.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            //const linesCNXHS = text.split('\n').filter(line => line.trim() !== '');
+            lineCNXHS = text;
         })
     .catch(error => console.error("Error fetching the file:", error));
 
@@ -420,12 +479,56 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }
 
+    //Get Random Line from preloaded contents for XHS Special
+    function getLinesXHS(mode) {
+            const randomLines = [];
+            const usedIndexes = new Set();
+
+            while (randomLines.length < 1) {
+                if(isEnglish){
+                    const randomIndex = Math.floor(Math.random() * lineXHS.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(lineXHS);
+                    }
+                }
+                else {
+                     const randomIndex = Math.floor(Math.random() * lineCNXHS.length);
+                        if (!usedIndexes.has(randomIndex)) {
+                        usedIndexes.add(randomIndex);
+                        randomLines.push(lineCNXHS[randomIndex]);
+                    }
+                }
+
+            }
+
+            //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
+            //Basically now the two mode is just to prompt alert or not
+            if(mode == 1) {
+                const textTC = randomLines.toString();
+                console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
+                alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
+            }
+            else if(mode == 2) {
+                const textTC = randomLines.toString();
+                console.log(textTC);
+                window.focus();
+                navigator.clipboard.writeText(textTC);
+                return textTC;
+            }
+
+    }
+
     document.querySelectorAll('.card').forEach(card => {
         card.addEventListener('click', function (e) {
             const platform = this.id;
-            if (platform == 'others_fixed') {
+                        /*if (platform == 'others_fixed') {
                 shareAlternative();
-            } else {
+            } 
+
+            else {
                 //Check if can use web share API level 2
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                     //Copy Share Text
@@ -437,12 +540,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return false;
                 }
             }
-        });
-    });
-
-    /*document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', function (e) {
-            const platform = this.id;
+                */
             if(platform == 'rednote'){
                 
                 //Check if the device have Rednote installed or not before redirecting
@@ -476,8 +574,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Check if can use web share API level 2
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
-                getLines();
-                shareImages();
+                //var line = getLines(2);
+                shareImages(1);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
@@ -488,18 +586,37 @@ document.addEventListener("DOMContentLoaded", function () {
                 redirect();
             }
             else if (platform == 'others_fixed') {
-                shareAlternative();
+                shareAlternative(0);
+            }
+            else if (platform == 'others_xhs') {
+                //Check if can use web share API level 2
+                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                    //Copy Share Text
+                    //var line = getLinesXHS(2);
+                    shareImages(2);
+                    return true;
+                    } else {
+                        alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                        return false;
+                    }
             }
             else if (links[platform]) {
                 window.open(links[platform], '_blank');
             }
+        });
+    });
+
+    /*document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', function (e) {
+            const platform = this.id;
             else {
                 const actionType = this.textContent;
                 alert(`You are about to ${actionType.toLowerCase()} on ${platform}!`);
                 // Here you would implement the functionality for other platforms
             }
         });
-    });*/
+    });
+    */
 
     /*
     // Add active state for touch devices
