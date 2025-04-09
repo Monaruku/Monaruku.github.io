@@ -190,9 +190,9 @@ document.addEventListener("DOMContentLoaded", function () {
     //Download image from url thru CORS proxy
     async function fetchImageAsFile(url, fileName) {
       try {
-        //const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
-        //const response = await fetch(proxyUrl + encodeURIComponent(url));
-        const response = await fetch(encodeURIComponent(url));
+        const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        //const response = await fetch(encodeURIComponent(url));
         const blob = await response.blob();
         return new File([blob], fileName, { type: blob.type });
       } catch (error) {
