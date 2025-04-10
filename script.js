@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };*/
 
     const links = {
-        'fb': 'hhttps://www.facebook.com/SQLEstream/',
+        'fb': 'https://www.facebook.com/SQLEstream/',
         'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
         'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
     };
