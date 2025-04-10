@@ -305,7 +305,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
-            const linesCNX= text.split('@').map(part => part.trim());
+            const linesCN= text.split('@').map(part => part.trim());
             lineCN = linesCN;
             console.log(lineCN);
 
