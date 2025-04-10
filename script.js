@@ -176,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 await navigator.share({
                 text: getLinesXHS(2),
-                savedImageFiles
+                files
                 });
                 console.log("Shared successfully!");
             } catch (error) {
