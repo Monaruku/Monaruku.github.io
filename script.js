@@ -330,10 +330,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Split the text using '@' as the delimiter
         const lineCNXHS1 = text.split('@').map(part => part.trim());
         lineCNXHS = lineCNXHS1;
-        // Example: log each part to console
-        lineCNXHS.forEach((part, index) => {
-            console.log(`Part ${index + 1}:\n${part}\n`);
-        });
+        console.log(lineCNXHS);
     })
     .catch(error => console.error("Error fetching the file:", error));
 
