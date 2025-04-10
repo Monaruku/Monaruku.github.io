@@ -1,1 +1,88 @@
-Xiao Hong Shu Specific
+⚠️你以为“听过E-Invoice讲座”就安全了？
+📉现实是：规则每月都在变，模糊理解 = 高风险！
+	
+👨‍⚖️【法律风险】
+错开E-Invoice时机，老板身份可能从“董事长”变“被告人”，
+从企业论坛 → 法院答辩席，一念之间！
+	
+💸【会计奖金变“空气”】
+年尾奖金原本想“环游世界”，结果变成“环游公司”（找工作）😩
+电子发票出错 = 年终奖泡汤！
+	
+🌀【现金流=现金溜】
+一张E-Invoice开错，IRB追税单一封接一封，
+公司账户“出血”，收入全白做！
+	
+📌上网问人、问朋友、问AI、问XHS……结果答案全都不一样？
+这次，别再靠“猜”的！直接听专家讲，才是真正的合规保障！
+	
+📣【全国电子发票巡回研讨会】正式启动！
+	
+🎓4位重磅讲师 联手出击：
+🔹 Dr. Choong Kwai Fatt & YS Lt. Kol (PA) Song Liew —— 顶尖税务权威
+🔹 Mr. Desmond Law & Ms. Meldy Ong —— E-Invoice 实施专家
+	
+🔍 重点内容一次学懂：
+✅ 2025 最新电子发票政策变化
+✅ LHDN 如何用 AI & 大数据追税？
+✅ Self-Billed、订金、退票、退款正确做法
+✅ Director Fee、员工福利、报销是否需要 E-Invoice？
+✅ 淘宝、Shopee没发票怎么办？
+✅ 跨国交易如何处理？现金交易怎么办？
+✅ Pre-Production Sandbox 你测过了吗？
+	
+🎤 现场真实案例 + Q&A，不用再到处问！
+	
+🎁 SQL HQ 补贴赞助，学习门槛低到爆：
+💥 RM50/人，3人同行仅 RM100！
+特别优惠 SQL Promo code : SQLBEST
+🚀 席位有限，报名从速！
+🗓️ 讲座时间 & 地点如下：
+📌 Ipoh 12/04
+📌 Penang 13/04
+📌 Johor 17/04
+📌 KL 19/04
+📌 Melaka 08/05
+📌 Miri 16/05
+📌 Sabah KK 17/05
+📌 Kuching 18/05
+📩 想报名或了解更多，欢迎留言或私信我！
+
+
+#马来西亚 #SQL #SQLAccounting #SQLAcc #LHDN #电子发票 #LHDN报税 #电子发票教学 #MyInvois #TIN #IRB @
+电子发票新规不断更新，模糊理解 = 高风险
+错误操作可能带来税务审查和罚款，影响的不只是发票，而是整个业务！
+-法律风险加剧
+操作不当，老板身份可能从 董事长变成被告人，出席的不是商业论坛，而是 法院答辩席！
+-会计员奖金缩水
+错过 E-Invoice 期限，年终奖金可能从 环游世界变成环游公司（找工作）！
+-现金流危机
+现金流可能变成 现金溜，IRB 追税单一张不少，营收却一分不剩！
+电子发票全国巡回研讨会
+特邀 四位重磅讲师 深入解析：
+🔹 Dr. Choong Kwai Fatt & YS Lt. Kol Bersekutu (PA) Song Liew —— 顶尖税务权威
+🔹 Mr. Desmond Law & Ms. Meldy Ong —— 电子发票领域与实施专家
+🎯 研讨会核心重点
+✅ 2025 最新 E-Invoice #政策更新
+✅ LHDN 如何利用 AI & 大数据追税？
+✅ e-Credit Note & e-Refund Note 退票、退款如何合法操作？
+✅ 薪资、董事费、员工福利 & 报销，哪些需要 e-Invoice？
+✅ 电商、网红带货、打赏金 & 礼物，如何报税？
+✅ 房租收入 & 利息扣税，自行发票 (Self-Billed) 适用吗？
+✅ Pre-Production Sandbox 2秒验证测试，企业符合要求吗？
+✅ 现场 Q&A 互动，真实案例解析！
+
+🔥 SQL HQ 补贴赞助，最低成本学习，确保企业合规！
+💥 早鸟价 RM 50 / 人，3 人仅 RM 100！💥
+特别优惠SQL Promo code : SQLBEST
+📍 全国巡回讲座时间 & 地点
+📌 Penang 13/04 (FULL)
+📌 Johor 17/04
+📌 KL 19/04 (FULL)
+📌 Melaka 08/05
+📌 Miri 16/05
+📌 Sabah KK 17/05
+📌 Kuching 18/05
+🚀 席位有限，手慢无！赶快报名！
+📩 可留言或私信了解更多详情！
+#马来西亚 #SQL #SQLAccounting #SQLAcc #LHDN #电子发票 #LHDN报税 #电子发票教学 #MyInvois #TIN #IRB

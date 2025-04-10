@@ -324,13 +324,19 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     .catch(error => console.error("Error fetching the file:", error));
 
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese_XHS.txt") // Replace with actual file path
-        .then(response => response.text())
-        .then(text => {
-            //const linesCNXHS = text.split('\n').filter(line => line.trim() !== '');
-            lineCNXHS = text;
-        })
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese_XHS.txt")
+    .then(response => response.text())
+    .then(text => {
+        // Split the text using '@' as the delimiter
+        const lineCNXHS1 = text.split('@').map(part => part.trim());
+        lineCNXHS = lineCNXHS1;
+        // Example: log each part to console
+        lineCNXHS.forEach((part, index) => {
+            console.log(`Part ${index + 1}:\n${part}\n`);
+        });
+    })
     .catch(error => console.error("Error fetching the file:", error));
+
 
     /* <-------------------> */
 
