@@ -105,6 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var imageUrls;
     const imageAmt = 3;
+    var savedImageFiles = [];
 
     //Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
@@ -113,26 +114,46 @@ document.addEventListener("DOMContentLoaded", function () {
             const line = text.split('\n').filter(line => line.trim() !== '');
             imageUrls = line;
             console.log(imageUrls);
+            loadRandomImages()
         })
         .catch(error => console.error("Error fetching the file:", error));
+
+    async function loadRandomImages() {
+      // Shuffle and select
+      const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+      const selectedUrls = shuffledUrls.slice(0, imageAmt);
+      console.log("Selected URLs:", selectedUrls);
+
+      // Fetch and convert
+      const filePromises = selectedUrls.map((url, index) =>
+          fetchImageAsFile(url, `image${index + 1}.jpg`)
+      );
+      const files = (await Promise.all(filePromises)).filter(Boolean);
+
+      // Save to array
+      savedImageFiles = files;
+      console.log(savedImageFiles);
+    }
+
+
 
 
     //The actual share Image function, basically call download and send them to share
     async function shareImages(mode) {
       
-        // Shuffle and pick imageAmt of random images
-        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
-        const selectedUrls = shuffledUrls.slice(0, imageAmt);
-        console.log(selectedUrls);
+    //     // Shuffle and pick imageAmt of random images
+    //     const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+    //     const selectedUrls = shuffledUrls.slice(0, imageAmt);
+    //     console.log(selectedUrls);
 
 
-      // Fetch images and convert to File objects
-      const filePromises = selectedUrls.map((url, index) =>
-        fetchImageAsFile(url, `image${index + 1}.jpg`)
-      );
+    //   // Fetch images and convert to File objects
+    //   const filePromises = selectedUrls.map((url, index) =>
+    //     fetchImageAsFile(url, `image${index + 1}.jpg`)
+    //   );
 
-      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
-
+      const files = savedImageFiles; // Remove null values if fetch fails
+      //console.log(savedImageFiles);
       // Check if multiple file sharing is supported
       if (mode == 1)            //Normal Mode
     {
@@ -155,7 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
             try {
                 await navigator.share({
                 text: getLinesXHS(2),
-                files
+                savedImageFiles
                 });
                 console.log("Shared successfully!");
             } catch (error) {
