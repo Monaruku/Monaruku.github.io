@@ -12,8 +12,8 @@ document.addEventListener("DOMContentLoaded", function () {
         'others_en': "Share to others...",
         'others_cn': "分享至其它...",
 
-        'others_xhs_en': "Share to others...",
-        'others_xhs_cn': "分享至其它...",
+        'others_xhs_en': "Share to RedNote",
+        'others_xhs_cn': "分享至小红书",
 
         'lang_desc_en': "切换语言至...",
         'lang_desc_cn': "Change language to...",
