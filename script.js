@@ -346,7 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             while (randomLines.length < 1) {
                 if(isEnglish){
-                    const randomIndex = Math.floor(Math.random() * line.length);
+                    const randomIndex = Math.floor(Math.random() * lineCN.length);
                         if (!usedIndexes.has(randomIndex)) {
                         usedIndexes.add(randomIndex);
                         randomLines.push(lineCN[randomIndex]);      //Only received chinese text
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             while (randomLines.length < 1) {
                 if(isEnglish){
-                    const randomIndex = Math.floor(Math.random() * lineXHS.length);
+                    const randomIndex = Math.floor(Math.random() * lineCNXHS.length);
                         if (!usedIndexes.has(randomIndex)) {
                         usedIndexes.add(randomIndex);
                         randomLines.push(lineCNXHS[randomIndex]);      //Only received chinese text
