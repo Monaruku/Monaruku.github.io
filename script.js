@@ -442,10 +442,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 //Check if the device have Rednote installed or not before redirecting
                 var fallbackToStore = function() {
-                    window.open('https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605', '_blank');
+                    window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                 };
                 var openApp = function() {
-                    window.open('xhsdiscover://user/60ba509f0000000001008605', '_blank');
+                    window.location = 'xhsdiscover://user/60ba509f0000000001008605';
                 };
 
                 openApp();
