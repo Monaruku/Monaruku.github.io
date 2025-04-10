@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };*/
 
     const links = {
-        'fb': 'https://www.facebook.com/sharer/sharer.php?u=https://www.facebook.com/SQLEstream/',
+        'fb': 'hhttps://www.facebook.com/SQLEstream/',
         'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
         'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
     };
@@ -442,29 +442,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 
                 //Check if the device have Rednote installed or not before redirecting
                 var fallbackToStore = function() {
-                    window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
+                    window.open('https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605', '_blank');
                 };
                 var openApp = function() {
-                    window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                    window.open('xhsdiscover://user/60ba509f0000000001008605', '_blank');
                 };
 
                 openApp();
                 setTimeout(fallbackToStore, 700);
                 
                 //shareToRedNote();
-            }
-            //lazy way of doing this
-            else if(platform == 'google') {
-                //Had to hardcode https link to read text file, or else chrome's security policy will block it
-                getLines(1)
-                window.open(links['google'], '_blank');
-            }
-            else if (platform == 'tiktok') {
-                if (tiktokAuthentication.checkTikTokToken()) {
-                    window.location.href = "tiktok_post_vid.html";
-                } else {
-                    window.location = tiktokAuthenticationUrl;
-                }
             }
             //how many else if do I need
             else if(platform == 'others') {
@@ -478,9 +465,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
                     return false;
                 }
-            }
-            else if (platform == 'store') {
-                redirect();
             }
             else if (platform == 'others_fixed') {
                 shareAlternative(0);
