@@ -289,40 +289,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     //Preloaded content
-    var line;
+    //var line;
     var lineCN;
 
     /** <--- Preload Content ---> **/
     //Had to hardlink the text file now because of CORS security policy
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
-        .then(response => response.text())
-        .then(text => {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            line = lines;
-        })
-    .catch(error => console.error("Error fetching the file:", error));
+    //fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish.txt") // Replace with actual file path
+    //    .then(response => response.text())
+    //    .then(text => {
+    //        const lines = text.split('\n').filter(line => line.trim() !== '');
+    //        line = lines;
+    //    })
+    //.catch(error => console.error("Error fetching the file:", error));
 
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
-            const linesCN = text.split('\n').filter(line => line.trim() !== '');
+            const linesCNX= text.split('@').map(part => part.trim());
             lineCN = linesCN;
+            console.log(lineCN);
+
+
         })
     .catch(error => console.error("Error fetching the file:", error));
 
-    var lineXHS;
+    //var lineXHS;
     var lineCNXHS;
 
     /** <--- Preload Content ---> **/
     //Had to hardlink the text file now because of CORS security policy
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish_XHS.txt") // Replace with actual file path
-        .then(response => response.text())
-        .then(text => {
+    //fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineEnglish_XHS.txt") // Replace with actual file path
+    //    .then(response => response.text())
+    //    .then(text => {
             //const linesXHS = text.split('\n').filter(line => line.trim() !== '');
-            lineXHS = text;
-            console.log(lineXHS);
-        })
-    .catch(error => console.error("Error fetching the file:", error));
+    //        lineXHS = text;
+    //    })
+    //.catch(error => console.error("Error fetching the file:", error));
 
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/LineChinese_XHS.txt")
     .then(response => response.text())
@@ -347,7 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const randomIndex = Math.floor(Math.random() * line.length);
                         if (!usedIndexes.has(randomIndex)) {
                         usedIndexes.add(randomIndex);
-                        randomLines.push(line[randomIndex]);
+                        randomLines.push(lineCN[randomIndex]);      //Only received chinese text
                     }
                 }
                 else {
@@ -389,7 +391,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     const randomIndex = Math.floor(Math.random() * lineXHS.length);
                         if (!usedIndexes.has(randomIndex)) {
                         usedIndexes.add(randomIndex);
-                        randomLines.push(lineXHS);
+                        randomLines.push(lineCNXHS[randomIndex]);      //Only received chinese text
                     }
                 }
                 else {
