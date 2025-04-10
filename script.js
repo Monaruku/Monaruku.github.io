@@ -89,6 +89,17 @@ document.addEventListener("DOMContentLoaded", function () {
     // Get TikTok login URL
     const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
+    //Loading Screen Stuff-------------------------------------------
+    function hideLoadingScreen() {
+        const loader = document.getElementById("loading-screen");
+        const main = document.getElementById("main-content");
+      
+        loader.style.display = "none";
+        main.style.display = "block";
+    }
+    //----------------------------------------------------------------
+
+
     //Download image from url thru CORS proxy
     async function fetchImageAsFile(url, fileName) {
       try {
@@ -132,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Save to array
       savedImageFiles = files;
+      hideLoadingScreen();
       console.log(savedImageFiles);
     }
 
