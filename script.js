@@ -497,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 };
 
                 openApp();
-                setTimeout(fallbackToStore, 700);
+                setTimeout(fallbackToStore, 1500);
                 
                 //shareToRedNote();
             }
