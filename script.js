@@ -4,7 +4,6 @@ document.addEventListener("DOMContentLoaded", function () {
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
         const othersDiv = document.getElementById('others');
     
-        // Option 1: Hide the element
         othersDiv.style.display = "none";
     }
 
