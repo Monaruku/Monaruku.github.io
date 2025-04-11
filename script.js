@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(text => {
             const line = text.split('\n').filter(line => line.trim() !== '');
             imageUrls = line;
-            console.log(imageUrls);
+            //console.log(imageUrls);
             loadRandomImages()
         })
         .catch(error => console.error("Error fetching the file:", error));
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Shuffle and select
       const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
       const selectedUrls = shuffledUrls.slice(0, imageAmt);
-      console.log("Selected URLs:", selectedUrls);
+      //console.log("Selected URLs:", selectedUrls);
 
       // Fetch and convert
       const filePromises = selectedUrls.map((url, index) =>
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
       // Save to array
       savedImageFiles = files;
       hideLoadingScreen();
-      console.log(savedImageFiles);
+      //console.log(savedImageFiles);
     }
 
 
@@ -185,12 +185,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 text: getLines(2),
                 files
                 });
-                console.log("Shared successfully!");
+                //console.log("Shared successfully!");
             } catch (error) {
-                console.error("Sharing failed", error);
+                //console.error("Sharing failed", error);
             }
             } else {
-            console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            //console.log("Your browser does not support sharing multiple files or image fetch failed.");
             }
     }
     else if (mode == 2) {
@@ -200,12 +200,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 text: getLinesXHS(2),
                 files
                 });
-                console.log("Shared successfully!");
+                //console.log("Shared successfully!");
             } catch (error) {
-                console.error("Sharing failed", error);
+                //console.error("Sharing failed", error);
             }
             } else {
-            console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            //console.log("Your browser does not support sharing multiple files or image fetch failed.");
             }
     }            
 
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
             }
 
-            console.log(imageUrlsEN); // Output filtered URLs
+            //console.log(imageUrlsEN); // Output filtered URLs
         })
         .catch(error => console.error("Error fetching the file:", error));
 
@@ -261,7 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
             }
 
-            console.log(imageUrlsCN); // Output filtered URLs
+            //console.log(imageUrlsCN); // Output filtered URLs
         })
         .catch(error => console.error("Error fetching the file:", error));
 
@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         selectedUrls = selectedUrls.sort(() => 0.5 - Math.random());
-        console.log(selectedUrls);
+        //console.log(selectedUrls);
 
 
       // Fetch images and convert to File objects
@@ -300,12 +300,12 @@ document.addEventListener("DOMContentLoaded", function () {
             text: getLines(2),
             files
           });
-          console.log("Shared successfully!");
+          //console.log("Shared successfully!");
         } catch (error) {
-          console.error("Sharing failed", error);
+          //console.error("Sharing failed", error);
         }
       } else {
-        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+        //console.log("Your browser does not support sharing multiple files or image fetch failed.");
       }
       }
       else if (mode == 1) {
@@ -316,12 +316,12 @@ document.addEventListener("DOMContentLoaded", function () {
             text: getLinesXHS(2),
             files
           });
-          console.log("Shared successfully!");
+          //console.log("Shared successfully!");
         } catch (error) {
-          console.error("Sharing failed", error);
+          //console.error("Sharing failed", error);
         }
       } else {
-        console.log("Your browser does not support sharing multiple files or image fetch failed.");
+        //console.log("Your browser does not support sharing multiple files or image fetch failed.");
       }
       }
     }
@@ -350,7 +350,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(text => {
             const linesCN= text.split('@').map(part => part.trim());
             lineCN = linesCN;
-            console.log(lineCN);
+            //console.log(lineCN);
 
 
         })
@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // Split the text using '@' as the delimiter
         const lineCNXHS1 = text.split('@').map(part => part.trim());
         lineCNXHS = lineCNXHS1;
-        console.log(lineCNXHS);
+        //console.log(lineCNXHS);
     })
     .catch(error => console.error("Error fetching the file:", error));
 
@@ -409,14 +409,14 @@ document.addEventListener("DOMContentLoaded", function () {
             //Basically now the two mode is just to prompt alert or not
             if(mode == 1) {
                 const textTC = randomLines.toString();
-                console.log(textTC);
+                //console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
                 alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
             }
             else if(mode == 2) {
                 const textTC = randomLines.toString();
-                console.log(textTC);
+                //console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
                 return textTC;
@@ -451,14 +451,14 @@ document.addEventListener("DOMContentLoaded", function () {
             //Basically now the two mode is just to prompt alert or not
             if(mode == 1) {
                 const textTC = randomLines.toString();
-                console.log(textTC);
+                //console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
                 alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
             }
             else if(mode == 2) {
                 const textTC = randomLines.toString();
-                console.log(textTC);
+                //console.log(textTC);
                 window.focus();
                 navigator.clipboard.writeText(textTC);
                 return textTC;
