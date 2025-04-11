@@ -1,13 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
 
-    //Due to a bug, Share to Others button will temporarily be disable on the iOS side
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const othersDiv = document.getElementById('others');
-    
-        othersDiv.style.display = "none";
-    }
-
-
     const text_lang = {
         'rednote_en': "RedNote",
         'rednote_cn': "小红书",
@@ -18,8 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
         'insta_en': "Instagram",
         'insta_cn': "Instagram",
 
-        'others_en': "Share to others...",
-        'others_cn': "分享至其它...",
+        'others_en': "Share to your friends",
+        'others_cn': "分享给你的朋友",
 
         'others_xhs_en': "Share to RedNote",
         'others_xhs_cn': "分享至小红书",
@@ -33,6 +25,17 @@ document.addEventListener("DOMContentLoaded", function () {
         'cta_en': 'Share now!',
         'cta_cn': '马上分享吧!',
     }
+
+    let isIOS = false;
+    //Due to a bug, Share to Others button will temporarily be disable on the iOS side
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const othersDiv = document.getElementById('others_xhs');
+    
+        othersDiv.style.display = "none";
+        isIOS = true;
+    }
+
+
 
     let isEnglish = true;
 
@@ -174,8 +177,6 @@ document.addEventListener("DOMContentLoaded", function () {
     //   );
 
       const files = savedImageFiles; // Assign the images to be shared
-      //console.log(savedImageFiles);
-      // Check if multiple file sharing is supported
       if (mode == 1)            //Normal Mode
     {
         if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
@@ -506,7 +507,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
                 //var line = getLines(2);
-                shareImages(1);
+                if(isIOS){
+                    shareImages(2);
+                }
+                else {
+                    shareImages(1);
+                }
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
