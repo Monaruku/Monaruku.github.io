@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+    //Due to a bug, Share to Others button will temporarily be disable on the iOS side
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        const othersDiv = document.getElementById('others');
+    
+        // Option 1: Hide the element
+        othersDiv.style.display = "none";
+    }
+
+
     const text_lang = {
         'rednote_en': "RedNote",
         'rednote_cn': "小红书",
@@ -150,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    //The actual share Image function, basically call download and send them to share
+    //The actual share Image function, basically retrieve saved images and send them to share
     async function shareImages(mode) {
       
     //     // Shuffle and pick imageAmt of random images
@@ -164,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //     fetchImageAsFile(url, `image${index + 1}.jpg`)
     //   );
 
-      const files = savedImageFiles; // Remove null values if fetch fails
+      const files = savedImageFiles; // Assign the images to be shared
       //console.log(savedImageFiles);
       // Check if multiple file sharing is supported
       if (mode == 1)            //Normal Mode
