@@ -204,11 +204,29 @@ document.addEventListener("DOMContentLoaded", function () {
         // } else {
         // console.log("Your browser does not support sharing multiple files or image fetch failed.");
         // }
-        //const dummyText = new File([""], "empty.txt", { type: "text/plain" });
+
+        const dummyJpgDataUrl =
+            'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxMTERUTEhMWFhUXFxgYFxcYGBgYGBcXGBgXFxgYGBgYHSggGBolHRgXITEhJSkrLi4uFx8zODMtNygtLisBCgoKDg0OGhAQGy0lICUvLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAJABWgMBIgACEQEDEQH/xAAbAAABBQEBAAAAAAAAAAAAAAAFAQIDBAYAB//EAD0QAAIBAgMFBQYFAwMFAAAAAAABAgMRBBIhMQVBUWFxgZGh8BMikQcjQlJicoKx0eHwM2LhFjNTc5Ik/8QAGgEAAgMBAQAAAAAAAAAAAAAAAAQCAwUBBv/EACIRAQEAAgEEAgMAAAAAAAAAAAABAhEDITESQVFhEzKhcf/aAAwDAQACEAMQAAAB4ltRFOu7XGLXHaHzAWxBaAa2bUkGHnEfqNPAm6AW8YOYPvN+HezRBSfWmXgACQpbnJj9TlnxWc9qAiVZKucYiPMlnLHYU3mgWEsS05klgz7kQ4iCDKCyxDNi/PSYhtqS92REnAhHnDdtNv0IMinV7hMKYW9EsGyglLqAlPGdlQ1WxRJrKM2tHIt1Si0KQUJYIQ3K7ZAtGmPGWNv8kIG4eI5XiGZJ6m9hvKeZro0WaQ7lFRUXZBVuQ4v/2Q==';
+
+        function dataUrlToFile(dataUrl, filename) {
+        const arr = dataUrl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        const n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        for (let i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
+        return new File([u8arr], filename, { type: mime });
+        }
+
+        // Usage
+        const dummy = dataUrlToFile(dummyJpgDataUrl, 'dummy.jpg');
+
+        //const dummy = new File([""], "empty.txt", { type: "text/plain" });
         try {
             await navigator.share({
             text: getLines(2),
-            files : [savedImageFilesWA, savedImageFilesWA]
+            files : [savedImageFilesWA, dummy]
+            //url: "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg"
             });
             //console.log("Shared successfully!");
         } catch (error) {
