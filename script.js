@@ -250,7 +250,19 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
             //console.log("Your browser does not support sharing multiple files or image fetch failed.");
             }
-    }            
+    }
+    else if (mode == 3) {
+        try {
+            await navigator.share({
+            text: getLines(2),
+            files : [savedImageFilesWA, savedImageFilesWA]
+            //url: "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg"
+            });
+            //console.log("Shared successfully!");
+        } catch (error) {
+            console.error("Sharing failed", error);
+        }
+    }        
 
     }
 
@@ -553,7 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Copy Share Text
                 //var line = getLines(2);
                 if(isIOS){
-                    shareImages(1);
+                    shareImages(3);
                 }
                 else {
                     shareImages(1);
