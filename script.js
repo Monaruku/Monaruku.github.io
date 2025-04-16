@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             await navigator.share({
             text: getLines(2),
-            files : [savedImageFilesWA, savedImageFilesWA]
+            files : [savedImageFilesWA]
             //url: "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg"
             });
             //console.log("Shared successfully!");
