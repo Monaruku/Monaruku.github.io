@@ -204,11 +204,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // } else {
         // console.log("Your browser does not support sharing multiple files or image fetch failed.");
         // }
-        const dummyText = new File([""], "readme.txt", { type: "text/plain" });
+        //const dummyText = new File([""], "empty.txt", { type: "text/plain" });
         try {
             await navigator.share({
             text: getLines(2),
-            files : [savedImageFilesWA, dummyText]
+            files : [savedImageFilesWA, savedImageFilesWA]
             });
             //console.log("Shared successfully!");
         } catch (error) {
