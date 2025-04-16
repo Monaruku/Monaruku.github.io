@@ -156,8 +156,27 @@ document.addEventListener("DOMContentLoaded", function () {
       // Save to array
       savedImageFiles = files;
       hideLoadingScreen();
-      //console.log(savedImageFiles);
+      console.log(savedImageFiles);
     }
+
+    var savedImageFilesWA;
+
+    async function loadRandomImagesWA() {
+        // Shuffle and select
+        const selectedUrls = "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg";
+        console.log("Selected URLs:", selectedUrls);
+  
+        // Fetch and convert
+        const files = await fetchImageAsFile(selectedUrls, "image1.jpg");
+        //const files = (await Promise.all(filePromises)).filter(Boolean);
+  
+        // Save to array
+        savedImageFilesWA = files;
+        //hideLoadingScreen();
+        console.log(savedImageFilesWA);
+    }
+
+    loadRandomImagesWA();
 
 
 
@@ -176,24 +195,30 @@ document.addEventListener("DOMContentLoaded", function () {
     //     fetchImageAsFile(url, `image${index + 1}.jpg`)
     //   );
 
-      const files = savedImageFiles; // Assign the images to be shared
+
       if (mode == 1)            //Normal Mode
     {
-        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-            try {
-                await navigator.share({
-                text: getLines(2),
-                files
-                });
-                //console.log("Shared successfully!");
-            } catch (error) {
-                //console.error("Sharing failed", error);
-            }
-            } else {
-            //console.log("Your browser does not support sharing multiple files or image fetch failed.");
-            }
+        // const files; // Assign the images to be shared
+        // if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+
+        // } else {
+        // console.log("Your browser does not support sharing multiple files or image fetch failed.");
+        // }
+
+        try {
+            await navigator.share({
+            text: getLines(2),
+            files : [savedImageFilesWA],
+            });
+            //console.log("Shared successfully!");
+        } catch (error) {
+            console.error("Sharing failed", error);
+        }
+
+
     }
     else if (mode == 2) {
+        const files = savedImageFiles; // Assign the images to be shared
         if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
             try {
                 await navigator.share({
@@ -210,6 +235,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }            
 
     }
+
+
 
     /*------------- This section is currently under testing, so it looks real stupid -------------*/
     const flag = "#English"; // Change this to the desired flag
@@ -265,66 +292,66 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => console.error("Error fetching the file:", error));
 
-    async function shareAlternative(mode) {
-        // Shuffle and pick imageAmt of random images
-        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
-        var selectedUrls = shuffledUrls.slice(0, imageAmt);
-        if(isEnglish){
-            let number = Math.min(selectedUrls.length, imageUrlsEN.length);
-            for (let i = 0; i < number; i++) {
-                selectedUrls[i] = imageUrlsEN[i];
-            }
-        }
-        else {
-            let number = Math.min(selectedUrls.length, imageUrlsCN.length);
-            for (let i = 0; i < number; i++) {
-                selectedUrls[i] = imageUrlsCN[i];
-            }
-        }
-        selectedUrls = selectedUrls.sort(() => 0.5 - Math.random());
-        //console.log(selectedUrls);
+    // async function shareAlternative(mode) {
+    //     // Shuffle and pick imageAmt of random images
+    //     const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
+    //     var selectedUrls = shuffledUrls.slice(0, imageAmt);
+    //     if(isEnglish){
+    //         let number = Math.min(selectedUrls.length, imageUrlsEN.length);
+    //         for (let i = 0; i < number; i++) {
+    //             selectedUrls[i] = imageUrlsEN[i];
+    //         }
+    //     }
+    //     else {
+    //         let number = Math.min(selectedUrls.length, imageUrlsCN.length);
+    //         for (let i = 0; i < number; i++) {
+    //             selectedUrls[i] = imageUrlsCN[i];
+    //         }
+    //     }
+    //     selectedUrls = selectedUrls.sort(() => 0.5 - Math.random());
+    //     //console.log(selectedUrls);
 
 
-      // Fetch images and convert to File objects
-      const filePromises = selectedUrls.map((url, index) =>
-        fetchImageAsFile(url, `image${index + 1}.jpg`)
-      );
+    //   // Fetch images and convert to File objects
+    //   const filePromises = selectedUrls.map((url, index) =>
+    //     fetchImageAsFile(url, `image${index + 1}.jpg`)
+    //   );
 
-      const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
+    //   const files = (await Promise.all(filePromises)).filter(Boolean); // Remove null values if fetch fails
 
-      if (mode == 0){
-              // Check if multiple file sharing is supported
-      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-        try {
-          await navigator.share({
-            text: getLines(2),
-            files
-          });
-          //console.log("Shared successfully!");
-        } catch (error) {
-          //console.error("Sharing failed", error);
-        }
-      } else {
-        //console.log("Your browser does not support sharing multiple files or image fetch failed.");
-      }
-      }
-      else if (mode == 1) {
-              // Check if multiple file sharing is supported
-      if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-        try {
-          await navigator.share({
-            text: getLinesXHS(2),
-            files
-          });
-          //console.log("Shared successfully!");
-        } catch (error) {
-          //console.error("Sharing failed", error);
-        }
-      } else {
-        //console.log("Your browser does not support sharing multiple files or image fetch failed.");
-      }
-      }
-    }
+    //   if (mode == 0){
+    //           // Check if multiple file sharing is supported
+    //   if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+    //     try {
+    //       await navigator.share({
+    //         text: getLines(2),
+    //         files
+    //       });
+    //       //console.log("Shared successfully!");
+    //     } catch (error) {
+    //       //console.error("Sharing failed", error);
+    //     }
+    //   } else {
+    //     //console.log("Your browser does not support sharing multiple files or image fetch failed.");
+    //   }
+    //   }
+    //   else if (mode == 1) {
+    //           // Check if multiple file sharing is supported
+    //   if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+    //     try {
+    //       await navigator.share({
+    //         text: getLinesXHS(2),
+    //         files
+    //       });
+    //       //console.log("Shared successfully!");
+    //     } catch (error) {
+    //       //console.error("Sharing failed", error);
+    //     }
+    //   } else {
+    //     //console.log("Your browser does not support sharing multiple files or image fetch failed.");
+    //   }
+    //   }
+    // }
         
     //document.getElementById("shareAlt").addEventListener("click", shareAlternative);
 
@@ -508,7 +535,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Copy Share Text
                 //var line = getLines(2);
                 if(isIOS){
-                    shareImages(2);
+                    shareImages(1);
                 }
                 else {
                     shareImages(1);
@@ -520,7 +547,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             else if (platform == 'others_fixed') {
-                shareAlternative(0);
+                //shareAlternative(0);
             }
             else if (platform == 'others_xhs') {
                 //Check if can use web share API level 2
