@@ -208,7 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             await navigator.share({
             text: getLines(2),
-            files : [savedImageFilesWA],
+            files : [savedImageFilesWA]
             });
             //console.log("Shared successfully!");
         } catch (error) {
