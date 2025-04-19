@@ -440,9 +440,19 @@ document.addEventListener("DOMContentLoaded", function () {
     /* <-------------------> */
 
     //Click Analytics
-    let clickCount = 0;
-    const endpoint = 'https://script.google.com/macros/s/AKfycbzM3fUa3ww7p1CqzKLR7-wqPYnzfuUpLQ5ls9WuhrI-ijIXy1zn2pdi57ovvWpxOLT6/exec'; // <- Replace with your Apps Script URL
-
+    function logClick() {
+        const formUrl = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdZy1xdTPov0ANI9atEkf9Vp9e36V1lvOKFspzHqUYmxXQNvQ/formResponse";
+        const formData = new FormData();
+    
+        // Replace this with the name attribute of your form field
+        formData.append("YPqjbf", "clicked");
+    
+        fetch(formUrl, {
+          method: "POST",
+          mode: "no-cors",
+          body: formData
+        });
+    }
 
 
 
@@ -572,16 +582,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
                 //var line = getLines(2);
-                clickCount++;
-                fetch(endpoint, {
-                  method: 'POST',
-                  body: JSON.stringify({ count: clickCount }),
-                  headers: { 'Content-Type': 'application/json' }
-                }).then(res => {
-                  if (res.ok) {
-                    console.log('Click recorded!');
-                  }
-                });
+                logClick();
                 if(isIOS){
                     shareImages(3);
                 }
