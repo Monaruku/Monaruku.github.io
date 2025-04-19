@@ -439,6 +439,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /* <-------------------> */
 
+    //Click Analytics
+    let clickCount = 0;
+    const endpoint = 'https://script.google.com/macros/s/AKfycbzM3fUa3ww7p1CqzKLR7-wqPYnzfuUpLQ5ls9WuhrI-ijIXy1zn2pdi57ovvWpxOLT6/exec'; // <- Replace with your Apps Script URL
+
+
+
+
+
     //Get Random Line from preloaded contents
     function getLines(mode) {
             const randomLines = [];
@@ -564,6 +572,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
                 //var line = getLines(2);
+                clickCount++;
+                fetch(endpoint, {
+                  method: 'POST',
+                  body: JSON.stringify({ count: clickCount }),
+                  headers: { 'Content-Type': 'application/json' }
+                }).then(res => {
+                  if (res.ok) {
+                    console.log('Click recorded!');
+                  }
+                });
                 if(isIOS){
                     shareImages(3);
                 }
