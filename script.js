@@ -440,12 +440,23 @@ document.addEventListener("DOMContentLoaded", function () {
     /* <-------------------> */
 
     //Click Analytics
-    function logClick() {
+    function logClick(mode) {
         const formUrl = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdZy1xdTPov0ANI9atEkf9Vp9e36V1lvOKFspzHqUYmxXQNvQ/formResponse";
         const formData = new FormData();
     
         // Replace this with the name attribute of your form field
-        formData.append("YPqjbf", "clicked");
+        if(mode == 1) {                                         //Facebook
+            formData.append("entry.2141122930", "Facebook");
+        }
+        else if (mode == 2) {                                   //Rednote
+            formData.append("entry.2141122930", "Rednote");
+        }
+        else if (mode == 3) {                                   //Instagram
+            formData.append("entry.2141122930", "Instagram");
+        }
+        else if (mode == 4) {                                   //Share
+            formData.append("entry.2141122930", "Share");
+        }
     
         fetch(formUrl, {
           method: "POST",
@@ -564,6 +575,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if(platform == 'rednote'){
                 
                 //Check if the device have Rednote installed or not before redirecting
+                logClick(2);
                 var fallbackToStore = function() {
                     window.open('https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605', '_blank');
                 };
@@ -582,7 +594,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
                 //var line = getLines(2);
-                logClick();
+                logClick(4);
                 if(isIOS){
                     shareImages(3);
                 }
@@ -610,8 +622,13 @@ document.addEventListener("DOMContentLoaded", function () {
                         return false;
                     }
             }
-            else if (links[platform]) {
+            else if (platform == 'fb') {
                 window.open(links[platform], '_blank');
+                logClick(1);
+            }
+            else if (platform == 'insta') {
+                window.open(links[platform], '_blank');
+                logClick(3);
             }
         });
     });
