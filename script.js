@@ -589,7 +589,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //shareToRedNote();
             }
             //how many else if do I need
-            else if(platform == 'others') {
+            else if(platform == 'others') {             //Currently in whatsapp mode
                 //Check if can use web share API level 2
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
