@@ -10,10 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
         'insta_en': "Instagram",
         'insta_cn': "Instagram",
 
-        'others_en': "Share to your friends",
+        'others_en': "Share to Facebook",
         'others_cn': "分享给你的朋友",
 
-        'others_insta_en': "Share to your friends",
+        'others_insta_en': "Share to Instagram",
         'others_insta_cn': "分享给你的朋友",
 
         'others_xhs_en': "Share to RedNote",
@@ -29,14 +29,14 @@ document.addEventListener("DOMContentLoaded", function () {
         'cta_cn': '马上分享吧!',
     }
 
-    let isIOS = false;
-    //Due to a bug, Share to Others button will temporarily be disable on the iOS side
-    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        const othersDiv = document.getElementById('others_xhs');
+    // let isIOS = false;
+    // //Due to a bug, Share to Others button will temporarily be disable on the iOS side
+    // if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+    //     const othersDiv = document.getElementById('others_xhs');
     
-        othersDiv.style.display = "none";
-        isIOS = true;
-    }
+    //     othersDiv.style.display = "none";
+    //     isIOS = true;
+    // }
 
 
 
