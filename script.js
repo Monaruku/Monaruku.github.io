@@ -13,6 +13,9 @@ document.addEventListener("DOMContentLoaded", function () {
         'others_en': "Share to your friends",
         'others_cn': "分享给你的朋友",
 
+        'others_insta_en': "Share to your friends",
+        'others_insta_cn': "分享给你的朋友",
+
         'others_xhs_en': "Share to RedNote",
         'others_xhs_cn': "分享至小红书",
 
@@ -42,7 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function load_lang () {
         var currentLang = (isEnglish) ? "_en" : "_cn";
         //const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
-        const media_list = ['rednote', 'fb', 'insta', 'others', 'others_xhs'];
+        const media_list = ['rednote', 'fb', 'insta', 'others', 'others_insta'];
         media_list.forEach(media => {
             document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
         });
@@ -577,10 +580,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Check if the device have Rednote installed or not before redirecting
                 logClick(2);
                 var fallbackToStore = function() {
-                    window.open('https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605', '_blank');
+                    window.open('https://www.xiaohongshu.com/user/profile/65164c2e000000002302441a', '_blank');
                 };
                 var openApp = function() {
-                    window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                    window.location = 'xhsdiscover://user/65164c2e000000002302441a';
                 };
 
                 openApp();
@@ -596,10 +599,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 //var line = getLines(2);
                 logClick(4);
                 if(isIOS){
-                    shareImages(3);
+                    shareImages(2);
                 }
                 else {
-                    shareImages(1);
+                    shareImages(2);
+                }
+                return true;
+                } else {
+                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                    return false;
+                }
+            }
+            else if(platform == 'others_insta') {           
+                //Check if can use web share API level 2
+                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                //Copy Share Text
+                //var line = getLines(2);
+                logClick(4);
+                if(isIOS){
+                    shareImages(2);
+                }
+                else {
+                    shareImages(2);
                 }
                 return true;
                 } else {
