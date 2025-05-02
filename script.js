@@ -598,12 +598,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Copy Share Text
                 //var line = getLines(2);
                 logClick(4);
-                if(isIOS){
-                    shareImages(2);
-                }
-                else {
-                    shareImages(2);
-                }
+                // if(isIOS){
+                //     shareImages(2);
+                // }
+                // else {
+                //     shareImages(2);
+                // }
+                shareImages(2);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
@@ -616,12 +617,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 //Copy Share Text
                 //var line = getLines(2);
                 logClick(4);
-                if(isIOS){
-                    shareImages(2);
-                }
-                else {
-                    shareImages(2);
-                }
+                // if(isIOS){
+                //     shareImages(2);
+                // }
+                // else {
+                //     shareImages(2);
+                // }
+                shareImages(2);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
