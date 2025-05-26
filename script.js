@@ -293,7 +293,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-
     /*------------- This section is currently under testing, so it looks real stupid -------------*/
     const flag = "#English"; // Change this to the desired flag
     const flagCN = "#Chinese";
