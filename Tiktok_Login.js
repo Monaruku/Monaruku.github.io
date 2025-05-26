@@ -11,7 +11,7 @@ class Authentication {
         // this.corsProxy = 'https://corsproxy.io/?url=';
         this.corsProxy = 'https://cors-anywhere.herokuapp.com/';
     }
-    
+
 
     getAuthenticationUrl(redirectUri, scopes) {
         // Create base URL for TikTok OAuth
@@ -34,7 +34,7 @@ class Authentication {
         return Math.random().toString(36).substring(2, 15) +
             Math.random().toString(36).substring(2, 15);
     }
-    
+
     async getAccessTokenFromCode(code, redirectUri) {
         try {
             // Prepare request body
@@ -126,7 +126,7 @@ class Authentication {
             throw error;
         }
     }
-    
+
     async revokeToken(accessToken) {
         try {
             // Create form data for the request
@@ -202,7 +202,7 @@ class Authentication {
 
             return await response.json();
         } catch (error) {
-            console.error(error);
+            console.error('Error getting creator info:', error);
             throw error;
         }
     }
