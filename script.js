@@ -93,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Must match the URI registered in Sandbox/Production
-    const redirectUri = 'https://applecakes14.github.io/SQL-Link-Tree//tiktok_post_vid.html';
+    const redirectUri = 'https://monaruku.github.io/tiktok_post_vid.html';
 
     const tiktokScopes = [
         'user.info.basic',
@@ -235,23 +235,46 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Sharing failed", error);
         }
-
-
-    }
-    else if (mode == 2) {
-        const files = savedImageFiles; // Assign the images to be shared
-        if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-            try {
-                await navigator.share({
-                text: getLinesXHS(2),
-                files
-                });
-                //console.log("Shared successfully!");
-            } catch (error) {
-                //console.error("Sharing failed", error);
+    }    
+        else if (mode == 2) {
+            // Function to fetch video file
+            async function fetchVideoFile(url) {
+                try {
+                    const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
+                    const response = await fetch(proxyUrl + encodeURIComponent(url));
+                    const blob = await response.blob();
+                    return new File([blob], "video.mp4", { type: "video/mp4" });
+                } catch (error) {
+                    console.error("Error fetching video:", error);
+                    return null;
+                }
             }
-            } else {
-            //console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            
+            try {
+                // Fetch the video and create a file
+                const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+                const videoFile = await fetchVideoFile(videoUrl);
+                
+                // Combine video with existing images
+                const files = [...savedImageFiles];
+                if (videoFile) files.unshift(videoFile); // Add video at the beginning
+                
+                // Check if sharing is supported and share the files
+                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                    try {
+                        await navigator.share({
+                            text: getLinesXHS(2),
+                            files
+                        });
+                        //console.log("Shared successfully!");
+                    } catch (error) {
+                        console.error("Sharing failed", error);
+                    }
+                } else {
+                    console.log("Your browser does not support sharing multiple files or file fetch failed.");
+                }
+            } catch (error) {
+                console.error("Error in video sharing process:", error);
             }
     }
     else if (mode == 3) {
@@ -265,67 +288,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Sharing failed", error);
         }
-      } else if (mode === 4) {  // Direct Facebook share
-            // Get the text to share
-            const shareText = getLines(2);
-
-            // Video URL - adjust the path as needed to your actual video location
-          const videoUrl = "https://github.com/AppleCakes14/SQL-Link-Tree/raw/refs/heads/main/Videos/final-1747902221090.mp4";
-
-            // Detect if we're on mobile
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-            if (isMobile) {
-                // Fetch the video file first
-                fetchImageAsFile(videoUrl, "promotion.mp4").then(videoFile => {
-                    if (videoFile && navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                        // Use Web Share API with both video and image files
-                        const filesToShare = [videoFile];
-                        
-                        // Add the image file if it exists
-                        if (savedImageFilesWA) {
-                            filesToShare.push(savedImageFilesWA);
-                        }
-                        
-                        // If we have additional image files in the array, add those too
-                        if (savedImageFiles && savedImageFiles.length > 0) {
-                            savedImageFiles.forEach(imgFile => filesToShare.push(imgFile));
-                        }
-                        
-                        navigator.share({
-                            text: shareText,
-                            files: filesToShare
-                        }).catch(error => {
-                            console.error("Sharing failed", error);
-                            // Fall back to URL sharing if file sharing fails
-                            fallbackToWebShare();
-                        });
-                    } else {
-                        fallbackToWebShare();
-                    }
-                }).catch(() => {
-                    fallbackToWebShare();
-                });
-
-                function fallbackToWebShare() {
-                    // If app doesn't open or file sharing fails, use the web URL
-                    const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                        encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
-                        "&quote=" + encodeURIComponent(shareText);
-                    window.open(webShareUrl, "_blank");
-                }
-            } else {
-                // For desktop users, use the normal share dialog
-                const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                    encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
-                    "&quote=" + encodeURIComponent(shareText);
-
-                window.open(shareUrl, "_blank", "width=600,height=400");
-            }
-
-            // Log the click
-            logClick(1);
-        }
+    }        
 
     }
 
@@ -683,7 +646,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // else {
                 //     shareImages(2);
                 // }
-                shareImages(4);
+                shareImages(2);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
@@ -748,19 +711,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Check if we have a dedicated link for this platform
             if (links[platform]) {
-                if(links[platform] == 'Red note'){
-                    
+                if (links[platform] == 'Red note') {
+
                     //Check if the device have Rednote installed or not before redirecting
-                    var fallbackToStore = function() {
-                      window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
+                    var fallbackToStore = function () {
+                        window.location = 'https://www.xiaohongshu.com/user/profile/60ba509f0000000001008605';
                     };
-                    var openApp = function() {
-                      window.location = 'xhsdiscover://user/60ba509f0000000001008605';
+                    var openApp = function () {
+                        window.location = 'xhsdiscover://user/60ba509f0000000001008605';
                     };
 
                     openApp();
                     setTimeout(fallbackToStore, 700);
-                    
+
                     //shareToRedNote();
                 }
                 //lazy way of doing this
@@ -769,29 +732,29 @@ document.addEventListener("DOMContentLoaded", function () {
                     getLines(1)
                     window.open(links['Google review'], '_blank');
                 }
-                else if(links[platform] == links['Facebook']) {
+                else if (links[platform] == links['Facebook']) {
                     var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-                        if (/android/i.test(userAgent)) {
-                            window.open(links['Facebook'], '_blank');
-                        }
+                    if (/android/i.test(userAgent)) {
+                        window.open(links['Facebook'], '_blank');
+                    }
 
-                        // iOS detection from: http://stackoverflow.com/a/9039885/177710
-                        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                            //Check if the device have Rednote installed or not before redirecting
-                            var fallbackToStore = function() {
-                              window.location = links['Facebook'];
-                            };
-                            var openApp = function() {
-                              window.location = links['FacebookIOS'];
-                            };
+                    // iOS detection from: http://stackoverflow.com/a/9039885/177710
+                    if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                        //Check if the device have Rednote installed or not before redirecting
+                        var fallbackToStore = function () {
+                            window.location = links['Facebook'];
+                        };
+                        var openApp = function () {
+                            window.location = links['FacebookIOS'];
+                        };
 
-                            openApp();
-                            setTimeout(fallbackToStore, 1700);
+                        openApp();
+                        setTimeout(fallbackToStore, 1700);
 
 
-                            //window.open(links['FacebookIOS'], '_blank');
-                        }
+                        //window.open(links['FacebookIOS'], '_blank');
+                    }
                 }
                 else if (links[platform] == links['TikTok']) {
                     if (tiktokAuthentication.checkTikTokToken()) {
@@ -813,8 +776,32 @@ document.addEventListener("DOMContentLoaded", function () {
                         return false;
                     }
                 }
-                else{
-                   window.open(links[platform], '_blank');
+                //how many else if do I need
+                else if (links[platform] == links['Share']) {
+                    //Copy Share Text
+                    navigator.clipboard.writeText(shareText);
+                    alert("Text copied! Please use it as the content for the post");
+                    if (navigator.share) {
+                        fetch(imageURL) // Replace with your image URL
+                            .then(response => response.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'image.jpg', { type: blob.type });
+
+                                navigator.share({
+                                    files: [file]
+                                    //url: 'This is actually just plain text' //Somehow parsing my website url in it as well
+                                }).then(() => {
+                                    console.log('Content shared successfully!');
+                                }).catch((error) => {
+                                    console.error('Error sharing:', error);
+                                });
+                            }).catch(error => console.error('Error fetching image:', error));
+                    } else {
+                        alert('Web Share API is not supported in your browser.');
+                    }
+                }
+                else {
+                    window.open(links[platform], '_blank');
                 }
             } else {
                 const actionType = this.textContent;
