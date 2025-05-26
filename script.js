@@ -309,10 +309,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 function fallbackToWebShare() {
                     // If app doesn't open or file sharing fails, use the web URL
-                    const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                        encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
-                        "&quote=" + encodeURIComponent(shareText);
-                    window.open(webShareUrl, "_blank");
+                    // Try to share the media directly using the Web Share API first
+                    if (navigator.canShare && navigator.share) {
+                        navigator.share({
+                            text: shareText,
+                            files: savedImageFiles || []
+                        }).catch(err => {
+                            console.error("Direct sharing failed:", err);
+                            // Fall back to URL sharing if direct sharing fails
+                            const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                                encodeURIComponent("https://www.facebook.com/SQLEstream/") +
+                                "&quote=" + encodeURIComponent(shareText);
+                            window.open(webShareUrl, "_blank");
+                        });
+                    } else {
+                        const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                            encodeURIComponent("https://www.facebook.com/SQLEstream/") +
+                            "&quote=" + encodeURIComponent(shareText);
+                        window.open(webShareUrl, "_blank");
+                    }
                 }
             } else {
                 // For desktop users, use the normal share dialog
