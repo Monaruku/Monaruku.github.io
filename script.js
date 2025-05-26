@@ -271,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const shareText = getLines(2);
 
         // Video URL - adjust the path as needed to your actual video location
-        const videoUrl = "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/main/Videos/promotion.mp4";
+        const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
 
         // Detect if we're on mobile
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
