@@ -265,50 +265,21 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Sharing failed", error);
         }
-    } else if (mode === 4) {  // Direct Facebook share
+      } else if (mode === 4) {  // Direct Facebook share
             // Get the text to share
             const shareText = getLines(2);
 
             // Video URL - adjust the path as needed to your actual video location
-            const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
-            
+          const videoUrl = "https://github.com/AppleCakes14/SQL-Link-Tree/raw/refs/heads/main/Videos/final-1747902221090.mp4";
+
             // Detect if we're on mobile
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
+
             if (isMobile) {
-                console.log("Mobile device detected, attempting to share video and images");
-                // Fetch the video file first - use explicit CORS proxy
-                const proxyVideoUrl = "https://corsproxy.io/?url=" + encodeURIComponent(videoUrl);
-                
-                // Define fallback function
-                const fallbackToWebShare = function() {
-                    // If app doesn't open or file sharing fails, use the web URL
-                    // Try to share the media directly using the Web Share API first
-                    if (navigator.canShare && navigator.share) {
-                        navigator.share({
-                            text: shareText,
-                            files: savedImageFiles || []
-                        }).catch(err => {
-                            console.error("Direct sharing failed:", err);
-                            // Fall back to URL sharing if direct sharing fails
-                            const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                                encodeURIComponent("https://www.facebook.com/SQLEstream/") +
-                                "&quote=" + encodeURIComponent(shareText);
-                            window.open(webShareUrl, "_blank");
-                        });
-                    } else {
-                        const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                            encodeURIComponent("https://www.facebook.com/SQLEstream/") +
-                            "&quote=" + encodeURIComponent(shareText);
-                        window.open(webShareUrl, "_blank");
-                    }
-                };
-                
-                // Fetch video file then attempt to share
-                fetch(proxyVideoUrl)
-                    .then(response => response.blob())
-                    .then(blob => {
-                        const videoFile = new File([blob], "video.mp4", { type: "video/mp4" });
+                // Fetch the video file first
+                fetchImageAsFile(videoUrl, "promotion.mp4").then(videoFile => {
+                    if (videoFile && navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                        // Use Web Share API with both video and image files
                         const filesToShare = [videoFile];
                         
                         // Add the image file if it exists
@@ -321,23 +292,28 @@ document.addEventListener("DOMContentLoaded", function () {
                             savedImageFiles.forEach(imgFile => filesToShare.push(imgFile));
                         }
                         
-                        console.log("Attempting to share files:", filesToShare.length);
-                        
-                        if (navigator.canShare && navigator.canShare({ files: filesToShare })) {
-                            navigator.share({
-                                text: shareText,
-                                files: filesToShare
-                            }).catch(error => {
-                                console.error("Sharing failed", error);
-                                fallbackToWebShare();
-                            });
-                        } else {
+                        navigator.share({
+                            text: shareText,
+                            files: filesToShare
+                        }).catch(error => {
+                            console.error("Sharing failed", error);
+                            // Fall back to URL sharing if file sharing fails
                             fallbackToWebShare();
-                        }
-                    })
-                    .catch(() => {
+                        });
+                    } else {
                         fallbackToWebShare();
-                    });
+                    }
+                }).catch(() => {
+                    fallbackToWebShare();
+                });
+
+                function fallbackToWebShare() {
+                    // If app doesn't open or file sharing fails, use the web URL
+                    const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                        encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
+                        "&quote=" + encodeURIComponent(shareText);
+                    window.open(webShareUrl, "_blank");
+                }
             } else {
                 // For desktop users, use the normal share dialog
                 const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
