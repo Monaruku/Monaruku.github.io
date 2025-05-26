@@ -265,56 +265,67 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Sharing failed", error);
         }
-    }
-    else if (mode === 4) {  // Direct Facebook share
-        // Get the text to share
-        const shareText = getLines(2);
+    } else if (mode === 4) {  // Direct Facebook share
+            // Get the text to share
+            const shareText = getLines(2);
 
-        // Video URL - adjust the path as needed to your actual video location
-        const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+            // Video URL - adjust the path as needed to your actual video location
+            const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
 
-        // Detect if we're on mobile
-        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            // Detect if we're on mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        if (isMobile) {
-            // Fetch the video file first
-            fetchImageAsFile(videoUrl, "promotion.mp4").then(videoFile => {
-                if (videoFile && navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                    // Use Web Share API with the video file
-                    navigator.share({
-                        text: shareText,
-                        files: [videoFile, savedImageFilesWA] // Share both video and image
-                    }).catch(error => {
-                        console.error("Sharing failed", error);
-                        // Fall back to URL sharing if file sharing fails
+            if (isMobile) {
+                // Fetch the video file first
+                fetchImageAsFile(videoUrl, "promotion.mp4").then(videoFile => {
+                    if (videoFile && navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                        // Use Web Share API with both video and image files
+                        const filesToShare = [videoFile];
+                        
+                        // Add the image file if it exists
+                        if (savedImageFilesWA) {
+                            filesToShare.push(savedImageFilesWA);
+                        }
+                        
+                        // If we have additional image files in the array, add those too
+                        if (savedImageFiles && savedImageFiles.length > 0) {
+                            savedImageFiles.forEach(imgFile => filesToShare.push(imgFile));
+                        }
+                        
+                        navigator.share({
+                            text: shareText,
+                            files: filesToShare
+                        }).catch(error => {
+                            console.error("Sharing failed", error);
+                            // Fall back to URL sharing if file sharing fails
+                            fallbackToWebShare();
+                        });
+                    } else {
                         fallbackToWebShare();
-                    });
-                } else {
+                    }
+                }).catch(() => {
                     fallbackToWebShare();
-                }
-            }).catch(() => {
-                fallbackToWebShare();
-            });
+                });
 
-            function fallbackToWebShare() {
-                // If app doesn't open or file sharing fails, use the web URL
-                const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                function fallbackToWebShare() {
+                    // If app doesn't open or file sharing fails, use the web URL
+                    const webShareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
+                        encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
+                        "&quote=" + encodeURIComponent(shareText);
+                    window.open(webShareUrl, "_blank");
+                }
+            } else {
+                // For desktop users, use the normal share dialog
+                const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
                     encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
                     "&quote=" + encodeURIComponent(shareText);
-                window.open(webShareUrl, "_blank");
+
+                window.open(shareUrl, "_blank", "width=600,height=400");
             }
-        } else {
-            // For desktop users, use the normal share dialog
-            const shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" +
-                encodeURIComponent("https://applecakes14.github.io/SQL-Link-Tree/") +
-                "&quote=" + encodeURIComponent(shareText);
 
-            window.open(shareUrl, "_blank", "width=600,height=400");
+            // Log the click
+            logClick(1);
         }
-
-        // Log the click
-        logClick(1);
-    }
 
     }
 
