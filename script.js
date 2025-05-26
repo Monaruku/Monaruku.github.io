@@ -238,43 +238,94 @@ document.addEventListener("DOMContentLoaded", function () {
     }    
         else if (mode == 2) {
             // Function to fetch video file
+            // First, log to confirm this section is executing
+            console.log("Video sharing mode activated");
+            
             async function fetchVideoFile(url) {
                 try {
-                    const proxyUrl = "https://corsproxy.io/?url="; // Free CORS proxy
-                    const response = await fetch(proxyUrl + encodeURIComponent(url));
+                    console.log("Fetching video from:", url);
+                    // Try direct fetch first (GitHub raw content should be accessible)
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error(`Direct fetch failed with status: ${response.status}`);
+                    }
                     const blob = await response.blob();
+                    console.log("Video blob created:", blob.size, "bytes", blob.type);
                     return new File([blob], "video.mp4", { type: "video/mp4" });
-                } catch (error) {
-                    console.error("Error fetching video:", error);
-                    return null;
+                } catch (directError) {
+                    console.error("Direct fetch failed:", directError);
+                    try {
+                        // Fallback to proxy
+                        const proxyUrl = "https://corsproxy.io/?url=";
+                        console.log("Trying proxy fetch:", proxyUrl + encodeURIComponent(url));
+                        const proxyResponse = await fetch(proxyUrl + encodeURIComponent(url));
+                        if (!proxyResponse.ok) {
+                            throw new Error(`Proxy fetch failed with status: ${proxyResponse.status}`);
+                        }
+                        const blob = await proxyResponse.blob();
+                        console.log("Video blob created via proxy:", blob.size, "bytes", blob.type);
+                        return new File([blob], "video.mp4", { type: blob.type || "video/mp4" });
+                    } catch (proxyError) {
+                        console.error("Proxy fetch also failed:", proxyError);
+                        return null;
+                    }
                 }
             }
             
             try {
-                // Fetch the video and create a file
+                // Use a reliable video URL (make sure this is accessible)
                 const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+                console.log("Starting video fetch from:", videoUrl);
+                
                 const videoFile = await fetchVideoFile(videoUrl);
                 
-                // Combine video with existing images
-                const files = [...savedImageFiles];
-                if (videoFile) files.unshift(videoFile); // Add video at the beginning
+                if (!videoFile) {
+                    console.error("Failed to create video file object");
+                    // Fallback to just sharing images if video fails
+                    const files = savedImageFiles.filter(Boolean);
+                    if (files.length > 0) {
+                        await navigator.share({
+                            text: getLinesXHS(2),
+                            files
+                        });
+                    }
+                    return;
+                }
                 
-                // Check if sharing is supported and share the files
+                console.log("Video file created:", videoFile.name, videoFile.size, "bytes");
+                
+                // Create share files array with video first
+                const files = [videoFile];
+                
+                // Add images if available
+                if (savedImageFiles && savedImageFiles.length) {
+                    console.log("Adding", savedImageFiles.length, "images to share");
+                    files.push(...savedImageFiles.filter(Boolean));
+                }
+                
+                // Verify files before sharing
+                console.log("Preparing to share", files.length, "files:", 
+                    files.map(f => `${f.name} (${f.size} bytes, ${f.type})`));
+                
                 if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+                    console.log("Browser supports sharing these files, attempting share...");
                     try {
                         await navigator.share({
                             text: getLinesXHS(2),
                             files
                         });
-                        //console.log("Shared successfully!");
+                        console.log("Share completed successfully");
                     } catch (error) {
-                        console.error("Sharing failed", error);
+                        console.error("Share dialog failed:", error);
+                        alert("Sharing failed. Please try again.");
                     }
                 } else {
-                    console.log("Your browser does not support sharing multiple files or file fetch failed.");
+                    console.error("Browser cannot share these files");
+                    alert("Your browser doesn't support sharing this content");
                 }
             } catch (error) {
-                console.error("Error in video sharing process:", error);
+                console.error("Fatal error in video sharing process:", error);
+                alert("Something went wrong while preparing content to share");
             }
     }
     else if (mode == 3) {
