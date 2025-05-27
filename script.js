@@ -307,8 +307,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // Run both functions and combine results when done
     Promise.all([loadRandomImagesWA(), loadRandomVideosWA()])
         .then(() => {
-            // Combine the image and video files into a single array
-            combinedMediaFiles = [savedVideoFilesWA, savedImageFilesWA].filter(Boolean);
+            // Create combined media files with video first, then image
+            combinedMediaFiles = [];
+            
+            // Add video first if it exists
+            if (savedVideoFilesWA) {
+                combinedMediaFiles.push(savedVideoFilesWA);
+            }
+            
+            // Add image if it exists
+            if (savedImageFilesWA) {
+                combinedMediaFiles.push(savedImageFilesWA);
+            }
+            
             console.log("Combined media files:", combinedMediaFiles);
         })
         .catch(error => {
