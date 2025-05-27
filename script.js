@@ -483,7 +483,7 @@ document.addEventListener("DOMContentLoaded", function () {
             // Fetch the video file using the same CORS proxy method
             console.log("Video sharing mode activated");
             console.log("Combined media files for Facebook share:", combinedMediaFiles);
-            const files = combinedMediaFiles; // Assign the images to be shared
+            const files = savedVideoFiles; // Assign the images to be shared
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
                 try {
                     await navigator.share({
