@@ -302,40 +302,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }        
     else if (mode == 4) {
-        // Mode 4: Share only video to Facebook
-        console.log("Sharing video to Facebook mode activated");
+        // Mode 4: Share only text with URL to Facebook
+        console.log("Sharing to Facebook mode activated");
         
-        async function fetchVideoAsFile(url, fileName) {
-            try {
-                const proxyUrl = "https://corsproxy.io/?url="; 
-                const response = await fetch(proxyUrl + encodeURIComponent(url));
-                const blob = await response.blob();
-                console.log("Video blob created:", blob.size, "bytes");
-                return new File([blob], fileName, { type: blob.type || "video/mp4" });
-            } catch (error) {
-                console.error("Error fetching video:", error);
-                return null;
-            }
-        }
-
-        // Video URL
-        const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
-        const videoFile = await fetchVideoAsFile(videoUrl, "video.mp4");
-
-        if (!videoFile) {
-            console.error("Failed to fetch video file");
-            return;
-        }
-
-        // Share only the video file
+        // Direct share without trying to fetch the video first
         try {
-            await navigator.share({
-                text: getLines(2),
-                files: [videoFile]
-            });
-            console.log("Video shared successfully!");
+            const shareText = getLines(2);
+            const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+            
+            // Try to share with just text and images if we already have them
+            if (savedImageFiles && savedImageFiles.length > 0) {
+                await navigator.share({
+                    text: shareText + "\n\nVideo: " + videoUrl,
+                    files: savedImageFiles.filter(Boolean).slice(0, 1) // Share just one image
+                });
+            } else {
+                // Share just text with video link if no images available
+                await navigator.share({
+                    text: shareText + "\n\nVideo: " + videoUrl
+                });
+            }
+            
+            console.log("Share successful!");
         } catch (error) {
-            console.error("Sharing video failed", error);
+            console.error("Sharing failed", error);
+            
+            // Fallback to just sharing text
+            try {
+                await navigator.share({
+                    text: getLines(2)
+                });
+            } catch (fallbackError) {
+                console.error("Fallback sharing failed", fallbackError);
+            }
         }
     }
     }
