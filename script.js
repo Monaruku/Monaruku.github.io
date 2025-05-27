@@ -237,95 +237,56 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }    
         else if (mode == 2) {
-            // Function to fetch video file
-            // First, log to confirm this section is executing
+            // Use the same approach as image sharing
+            // Fetch the video file using the same CORS proxy method
             console.log("Video sharing mode activated");
-            
-            async function fetchVideoFile(url) {
+
+            async function fetchVideoAsFile(url, fileName) {
                 try {
-                    console.log("Fetching video from:", url);
-                    // Try direct fetch first (GitHub raw content should be accessible)
-                    const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error(`Direct fetch failed with status: ${response.status}`);
-                    }
+                    const proxyUrl = "https://corsproxy.io/?url="; // Same CORS proxy as images
+                    const response = await fetch(proxyUrl + encodeURIComponent(url));
                     const blob = await response.blob();
-                    console.log("Video blob created:", blob.size, "bytes", blob.type);
-                    return new File([blob], "video.mp4", { type: "video/mp4" });
-                } catch (directError) {
-                    console.error("Direct fetch failed:", directError);
-                    try {
-                        // Fallback to proxy
-                        const proxyUrl = "https://corsproxy.io/?url=";
-                        console.log("Trying proxy fetch:", proxyUrl + encodeURIComponent(url));
-                        const proxyResponse = await fetch(proxyUrl + encodeURIComponent(url));
-                        if (!proxyResponse.ok) {
-                            throw new Error(`Proxy fetch failed with status: ${proxyResponse.status}`);
-                        }
-                        const blob = await proxyResponse.blob();
-                        console.log("Video blob created via proxy:", blob.size, "bytes", blob.type);
-                        return new File([blob], "video.mp4", { type: blob.type || "video/mp4" });
-                    } catch (proxyError) {
-                        console.error("Proxy fetch also failed:", proxyError);
-                        return null;
-                    }
+                    console.log("Video blob created:", blob.size, "bytes");
+                    return new File([blob], fileName, { type: blob.type || "video/mp4" });
+                } catch (error) {
+                    console.error("Error fetching video:", error);
+                    return null;
                 }
             }
-            
+
+            // Video URL - using the same one from the original code
+            const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+            const videoFile = await fetchVideoAsFile(videoUrl, "video.mp4");
+
+            if (!videoFile) {
+                console.error("Failed to fetch video file");
+                // Fallback to just sharing images
+                try {
+                    await navigator.share({
+                        text: getLinesXHS(2),
+                        files: savedImageFiles.filter(Boolean)
+                    });
+                } catch (shareError) {
+                    console.error("Sharing failed", shareError);
+                }
+                return;
+            }
+
+            // Prepare files array with video first, then add images if needed
+            const files = [videoFile];
+            if (savedImageFiles && savedImageFiles.length) {
+                files.push(...savedImageFiles.filter(Boolean));
+            }
+
+            // Share the video and text
             try {
-                // Use a reliable video URL (make sure this is accessible)
-                const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
-                console.log("Starting video fetch from:", videoUrl);
-                
-                const videoFile = await fetchVideoFile(videoUrl);
-                
-                if (!videoFile) {
-                    console.error("Failed to create video file object");
-                    // Fallback to just sharing images if video fails
-                    const files = savedImageFiles.filter(Boolean);
-                    if (files.length > 0) {
-                        await navigator.share({
-                            text: getLinesXHS(2),
-                            files
-                        });
-                    }
-                    return;
-                }
-                
-                console.log("Video file created:", videoFile.name, videoFile.size, "bytes");
-                
-                // Create share files array with video first
-                const files = [videoFile];
-                
-                // Add images if available
-                if (savedImageFiles && savedImageFiles.length) {
-                    console.log("Adding", savedImageFiles.length, "images to share");
-                    files.push(...savedImageFiles.filter(Boolean));
-                }
-                
-                // Verify files before sharing
-                console.log("Preparing to share", files.length, "files:", 
-                    files.map(f => `${f.name} (${f.size} bytes, ${f.type})`));
-                
-                if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-                    console.log("Browser supports sharing these files, attempting share...");
-                    try {
-                        await navigator.share({
-                            text: getLinesXHS(2),
-                            files
-                        });
-                        console.log("Share completed successfully");
-                    } catch (error) {
-                        console.error("Share dialog failed:", error);
-                        alert("Sharing failed. Please try again.");
-                    }
-                } else {
-                    console.error("Browser cannot share these files");
-                    alert("Your browser doesn't support sharing this content");
-                }
+                await navigator.share({
+                    text: getLinesXHS(2),
+                    files
+                });
+                console.log("Shared successfully!");
             } catch (error) {
-                console.error("Fatal error in video sharing process:", error);
-                alert("Something went wrong while preparing content to share");
+                console.error("Sharing failed", error);
             }
     }
     else if (mode == 3) {
@@ -340,7 +301,43 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Sharing failed", error);
         }
     }        
+    else if (mode == 4) {
+        // Mode 4: Share only video to Facebook
+        console.log("Sharing video to Facebook mode activated");
+        
+        async function fetchVideoAsFile(url, fileName) {
+            try {
+                const proxyUrl = "https://corsproxy.io/?url="; 
+                const response = await fetch(proxyUrl + encodeURIComponent(url));
+                const blob = await response.blob();
+                console.log("Video blob created:", blob.size, "bytes");
+                return new File([blob], fileName, { type: blob.type || "video/mp4" });
+            } catch (error) {
+                console.error("Error fetching video:", error);
+                return null;
+            }
+        }
 
+        // Video URL
+        const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+        const videoFile = await fetchVideoAsFile(videoUrl, "video.mp4");
+
+        if (!videoFile) {
+            console.error("Failed to fetch video file");
+            return;
+        }
+
+        // Share only the video file
+        try {
+            await navigator.share({
+                text: getLines(2),
+                files: [videoFile]
+            });
+            console.log("Video shared successfully!");
+        } catch (error) {
+            console.error("Sharing video failed", error);
+        }
+    }
     }
 
 
@@ -677,7 +674,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // else {
                 //     shareImages(2);
                 // }
-                shareImages(2);
+                shareImages(4);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
