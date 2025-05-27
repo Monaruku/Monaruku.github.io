@@ -780,7 +780,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     document.querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', function (e) {
+        card.addEventListener('click', async function (e) {
             const platform = this.id;
                         /*if (platform == 'others_fixed') {
                 shareAlternative();
@@ -828,7 +828,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // else {
                 //     shareImages(2);
                 // }
-                shareImages(4);
+                shareImages(2);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
@@ -837,21 +837,60 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             else if(platform == 'others_insta') {           
                 //Check if can use web share API level 2
-                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                // if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                 //Copy Share Text
                 //var line = getLines(2);
                 logClick(4);
-                // if(isIOS){
-                //     shareImages(2);
-                // }
-                // else {
-                //     shareImages(2);
-                // }
-                shareImages(2);
-                return true;
-                } else {
-                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
-                    return false;
+                try {
+                    // Get the share text FIRST before any async operations
+                    const shareText = getLines(2);
+
+                    // Try to share video first 
+                    if (savedVideoFiles && savedVideoFiles.length > 0 && savedVideoFiles[0] && savedVideoFiles[0].size > 0) {
+                        const videoFile = savedVideoFiles[0];
+                        console.log("Sharing video:", videoFile.name, videoFile.size, "bytes");
+
+                        // Direct share within the user gesture context
+                        if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                            await navigator.share({
+                                text: shareText,
+                                files: [videoFile]
+                            });
+                            console.log("Video sharing successful!");
+                            return;
+                        }
+                    }
+
+                    // If video sharing failed or no video available, try image
+                    if (savedImageFiles && savedImageFiles.length > 0) {
+                        const validImage = savedImageFiles.find(file => file && file.size > 0);
+                        if (validImage && navigator.canShare && navigator.canShare({ files: [validImage] })) {
+                            console.log("Sharing image:", validImage.name);
+                            await navigator.share({
+                                text: shareText,
+                                files: [validImage]
+                            });
+                            console.log("Image sharing successful!");
+                            return;
+                        }
+                    }
+
+                    // Text-only fallback
+                    await navigator.share({
+                        text: shareText
+                    });
+                    console.log("Text-only sharing successful!");
+
+                } catch (error) {
+                    console.error("Share error:", error);
+
+                    // Final fallback - copy to clipboard
+                    try {
+                        await navigator.clipboard.writeText(getLines(2));
+                        alert("Sharing failed, but text copied to clipboard!");
+                    } catch (clipboardError) {
+                        alert("Unable to share. Please try again.");
+                    }
                 }
             }
             else if (platform == 'others_fixed') {
