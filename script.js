@@ -128,10 +128,27 @@ document.addEventListener("DOMContentLoaded", function () {
         return null;
       }
     }
+    
+    //Download video from url thru CORS proxy
+    async function fetchVideoAsFile(url, fileName) {
+      try {
+        const proxyUrl = "https://corsproxy.io/?url="; // Same CORS proxy
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const blob = await response.blob();
+        return new File([blob], fileName, { type: blob.type || "video/mp4" });
+      } catch (error) {
+        console.error("Error fetching video:", error);
+        return null;
+      }
+    }
 
     var imageUrls;
     const imageAmt = 3;
     var savedImageFiles = [];
+
+    var videoUrls;
+    const videoAmt = 1;
+    var savedVideoFiles = [];
 
     //Preload ImageURLs from text file
     fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
@@ -141,6 +158,17 @@ document.addEventListener("DOMContentLoaded", function () {
             imageUrls = line;
             //console.log(imageUrls);
             loadRandomImages()
+        })
+        .catch(error => console.error("Error fetching the file:", error));
+        
+    //Preload VideoURLs from text file
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/VideoLinks.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const line = text.split('\n').filter(line => line.trim() !== '');
+            videoUrls = line;
+            //console.log(videoUrls);
+            loadRandomVideos()
         })
         .catch(error => console.error("Error fetching the file:", error));
 
@@ -160,6 +188,29 @@ document.addEventListener("DOMContentLoaded", function () {
       savedImageFiles = files;
       hideLoadingScreen();
       console.log(savedImageFiles);
+    }
+    async function loadRandomVideos() {
+        // Since we only have one video, we'll directly use it instead of shuffling
+        if (videoUrls && videoUrls.length > 0) {
+            // Just use the first video URL
+            const videoUrl = videoUrls[0];
+            console.log("Using video URL:", videoUrl);
+
+            // Fetch and convert
+            const videoFile = await fetchVideoAsFile(videoUrl, "video1.mp4");
+            
+            // Save to array (only if the fetch was successful)
+            if (videoFile) {
+                savedVideoFiles = [videoFile];
+                console.log("Video loaded successfully");
+            } else {
+                console.error("Failed to load video");
+            }
+        } else {
+            console.warn("No video URLs available");
+        }
+        
+        hideLoadingScreen();
     }
 
     var savedImageFilesWA;
@@ -301,25 +352,35 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error("Sharing failed", error);
         }
     }        
-    else if (mode == 4) {
-        // Mode 4: Share only text with URL to Facebook
+    if (mode == 4) {
+        // Mode 4: Share to Facebook with images and videos
         console.log("Sharing to Facebook mode activated");
         
-        // Direct share without trying to fetch the video first
         try {
             const shareText = getLines(2);
-            const videoUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+            const filesToShare = [];
             
-            // Try to share with just text and images if we already have them
+            // Add video file if available
+            if (savedVideoFiles && savedVideoFiles.length > 0) {
+                filesToShare.push(savedVideoFiles[0]); // Add the first video
+            }
+            
+            // Add image files if available (limit to 1-2 images to avoid overwhelming)
             if (savedImageFiles && savedImageFiles.length > 0) {
+                // Add up to 2 images
+                filesToShare.push(...savedImageFiles.slice(0, 2).filter(Boolean));
+            }
+            
+            // Share with files if we have any
+            if (filesToShare.length > 0 && navigator.canShare && navigator.canShare({ files: filesToShare })) {
                 await navigator.share({
-                    text: shareText + "\n\nVideo: " + videoUrl,
-                    files: savedImageFiles.filter(Boolean).slice(0, 1) // Share just one image
+                    text: shareText,
+                    files: filesToShare
                 });
             } else {
-                // Share just text with video link if no images available
+                // Fallback to just sharing text if no files or sharing not supported
                 await navigator.share({
-                    text: shareText + "\n\nVideo: " + videoUrl
+                    text: shareText
                 });
             }
             
