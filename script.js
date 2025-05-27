@@ -132,12 +132,15 @@ document.addEventListener("DOMContentLoaded", function () {
     //Download video from url thru CORS proxy
     async function fetchVideoAsFile(url, fileName) {
         try {
-            // First try direct GitHub fetch for raw content
+            console.log("Attempting to fetch video directly:", url);
+
+            // For GitHub raw content, we can often access it directly from GitHub Pages
             if (url.includes('githubusercontent.com')) {
                 try {
-                    console.log("Attempting direct GitHub raw content fetch...");
+                    // Try direct fetch first - this should work from GitHub Pages to githubusercontent
                     const response = await fetch(url, {
-                        headers: { 'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8' }
+                        headers: { 'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8' },
+                        cache: 'no-store'  // Prevent caching issues
                     });
 
                     if (response.ok) {
@@ -145,47 +148,57 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (blob.size > 1000) {
                             console.log(`Successfully fetched video directly: ${fileName}, Size: ${blob.size} bytes`);
                             return new File([blob], fileName, { type: blob.type || "video/mp4" });
+                        } else {
+                            throw new Error("Video file too small, likely invalid");
                         }
+                    } else {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                 } catch (directError) {
                     console.warn("Direct GitHub fetch failed:", directError);
+                    // Fall through to the fallback
                 }
             }
 
-            // If direct fetch failed, try with CORS proxy
-            const proxyUrl = "https://api.allorigins.win/raw?url="; // More reliable CORS proxy
-            console.log("Using CORS proxy:", proxyUrl);
-            const response = await fetch(proxyUrl + encodeURIComponent(url), {
-                headers: { 'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8' },
-                cache: 'no-store'
-            });
+            // If we're here, the direct fetch failed
+            // Try an alternative approach with simpler URL
+            // Sometimes removing some parameters helps
+            try {
+                const simplifiedUrl = url.split('?')[0]; // Remove query parameters
+                console.log("Trying simplified URL:", simplifiedUrl);
 
-            const blob = await response.blob();
+                const response = await fetch(simplifiedUrl, {
+                    headers: { 'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8' },
+                    cache: 'no-store'
+                });
 
-            // Validate we got a proper file
-            if (blob.size < 1000) {
-                throw new Error("Video blob too small, likely invalid");
+                if (response.ok) {
+                    const blob = await response.blob();
+                    if (blob.size > 1000) {
+                        console.log(`Successfully fetched video with simplified URL: ${fileName}, Size: ${blob.size} bytes`);
+                        return new File([blob], fileName, { type: blob.type || "video/mp4" });
+                    }
+                }
+            } catch (simplifiedError) {
+                console.warn("Simplified URL fetch failed:", simplifiedError);
             }
 
-            return new File([blob], fileName, { type: blob.type || "video/mp4" });
+            // Last resort: Use the embedded placeholder video
+            throw new Error("All direct fetch attempts failed");
+
         } catch (error) {
             console.error("Error fetching video:", error);
 
-            // Return a minimal placeholder video
-            try {
-                console.log("Using placeholder video as fallback");
-                // Small valid MP4 video placeholder
-                const placeholderVideoBase64 = "AAAAHGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWlzbwAAAAhmcmVlAAAAG21kYXQAAAATABVLBgEG79Px5AAAAAAAAAAAAAAA";
-                const binaryString = atob(placeholderVideoBase64);
-                const bytes = new Uint8Array(binaryString.length);
-                for (let i = 0; i < binaryString.length; i++) {
-                    bytes[i] = binaryString.charCodeAt(i);
-                }
-                return new File([bytes], fileName, { type: "video/mp4" });
-            } catch (fallbackError) {
-                console.error("Failed to create placeholder video:", fallbackError);
-                return null;
+            // Return a minimal placeholder video as fallback
+            console.log("Using placeholder video as fallback");
+            // Small valid MP4 video placeholder
+            const placeholderVideoBase64 = "AAAAHGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWlzbwAAAAhmcmVlAAAAG21kYXQAAAATABVLBgEG79Px5AAAAAAAAAAAAAAA";
+            const binaryString = atob(placeholderVideoBase64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
             }
+            return new File([bytes], fileName, { type: "video/mp4" });
         }
       }
 
@@ -197,97 +210,27 @@ document.addEventListener("DOMContentLoaded", function () {
     const videoAmt = 1;
     var savedVideoFiles = [];
 
-//Improved download video function with multiple CORS proxy options
-async function fetchVideoAsFile(url, fileName, retryCount = 0) {
-    try {
-        // Use intodns.com/cloudboxes.io as the primary proxy
-        const proxyUrl = "https://intodns.com/cloudboxes.io";
+    //Preload ImageURLs from text file
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const line = text.split('\n').filter(line => line.trim() !== '');
+            imageUrls = line;
+            //console.log(imageUrls);
+            loadRandomImages()
+        })
+        .catch(error => console.error("Error fetching the file:", error));
         
-        console.log(`Fetching video using ${proxyUrl}`);
-        
-        // Direct request to the proxy URL
-        const response = await fetch(proxyUrl, {
-            method: 'GET',
-            headers: {
-                'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8',
-                'Target-URL': url // Some proxies use custom headers to specify the target
-            },
-            cache: 'no-store'
-        });
-        
-        if (!response.ok) {
-            throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
-        }
-        
-        // Get the blob and verify it's valid
-        const blob = await response.blob();
-        
-        if (blob.size < 1000) {
-            console.warn("Video blob too small, likely invalid:", blob.size, "bytes");
-            throw new Error("Video file too small");
-        }
-        
-        // Create a proper file with correct MIME type
-        const file = new File([blob], fileName, { 
-            type: blob.type || "video/mp4"
-        });
-        
-        console.log(`Video successfully fetched: ${fileName}, Size: ${file.size} bytes, Type: ${file.type}`);
-        return file;
-    } catch (error) {
-        console.error(`Error fetching video:`, error);
-        
-        // Fall back to a placeholder video if the direct request fails
-        try {
-            console.log("Direct proxy failed. Using placeholder video...");
-            const placeholderVideoBase64 = "AAAAHGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWlzbwAAAAhmcmVlAAAAG21kYXQAAAATABVLBgEG79Px5AAAAAAAAAAAAAAA";
-            const binaryString = atob(placeholderVideoBase64);
-            const bytes = new Uint8Array(binaryString.length);
-            for (let i = 0; i < binaryString.length; i++) {
-                bytes[i] = binaryString.charCodeAt(i);
-            }
-            return new File([bytes], fileName, { type: "video/mp4" });
-        } catch (fallbackError) {
-            console.error("Failed to create placeholder video:", fallbackError);
-            return null;
-        }
-    }
-  }
-
-  //Preload ImageURLs from text file
-  fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
-      .then(response => response.text())
-      .then(text => {
-          const line = text.split('\n').filter(line => line.trim() !== '');
-          imageUrls = line;
-          //console.log(imageUrls);
-          loadRandomImages()
-      })
-      .catch(error => console.error("Error fetching the file:", error));
-      
-  //Preload VideoURLs from text file with better error handling
-  fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
-      .then(response => {
-          if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-          return response.text();
-      })
-      .then(text => {
-          const lines = text.split('\n').filter(line => line.trim() !== '');
-          if (lines.length === 0) {
-              throw new Error("No video URLs found in the file");
-          }
-          videoUrls = lines;
-          console.log("Video URLs loaded:", videoUrls);
-          loadRandomVideos();
-      })
-      .catch(error => {
-          console.error("Error fetching video links:", error);
-          // Try loading a default video as fallback
-          videoUrls = ["https://corsproxy.io/?url=https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4"];
-          loadRandomVideos();
-      });
+    //Preload VideoURLs from text file
+    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt") // Replace with actual file path
+        .then(response => response.text())
+        .then(text => {
+            const line = text.split('\n').filter(line => line.trim() !== '');
+            videoUrls = line;
+            //console.log(videoUrls);
+            loadRandomVideos()
+        })
+        .catch(error => console.error("Error fetching the file:", error));
 
     async function loadRandomImages() {
       // Shuffle and select
@@ -315,18 +258,18 @@ async function fetchVideoAsFile(url, fileName, retryCount = 0) {
 
             // Fetch and convert
             const videoFile = await fetchVideoAsFile(videoUrl, "video1.mp4");
-            
+
             // Save to array (only if the fetch was successful)
             if (videoFile) {
                 savedVideoFiles = [videoFile];
-                console.log("Video loaded successfully");
+                console.log("Video loaded successfully:", videoFile.size, "bytes");
             } else {
                 console.error("Failed to load video");
             }
         } else {
             console.warn("No video URLs available");
         }
-        
+
         hideLoadingScreen();
     }
 
