@@ -420,6 +420,9 @@ document.addEventListener("DOMContentLoaded", function () {
             const shareText = getLines(2);
 
             // First try with just the video (simpler approach)
+            console.log("savedVideoFiles:", savedVideoFiles, 
+                "savedVideoFiles.length:", savedVideoFiles.length,
+                "savedVideoFiles[0].size:", savedVideoFiles[0] ? savedVideoFiles[0].size : "No video file");
             if (savedVideoFiles && savedVideoFiles.length > 0 && savedVideoFiles[0].size > 0) {
                 const videoFile = savedVideoFiles[0];
                 console.log("Attempting to share single video:", videoFile.name, videoFile.size, "bytes");
