@@ -272,25 +272,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
         hideLoadingScreen();
     }
-
     var savedImageFilesWA;
+    var savedVideoFilesWA;
 
     async function loadRandomImagesWA() {
         // Shuffle and select
         const selectedUrls = "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg";
         console.log("Selected URLs:", selectedUrls);
-  
+
         // Fetch and convert
         const files = await fetchImageAsFile(selectedUrls, "image1.jpg");
         //const files = (await Promise.all(filePromises)).filter(Boolean);
-  
+
         // Save to array
         savedImageFilesWA = files;
         //hideLoadingScreen();
         console.log(savedImageFilesWA);
     }
 
+    async function loadRandomVideosWA() {
+        // Use a specific video URL
+        const selectedUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+        console.log("Selected Video URL:", selectedUrl);
+
+        // Fetch and convert
+        const file = await fetchVideoAsFile(selectedUrl, "video1.mp4");
+
+        // Save to variable
+        savedVideoFilesWA = file;
+        console.log("Video loaded:", savedVideoFilesWA);
+    }
+
     loadRandomImagesWA();
+    loadRandomVideosWA();
 
 
 
@@ -413,83 +427,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }        
     if (mode == 4) {
-        // Mode 4: Share to Facebook with images and videos
+        // Mode 4: Share to Facebook with both images and videos
         console.log("Sharing to Facebook mode activated");
-
+        
         try {
-            const shareText = getLines(2);
-
-            // First try with just the video (simpler approach)
-            console.log("savedVideoFiles:", savedVideoFiles, 
-                "savedVideoFiles.length:", savedVideoFiles.length,
-                "savedVideoFiles[0].size:", savedVideoFiles[0] ? savedVideoFiles[0].size : "No video file");
-            if (savedVideoFiles && savedVideoFiles.length > 0 && savedVideoFiles[0].size > 0) {
-                const videoFile = savedVideoFiles[0];
-                console.log("Attempting to share single video:", videoFile.name, videoFile.size, "bytes");
-
-                try {
-                    // Try sharing just the video first
-                    if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                        await navigator.share({
-                            text: shareText,
-                            files: [videoFile]
-                        });
-                        console.log("Video-only share successful!");
-                        return;
-                    }
-                } catch (videoOnlyError) {
-                    console.warn("Video-only share failed:", videoOnlyError);
-                    // Fall through to try other approaches
-                }
+            // Create array with both video and images
+            const filesToShare = [];
+            
+            // Add video if available (using savedVideoFilesWA)
+            if (savedVideoFilesWA) {
+                console.log("Adding video to Facebook share:", savedVideoFilesWA.name);
+                filesToShare.push(savedVideoFilesWA);
             }
-
-            // If video-only share failed, try with just images
+            
+            // Add images
             if (savedImageFiles && savedImageFiles.length > 0) {
-                const validImages = savedImageFiles
-                    .filter(file => file && file.size > 0)
-                    .slice(0, 1); // Just share 1 image to keep it simple
-
-                if (validImages.length > 0) {
-                    console.log("Attempting to share single image:", validImages[0].name);
-
-                    try {
-                        if (navigator.canShare && navigator.canShare({ files: validImages })) {
-                            await navigator.share({
-                                text: shareText,
-                                files: validImages
-                            });
-                            console.log("Image-only share successful!");
-                            return;
-                        }
-                    } catch (imageOnlyError) {
-                        console.warn("Image-only share failed:", imageOnlyError);
-                    }
-                }
+                console.log("Adding images to Facebook share:", savedImageFiles.length, "images");
+                filesToShare.push(...savedImageFiles.filter(Boolean));
+            } else if (savedImageFilesWA) {
+                // Fallback to WA image if regular images aren't available
+                filesToShare.push(savedImageFilesWA);
             }
-
-            // Final fallback: just share text
-            console.log("Attempting text-only share as fallback");
+            
+            // Share content
             await navigator.share({
-                text: shareText
+                text: getLines(2),
+                files: filesToShare
             });
-            console.log("Text-only share successful!");
-
+            
+            console.log("Facebook share successful!");
         } catch (error) {
-            console.error("All sharing attempts failed:", error);
-
-            // Try one more time with just text, no error handling
-            try {
-                await navigator.share({
-                    text: getLines(2)
-                });
-            } catch (finalError) {
-                console.error("Final fallback share also failed");
-
-                // Last resort - copy to clipboard and notify user
-                navigator.clipboard.writeText(getLines(2))
-                    .then(() => alert("Sharing failed, but text copied to clipboard!"))
-                    .catch(() => alert("Unable to share content. Please try again."));
-            }
+            console.error("Facebook sharing failed", error);
         }
     }
     }
@@ -828,7 +796,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // else {
                 //     shareImages(2);
                 // }
-                shareImages(2);
+                shareImages(4);
                 return true;
                 } else {
                     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
