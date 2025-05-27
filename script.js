@@ -200,77 +200,57 @@ document.addEventListener("DOMContentLoaded", function () {
 //Improved download video function with multiple CORS proxy options
 async function fetchVideoAsFile(url, fileName, retryCount = 0) {
     try {
-      // List of CORS proxies to try in order
-      const proxyOptions = [
-        "https://corsproxy.io/?url=",
-        "https://cors-anywhere.herokuapp.com/",
-        "https://api.allorigins.win/raw?url=",
-        "https://crossorigin.me/"
-      ];
-      
-      // Select a proxy based on retry count or direct request on last attempt
-      const proxyUrl = retryCount < proxyOptions.length 
-        ? proxyOptions[retryCount] 
-        : ""; // Try direct request as last resort
-      
-      console.log(`Attempting to fetch video with proxy: ${proxyUrl || 'direct request'}`);
-      
-      // Fetch the video
-      const response = await fetch(proxyUrl + encodeURIComponent(url), {
-        method: 'GET',
-        headers: {
-          'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8'
-        },
-        cache: 'no-store'
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
-      }
-      
-      // Get the blob and verify it's valid
-      const blob = await response.blob();
-      
-      if (blob.size < 1000) {
-        console.warn("Video blob too small, likely invalid:", blob.size, "bytes");
-        throw new Error("Video file too small");
-      }
-      
-      // Create a proper file with correct MIME type
-      const file = new File([blob], fileName, { 
-        type: blob.type || "video/mp4"
-      });
-      
-      console.log(`Video successfully fetched: ${fileName}, Size: ${file.size} bytes, Type: ${file.type}`);
-      return file;
-    } catch (error) {
-      console.error(`Error fetching video (attempt ${retryCount + 1}):`, error);
-      
-      // Try next proxy if available
-      if (retryCount < proxyOptions.length) {
-        console.log(`Retrying with different proxy...`);
-        return fetchVideoAsFile(url, fileName, retryCount + 1);
-      }
-      
-      // All proxies failed, try a different approach - fetch a smaller, embedded video
-      if (retryCount >= proxyOptions.length) {
-        try {
-          console.log("All proxies failed. Attempting to use a local/embedded video...");
-          // You could return a small placeholder video here
-          // For demonstration, creating a minimal valid MP4 file
-          const placeholderVideoBase64 = "AAAAHGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWlzbwAAAAhmcmVlAAAAG21kYXQAAAATABVLBgEG79Px5AAAAAAAAAAAAAAA";
-          const binaryString = atob(placeholderVideoBase64);
-          const bytes = new Uint8Array(binaryString.length);
-          for (let i = 0; i < binaryString.length; i++) {
-            bytes[i] = binaryString.charCodeAt(i);
-          }
-          return new File([bytes], fileName, { type: "video/mp4" });
-        } catch (fallbackError) {
-          console.error("Failed to create placeholder video:", fallbackError);
-          return null;
+        // Use intodns.com/cloudboxes.io as the primary proxy
+        const proxyUrl = "https://intodns.com/cloudboxes.io";
+        
+        console.log(`Fetching video using ${proxyUrl}`);
+        
+        // Direct request to the proxy URL
+        const response = await fetch(proxyUrl, {
+            method: 'GET',
+            headers: {
+                'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8',
+                'Target-URL': url // Some proxies use custom headers to specify the target
+            },
+            cache: 'no-store'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch video: ${response.status} ${response.statusText}`);
         }
-      }
-      return null;
+        
+        // Get the blob and verify it's valid
+        const blob = await response.blob();
+        
+        if (blob.size < 1000) {
+            console.warn("Video blob too small, likely invalid:", blob.size, "bytes");
+            throw new Error("Video file too small");
+        }
+        
+        // Create a proper file with correct MIME type
+        const file = new File([blob], fileName, { 
+            type: blob.type || "video/mp4"
+        });
+        
+        console.log(`Video successfully fetched: ${fileName}, Size: ${file.size} bytes, Type: ${file.type}`);
+        return file;
+    } catch (error) {
+        console.error(`Error fetching video:`, error);
+        
+        // Fall back to a placeholder video if the direct request fails
+        try {
+            console.log("Direct proxy failed. Using placeholder video...");
+            const placeholderVideoBase64 = "AAAAHGZ0eXBtcDQyAAAAAG1wNDJtcDQxaXNvbWlzbwAAAAhmcmVlAAAAG21kYXQAAAATABVLBgEG79Px5AAAAAAAAAAAAAAA";
+            const binaryString = atob(placeholderVideoBase64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return new File([bytes], fileName, { type: "video/mp4" });
+        } catch (fallbackError) {
+            console.error("Failed to create placeholder video:", fallbackError);
+            return null;
+        }
     }
   }
 
