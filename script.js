@@ -355,46 +355,70 @@ document.addEventListener("DOMContentLoaded", function () {
     if (mode == 4) {
         // Mode 4: Share to Facebook with images and videos
         console.log("Sharing to Facebook mode activated");
-        
+
         try {
             const shareText = getLines(2);
             const filesToShare = [];
-            
-            // Add video file if available
+
+            // Debug file information before sharing
+            console.log("Video files available:", savedVideoFiles ? savedVideoFiles.length : 0);
+            console.log("Image files available:", savedImageFiles ? savedImageFiles.length : 0);
+
+            // Add video file if available - check file integrity
             if (savedVideoFiles && savedVideoFiles.length > 0) {
-                filesToShare.push(savedVideoFiles[0]); // Add the first video
+                const videoFile = savedVideoFiles[0];
+                if (videoFile && videoFile.size > 0) {
+                    console.log("Adding video file:", videoFile.name, "Size:", videoFile.size, "bytes");
+                    filesToShare.push(videoFile);
+                } else {
+                    console.warn("Video file appears to be empty or corrupted, skipping");
+                }
             }
-            
-            // Add image files if available (limit to 1-2 images to avoid overwhelming)
+
+            // Add image files if available - check file integrity
             if (savedImageFiles && savedImageFiles.length > 0) {
-                // Add up to 2 images
-                filesToShare.push(...savedImageFiles.slice(0, 2).filter(Boolean));
-            }
-            
-            // Share with files if we have any
-            if (filesToShare.length > 0 && navigator.canShare && navigator.canShare({ files: filesToShare })) {
-                await navigator.share({
-                    text: shareText,
-                    files: filesToShare
+                const validImages = savedImageFiles.slice(0, 2)
+                    .filter(file => file && file.size > 0);
+
+                console.log("Adding", validImages.length, "image files");
+                validImages.forEach((img, i) => {
+                    console.log(`Image ${i + 1}:`, img.name, "Size:", img.size, "bytes");
                 });
+
+                filesToShare.push(...validImages);
+            }
+
+            // Share with files if we have valid files and sharing is supported
+            if (filesToShare.length > 0 && navigator.canShare) {
+                // Create a simple test to ensure the files are shareable
+                const shareObj = { files: filesToShare };
+
+                if (navigator.canShare(shareObj)) {
+                    console.log("Sharing", filesToShare.length, "files to Facebook");
+                    await navigator.share({
+                        text: shareText,
+                        files: filesToShare
+                    });
+                    console.log("Share successful!");
+                } else {
+                    console.warn("Files not shareable, falling back to text-only share");
+                    await navigator.share({ text: shareText });
+                }
             } else {
-                // Fallback to just sharing text if no files or sharing not supported
-                await navigator.share({
-                    text: shareText
-                });
+                console.log("No files to share or sharing not supported, sharing text only");
+                await navigator.share({ text: shareText });
             }
-            
-            console.log("Share successful!");
         } catch (error) {
-            console.error("Sharing failed", error);
-            
-            // Fallback to just sharing text
+            console.error("Sharing failed:", error);
+
+            // Try a more basic approach as fallback
             try {
+                console.log("Attempting fallback share with text only");
                 await navigator.share({
                     text: getLines(2)
                 });
             } catch (fallbackError) {
-                console.error("Fallback sharing failed", fallbackError);
+                console.error("Fallback sharing also failed:", fallbackError);
             }
         }
     }
