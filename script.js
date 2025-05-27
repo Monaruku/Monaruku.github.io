@@ -210,48 +210,54 @@ document.addEventListener("DOMContentLoaded", function () {
     const videoAmt = 1;
     var savedVideoFiles = [];
 
-    //Preload ImageURLs from text file
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt") // Replace with actual file path
-        .then(response => response.text())
-        .then(text => {
-            const line = text.split('\n').filter(line => line.trim() !== '');
-            imageUrls = line;
-            //console.log(imageUrls);
-            loadRandomImages()
-        })
-        .catch(error => console.error("Error fetching the file:", error));
+    var combinedMediaFiles = [];
+    var imagesLoaded = false;
+    var videosLoaded = false;
 
-    //Preload VideoURLs from text file
-    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt") // Replace with actual file path
-        .then(response => response.text())
-        .then(text => {
-            const line = text.split('\n').filter(line => line.trim() !== '');
-            videoUrls = line;
-            //console.log(videoUrls);
-            loadRandomVideos()
-        })
-        .catch(error => console.error("Error fetching the file:", error));
-
+    // Improved function to handle image loading with proper Promise resolution
     async function loadRandomImages() {
-        // Shuffle and select
-        const shuffledUrls = imageUrls.sort(() => 0.5 - Math.random());
-        const selectedUrls = shuffledUrls.slice(0, imageAmt);
-        //console.log("Selected URLs:", selectedUrls);
+        try {
+            if (!imageUrls || !Array.isArray(imageUrls) || imageUrls.length === 0) {
+                console.warn("No image URLs available yet, delaying image loading");
+                return [];
+            }
 
-        // Fetch and convert
-        const filePromises = selectedUrls.map((url, index) =>
-            fetchImageAsFile(url, `image${index + 1}.jpg`)
-        );
-        const files = (await Promise.all(filePromises)).filter(Boolean);
+            // Shuffle and select
+            const shuffledUrls = [...imageUrls].sort(() => 0.5 - Math.random());
+            const selectedUrls = shuffledUrls.slice(0, imageAmt);
+            console.log("Selected image URLs:", selectedUrls);
 
-        // Save to array
-        savedImageFiles = files;
-        hideLoadingScreen();
-        console.log(savedImageFiles);
+            // Fetch and convert
+            const filePromises = selectedUrls.map((url, index) =>
+                fetchImageAsFile(url, `image${index + 1}.jpg`)
+            );
+            const files = (await Promise.all(filePromises)).filter(Boolean);
+
+            // Save to array
+            savedImageFiles = files;
+            console.log("Images loaded successfully:", files.length);
+
+            imagesLoaded = true;
+            updateCombinedMedia();
+            hideLoadingScreen();
+            return files;
+        } catch (error) {
+            console.error("Error in loadRandomImages:", error);
+            imagesLoaded = true;
+            updateCombinedMedia();
+            hideLoadingScreen();
+            return [];
+        }
     }
+
+    // Improved function to handle video loading with proper Promise resolution
     async function loadRandomVideos() {
-        // Since we only have one video, we'll directly use it instead of shuffling
-        if (videoUrls && videoUrls.length > 0) {
+        try {
+            if (!videoUrls || !Array.isArray(videoUrls) || videoUrls.length === 0) {
+                console.warn("No video URLs available yet, delaying video loading");
+                return [];
+            }
+
             // Just use the first video URL
             const videoUrl = videoUrls[0];
             console.log("Using video URL:", videoUrl);
@@ -265,36 +271,103 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Video loaded successfully:", videoFile.size, "bytes");
             } else {
                 console.error("Failed to load video");
+                savedVideoFiles = [];
             }
-        } else {
-            console.warn("No video URLs available");
-        }
 
-        hideLoadingScreen();
+            videosLoaded = true;
+            updateCombinedMedia();
+            hideLoadingScreen();
+            return savedVideoFiles;
+        } catch (error) {
+            console.error("Error in loadRandomVideos:", error);
+            videosLoaded = true;
+            updateCombinedMedia();
+            hideLoadingScreen();
+            return [];
+        }
     }
-    var combinedMediaFiles = [];
-    
-    // After images and videos are loaded, combine them
-    Promise.all([loadRandomImages(), loadRandomVideos()])
-        .then(() => {
-            // Create combined media files with videos first, then images
-            combinedMediaFiles = [];
-            
-            // Add videos first if they exist
-            if (savedVideoFiles && savedVideoFiles.length > 0) {
-                combinedMediaFiles.push(...savedVideoFiles.filter(Boolean));
+
+    // Update combined media when both images and videos are loaded
+    function updateCombinedMedia() {
+        if (imagesLoaded && videosLoaded) {
+            try {
+                // Reset combined media files
+                combinedMediaFiles = [];
+
+                // Add videos first if they exist
+                if (savedVideoFiles && savedVideoFiles.length > 0) {
+                    const validVideos = savedVideoFiles.filter(file => file && file instanceof File && file.size > 0);
+                    if (validVideos.length > 0) {
+                        console.log("Adding videos to combined media:", validVideos.length);
+                        combinedMediaFiles.push(...validVideos);
+                    }
+                }
+
+                // Add images if they exist
+                if (savedImageFiles && savedImageFiles.length > 0) {
+                    const validImages = savedImageFiles.filter(file => file && file instanceof File && file.size > 0);
+                    if (validImages.length > 0) {
+                        console.log("Adding images to combined media:", validImages.length);
+                        combinedMediaFiles.push(...validImages);
+                    }
+                }
+
+                console.log("Combined media files updated:", combinedMediaFiles.length, "files");
+            } catch (error) {
+                console.error("Error combining media files:", error);
+                combinedMediaFiles = [];
             }
-            
-            // Add images if they exist
-            if (savedImageFiles && savedImageFiles.length > 0) {
-                combinedMediaFiles.push(...savedImageFiles.filter(Boolean));
+        }
+    }
+
+    // Preload ImageURLs from text file with better error handling
+    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/ImageLinks.txt")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            
-            console.log("Combined media files:", combinedMediaFiles);
+            return response.text();
+        })
+        .then(text => {
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) {
+                throw new Error("No image URLs found in the file");
+            }
+            imageUrls = lines;
+            console.log("Image URLs loaded:", imageUrls.length);
+            return loadRandomImages();
         })
         .catch(error => {
-            console.error("Error combining media files:", error);
+            console.error("Error fetching image links:", error);
+            imageUrls = [];
+            imagesLoaded = true;
+            updateCombinedMedia();
         });
+
+    //Preload VideoURLs from text file with better error handling
+    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(text => {
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            if (lines.length === 0) {
+                throw new Error("No video URLs found in the file");
+            }
+            videoUrls = lines;
+            console.log("Video URLs loaded:", videoUrls.length);
+            return loadRandomVideos();
+        })
+        .catch(error => {
+            console.error("Error fetching video links:", error);
+            videoUrls = [];``
+            videosLoaded = true;
+            updateCombinedMedia();
+        });
+
 
     var savedImageFilesWA;
     var savedVideoFilesWA;
