@@ -272,9 +272,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
         hideLoadingScreen();
     }
+    var combinedMediaFiles = [];
+    
+    // After images and videos are loaded, combine them
+    Promise.all([loadRandomImages(), loadRandomVideos()])
+        .then(() => {
+            // Create combined media files with videos first, then images
+            combinedMediaFiles = [];
+            
+            // Add videos first if they exist
+            if (savedVideoFiles && savedVideoFiles.length > 0) {
+                combinedMediaFiles.push(...savedVideoFiles.filter(Boolean));
+            }
+            
+            // Add images if they exist
+            if (savedImageFiles && savedImageFiles.length > 0) {
+                combinedMediaFiles.push(...savedImageFiles.filter(Boolean));
+            }
+            
+            console.log("Combined media files:", combinedMediaFiles);
+        })
+        .catch(error => {
+            console.error("Error combining media files:", error);
+        });
+
     var savedImageFilesWA;
     var savedVideoFilesWA;
-    var combinedMediaFiles = [];
+    var combinedMediaFilesWA = [];
 
     async function loadRandomImagesWA() {
         // Shuffle and select
@@ -308,19 +332,19 @@ document.addEventListener("DOMContentLoaded", function () {
     Promise.all([loadRandomImagesWA(), loadRandomVideosWA()])
         .then(() => {
             // Create combined media files with video first, then image
-            combinedMediaFiles = [];
+            combinedMediaFilesWA = [];
             
             // Add video first if it exists
             if (savedVideoFilesWA) {
-                combinedMediaFiles.push(savedVideoFilesWA);
+                combinedMediaFilesWA.push(savedVideoFilesWA);
             }
             
             // Add image if it exists
             if (savedImageFilesWA) {
-                combinedMediaFiles.push(savedImageFilesWA);
+                combinedMediaFilesWA.push(savedImageFilesWA);
             }
             
-            console.log("Combined media files:", combinedMediaFiles);
+            console.log("Combined media files(WA):", combinedMediaFilesWA);
         })
         .catch(error => {
             console.error("Error loading media files:", error);
@@ -419,28 +443,29 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Sharing to Facebook mode activated");
 
             try {
-                // Create array with both video and images
-                const filesToShare = [];
+                // // Create array with both video and images
+                // const filesToShare = [];
 
-                // Add video if available (using savedVideoFilesWA)
-                if (savedVideoFilesWA) {
-                    console.log("Adding video to Facebook share:", savedVideoFilesWA.name);
-                    filesToShare.push(savedVideoFilesWA);
-                }
+                // // Add video if available (using savedVideoFilesWA)
+                // if (savedVideoFilesWA) {
+                //     console.log("Adding video to Facebook share:", savedVideoFilesWA.name);
+                //     filesToShare.push(savedVideoFilesWA);
+                // }
 
-                // Add images
-                if (savedImageFiles && savedImageFiles.length > 0) {
-                    console.log("Adding images to Facebook share:", savedImageFiles.length, "images");
-                    filesToShare.push(...savedImageFiles.filter(Boolean));
-                } else if (savedImageFilesWA) {
-                    // Fallback to WA image if regular images aren't available
-                    filesToShare.push(savedImageFilesWA);
-                }
+                // // Add images
+                // if (savedImageFiles && savedImageFiles.length > 0) {
+                //     console.log("Adding images to Facebook share:", savedImageFiles.length, "images");
+                //     filesToShare.push(...savedImageFiles.filter(Boolean));
+                // } else if (savedImageFilesWA) {
+                //     // Fallback to WA image if regular images aren't available
+                //     filesToShare.push(savedImageFilesWA);
+                // }
 
                 // Share content
+                console.log("Combined media files for Facebook share:", combinedMediaFiles);
                 await navigator.share({
                     text: getLines(2),
-                    files: filesToShare
+                    files: combinedMediaFiles
                 });
 
                 console.log("Facebook share successful!");
