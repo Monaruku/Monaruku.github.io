@@ -816,21 +816,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
         //document.getElementById('output').textContent = "Randomly Selected Lines:\n" + randomLines.join('\n');
         //Basically now the two mode is just to prompt alert or not
+        // if (mode == 1) {
+        //     const textTC = randomLines.toString();
+        //     //console.log(textTC);
+        //     window.focus();
+        //     navigator.clipboard.writeText(textTC);
+        //     alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
+        // }
+        // else if (mode == 2) {
+        //     const textTC = randomLines.toString();
+        //     //console.log(textTC);
+        //     window.focus();
+        //     navigator.clipboard.writeText(textTC);
+        //     return textTC;
+        // }
+        const textTC = randomLines.toString();
         if (mode == 1) {
-            const textTC = randomLines.toString();
-            //console.log(textTC);
-            window.focus();
-            navigator.clipboard.writeText(textTC);
-            alert(isEnglish ? "Text copied! Paste it onto Google Review." : "复制成功！请粘贴在下一页的谷歌评论。");
+            try {
+                window.focus(); // Try to focus the window
+                navigator.clipboard.writeText(textTC)
+                    .then(() => {
+                        alert(isEnglish ? "Text copied! Paste it onto XHS." : "复制成功！请粘贴在小红书。");
+                    })
+                    .catch(err => {
+                        console.error("Clipboard write failed:", err);
+                        // Fallback - show text to manually copy
+                        prompt(isEnglish ? "Please copy this text manually:" : "请手动复制此文本:", textTC);
+                    });
+            } catch (error) {
+                console.error("Clipboard error:", error);
+                // Fallback - show text to manually copy
+                prompt(isEnglish ? "Please copy this text manually:" : "请手动复制此文本:", textTC);
+            }
+        } else if (mode == 2) {
+            return textTC; // Just return the text without clipboard operations
         }
-        else if (mode == 2) {
-            const textTC = randomLines.toString();
-            //console.log(textTC);
-            window.focus();
-            navigator.clipboard.writeText(textTC);
-            return textTC;
-        }
-
     }
 
     document.querySelectorAll('.card').forEach(card => {
@@ -951,14 +971,50 @@ document.addEventListener("DOMContentLoaded", function () {
                 //shareAlternative(0);
             }
             else if (platform == 'others_xhs') {
-                //Check if can use web share API level 2
-                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
-                    //Copy Share Text
-                    //var line = getLinesXHS(2);
-                    shareImages(2);
+                // //Check if can use web share API level 2
+                // if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                //     //Copy Share Text
+                //     //var line = getLinesXHS(2);
+                //     shareImages(2);
+                //     return true;
+                // } else {
+                //     alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                //     return false;
+                // }
+                try {
+                    const shareText = getLinesXHS(2); // Just get the text without clipboard operations
+
+                    // Try to share with files first
+                    if (savedImageFiles && savedImageFiles.length > 0) {
+                        const validImage = savedImageFiles.find(file => file && file.size > 0);
+
+                        if (validImage && navigator.canShare && navigator.canShare({ files: [validImage] })) {
+                            await navigator.share({
+                                text: shareText,
+                                files: [validImage]
+                            });
+                            return true;
+                        }
+                    }
+
+                    // If sharing with files fails or isn't supported, fall back to text-only
+                    await navigator.share({
+                        text: shareText
+                    });
                     return true;
-                } else {
-                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+
+                } catch (error) {
+                    console.error("XHS sharing failed:", error);
+
+                    // Final fallback - try to copy to clipboard with focus attempt
+                    try {
+                        window.focus();
+                        document.hasFocus() ?
+                            await navigator.clipboard.writeText(getLinesXHS(2)) :
+                            alert("Please focus the window and try again.");
+                    } catch (clipboardError) {
+                        prompt("Please copy this text manually:", getLinesXHS(2));
+                    }
                     return false;
                 }
             }
