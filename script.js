@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(error => console.error("Error fetching the file:", error));
         
     //Preload VideoURLs from text file
-    fetch("https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/VideoLinks.txt") // Replace with actual file path
+    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt") // Replace with actual file path
         .then(response => response.text())
         .then(text => {
             const line = text.split('\n').filter(line => line.trim() !== '');
