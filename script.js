@@ -418,67 +418,74 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             const shareText = getLines(2);
-            const filesToShare = [];
 
-            // Debug file information before sharing
-            console.log("Video files available:", savedVideoFiles ? savedVideoFiles.length : 0);
-            console.log("Image files available:", savedImageFiles ? savedImageFiles.length : 0);
-
-            // Add video file if available - check file integrity
-            if (savedVideoFiles && savedVideoFiles.length > 0) {
+            // First try with just the video (simpler approach)
+            if (savedVideoFiles && savedVideoFiles.length > 0 && savedVideoFiles[0].size > 0) {
                 const videoFile = savedVideoFiles[0];
-                if (videoFile && videoFile.size > 0) {
-                    console.log("Adding video file:", videoFile.name, "Size:", videoFile.size, "bytes");
-                    filesToShare.push(videoFile);
-                } else {
-                    console.warn("Video file appears to be empty or corrupted, skipping");
+                console.log("Attempting to share single video:", videoFile.name, videoFile.size, "bytes");
+
+                try {
+                    // Try sharing just the video first
+                    if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                        await navigator.share({
+                            text: shareText,
+                            files: [videoFile]
+                        });
+                        console.log("Video-only share successful!");
+                        return;
+                    }
+                } catch (videoOnlyError) {
+                    console.warn("Video-only share failed:", videoOnlyError);
+                    // Fall through to try other approaches
                 }
             }
 
-            // Add image files if available - check file integrity
+            // If video-only share failed, try with just images
             if (savedImageFiles && savedImageFiles.length > 0) {
-                const validImages = savedImageFiles.slice(0, 2)
-                    .filter(file => file && file.size > 0);
+                const validImages = savedImageFiles
+                    .filter(file => file && file.size > 0)
+                    .slice(0, 1); // Just share 1 image to keep it simple
 
-                console.log("Adding", validImages.length, "image files");
-                validImages.forEach((img, i) => {
-                    console.log(`Image ${i + 1}:`, img.name, "Size:", img.size, "bytes");
-                });
+                if (validImages.length > 0) {
+                    console.log("Attempting to share single image:", validImages[0].name);
 
-                filesToShare.push(...validImages);
-            }
-
-            // Share with files if we have valid files and sharing is supported
-            if (filesToShare.length > 0 && navigator.canShare) {
-                // Create a simple test to ensure the files are shareable
-                const shareObj = { files: filesToShare };
-
-                if (navigator.canShare(shareObj)) {
-                    console.log("Sharing", filesToShare.length, "files to Facebook");
-                    await navigator.share({
-                        text: shareText,
-                        files: filesToShare
-                    });
-                    console.log("Share successful!");
-                } else {
-                    console.warn("Files not shareable, falling back to text-only share");
-                    await navigator.share({ text: shareText });
+                    try {
+                        if (navigator.canShare && navigator.canShare({ files: validImages })) {
+                            await navigator.share({
+                                text: shareText,
+                                files: validImages
+                            });
+                            console.log("Image-only share successful!");
+                            return;
+                        }
+                    } catch (imageOnlyError) {
+                        console.warn("Image-only share failed:", imageOnlyError);
+                    }
                 }
-            } else {
-                console.log("No files to share or sharing not supported, sharing text only");
-                await navigator.share({ text: shareText });
             }
-        } catch (error) {
-            console.error("Sharing failed:", error);
 
-            // Try a more basic approach as fallback
+            // Final fallback: just share text
+            console.log("Attempting text-only share as fallback");
+            await navigator.share({
+                text: shareText
+            });
+            console.log("Text-only share successful!");
+
+        } catch (error) {
+            console.error("All sharing attempts failed:", error);
+
+            // Try one more time with just text, no error handling
             try {
-                console.log("Attempting fallback share with text only");
                 await navigator.share({
                     text: getLines(2)
                 });
-            } catch (fallbackError) {
-                console.error("Fallback sharing also failed:", fallbackError);
+            } catch (finalError) {
+                console.error("Final fallback share also failed");
+
+                // Last resort - copy to clipboard and notify user
+                navigator.clipboard.writeText(getLines(2))
+                    .then(() => alert("Sharing failed, but text copied to clipboard!"))
+                    .catch(() => alert("Unable to share content. Please try again."));
             }
         }
     }
