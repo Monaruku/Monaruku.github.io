@@ -932,7 +932,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
                     //Copy Share Text
                     //var line = getLines(2);
-                    logClick(4);
+                    // logClick(4);
                     // if(isIOS){
                     //     shareImages(2);
                     // }
