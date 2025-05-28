@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     //Preload VideoURLs from text file with better error handling
-    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
+    fetch("https://api.whatsapp.com/send?text=Check%20out%20this%20video!%20https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
@@ -487,12 +487,13 @@ document.addEventListener("DOMContentLoaded", function () {
             if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
                 try {
                     await navigator.share({
+                        title: "Share to (Demo)",
                         text: getLinesXHS(2),
-                        files
+                        files: files
                     });
-                    //console.log("Shared successfully!");
+                    console.log("Shared successfully!");
                 } catch (error) {
-                    //console.error("Sharing failed", error);
+                    console.error("Sharing failed", error);
                 }
             } else {
                 //console.log("Your browser does not support sharing multiple files or image fetch failed.");
