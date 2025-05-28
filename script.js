@@ -952,7 +952,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             throw new Error("Web Share API not supported");
                         }
 
-                        const filesForSharing = savedVideoFiles.filter(file => file && file.size > 0);
+                        const filesForSharing = savedImageFiles.filter(file => file && file.size > 0);
                         console.log("Files to share:", filesForSharing.length, "videos");
 
                         if (filesForSharing.length === 0) {
