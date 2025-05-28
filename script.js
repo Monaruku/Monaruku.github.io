@@ -967,7 +967,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Attempt the share within the user gesture context
                         const result = await navigator.share({
                             title: "Share to (Demo)",
-                            text: getLinesXHS(2),
+                            text: "i think this is good",
                             files: filesForSharing
                         });
 
@@ -979,7 +979,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         try {
                             await navigator.share({
                                 title: "Share to (Demo)",
-                                text: getLinesXHS(2)
+                                text: "i think this is good"
                             });
                             console.log("Fallback sharing (text only) successful");
                         } catch (fallbackError) {
