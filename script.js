@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(error => {
             console.error("Error fetching video links:", error);
-            videoUrls = [];``
+            videoUrls = []; ``
             videosLoaded = true;
             updateCombinedMedia();
         });
@@ -406,17 +406,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(() => {
             // Create combined media files with video first, then image
             combinedMediaFilesWA = [];
-            
+
             // Add video first if it exists
             if (savedVideoFilesWA) {
                 combinedMediaFilesWA.push(savedVideoFilesWA);
             }
-            
+
             // Add image if it exists
             if (savedImageFilesWA) {
                 combinedMediaFilesWA.push(savedImageFilesWA);
             }
-            
+
             console.log("Combined media files(WA):", combinedMediaFilesWA);
         })
         .catch(error => {
@@ -896,12 +896,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     //Copy Share Text
                     //var line = getLines(2);
                     logClick(4);
-                    // if(isIOS){
-                    //     shareImages(2);
-                    // }
-                    // else {
-                    //     shareImages(2);
-                    // }
                     shareImages(2);
                     return true;
                 } else {
@@ -916,55 +910,59 @@ document.addEventListener("DOMContentLoaded", function () {
                 //var line = getLines(2);
                 logClick(4);
                 try {
-                    // Get the share text FIRST before any async operations
+                    // Get the share text first
                     const shareText = getLines(2);
 
-                    // Try to share video first 
-                    if (savedVideoFiles && savedVideoFiles.length > 0 && savedVideoFiles[0] && savedVideoFiles[0].size > 0) {
-                        const videoFile = savedVideoFiles[0];
-                        console.log("Sharing video:", videoFile.name, videoFile.size, "bytes");
+                    // Try Web Share API first for video
+                    if (savedVideoFiles && savedVideoFiles.length > 0 &&
+                        savedVideoFiles[0] && savedVideoFiles[0].size > 0) {
 
-                        // Direct share within the user gesture context
+                        const videoFile = savedVideoFiles[0];
+                        console.log("Attempting to share video:", videoFile.name, videoFile.size);
+
                         if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                            await navigator.share({
-                                text: shareText,
-                                files: [videoFile]
-                            });
-                            console.log("Video sharing successful!");
-                            return;
+                            try {
+                                await navigator.share({
+                                    text: shareText,
+                                    files: [videoFile]
+                                });
+                                console.log("Video sharing successful!");
+                                return;
+                            } catch (shareError) {
+                                console.log("Web Share API failed for video:", shareError);
+                                // Fall through to alternative method
+                            }
                         }
+
+                        // If Web Share API failed, use our alternative download approach
+                        shareVideoWithDownloadLink(videoFile, shareText);
+                        return;
                     }
 
-                    // If video sharing failed or no video available, try image
+                    // Fallback to image if no video
                     if (savedImageFiles && savedImageFiles.length > 0) {
                         const validImage = savedImageFiles.find(file => file && file.size > 0);
-                        if (validImage && navigator.canShare && navigator.canShare({ files: [validImage] })) {
-                            console.log("Sharing image:", validImage.name);
-                            await navigator.share({
-                                text: shareText,
-                                files: [validImage]
-                            });
-                            console.log("Image sharing successful!");
-                            return;
+                        if (validImage) {
+                            try {
+                                await navigator.share({
+                                    text: shareText,
+                                    files: [validImage]
+                                });
+                                console.log("Image sharing successful!");
+                                return;
+                            } catch (error) {
+                                console.error("Image sharing failed:", error);
+                            }
                         }
                     }
 
-                    // Text-only fallback
-                    await navigator.share({
-                        text: shareText
-                    });
-                    console.log("Text-only sharing successful!");
+                    // Final fallback - just copy text
+                    await navigator.clipboard.writeText(shareText);
+                    alert("Text copied to clipboard!");
 
                 } catch (error) {
-                    console.error("Share error:", error);
-
-                    // Final fallback - copy to clipboard
-                    try {
-                        await navigator.clipboard.writeText(getLines(2));
-                        alert("Sharing failed, but text copied to clipboard!");
-                    } catch (clipboardError) {
-                        alert("Unable to share. Please try again.");
-                    }
+                    console.error("Sharing error:", error);
+                    alert("Unable to share. Please try again.");
                 }
             }
             else if (platform == 'others_fixed') {
