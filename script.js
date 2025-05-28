@@ -345,7 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     //Preload VideoURLs from text file with better error handling
-    fetch("https://api.whatsapp.com/send?text=Check%20out%20this%20video!%20https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
+    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
