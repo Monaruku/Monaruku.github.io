@@ -479,24 +479,60 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
         else if (mode == 2) {
-            // Use the same approach as image sharing
-            // Fetch the video file using the same CORS proxy method
-            console.log("Video sharing mode activated");
-            console.log("Combined media files for Facebook share:", combinedMediaFiles);
-            const files = savedVideoFiles; // Assign the images to be shared
-            if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
+            try {
+                console.log("Video sharing mode activated");
+
+                // Check if we have valid video files first
+                if (!savedVideoFiles || savedVideoFiles.length === 0 || !savedVideoFiles[0]) {
+                    throw new Error("No valid video files available");
+                }
+
+                // Verify browser support explicitly
+                if (!navigator.canShare) {
+                    throw new Error("Web Share API not supported");
+                }
+
+                const filesForSharing = savedVideoFiles.filter(file => file && file.size > 0);
+                console.log("Files to share:", filesForSharing.length, "videos");
+
+                if (filesForSharing.length === 0) {
+                    throw new Error("No valid video files to share");
+                }
+
+                // Verify that this specific file can be shared
+                if (!navigator.canShare({ files: filesForSharing })) {
+                    throw new Error("Browser cannot share these specific files");
+                }
+
+                // Attempt the share within the user gesture context
+                const result = await navigator.share({
+                    title: "Share to (Demo)",
+                    text: getLinesXHS(2),
+                    files: filesForSharing
+                });
+
+                console.log("Shared successfully:", result);
+            } catch (error) {
+                console.error("Sharing failed:", error.name, error.message);
+
+                // Fallback: Try sharing without files
                 try {
                     await navigator.share({
                         title: "Share to (Demo)",
-                        text: getLinesXHS(2),
-                        files: files
+                        text: getLinesXHS(2)
                     });
-                    console.log("Shared successfully!");
-                } catch (error) {
-                    console.error("Sharing failed", error);
+                    console.log("Fallback sharing (text only) successful");
+                } catch (fallbackError) {
+                    console.error("Fallback sharing also failed:", fallbackError);
+
+                    // Final fallback: Just copy text to clipboard
+                    try {
+                        await navigator.clipboard.writeText(getLinesXHS(2));
+                        alert("Share failed, but text copied to clipboard!");
+                    } catch (clipboardError) {
+                        alert("Unable to share content. Please try again.");
+                    }
                 }
-            } else {
-                //console.log("Your browser does not support sharing multiple files or image fetch failed.");
             }
         }
 
