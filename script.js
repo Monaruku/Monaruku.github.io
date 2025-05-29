@@ -482,20 +482,57 @@ document.addEventListener("DOMContentLoaded", function () {
             // Use the same approach as image sharing
             // Fetch the video file using the same CORS proxy method
             console.log("Video sharing mode activated");
-            console.log("Combined media files for Facebook share:", combinedMediaFiles);
-            const files = savedImageFiles; // Assign the images to be shared
-            if (files.length > 0 && navigator.canShare && navigator.canShare({ files })) {
-                try {
-                    await navigator.share({
-                        text: getLinesXHS(2),
-                        files
-                    });
-                    //console.log("Shared successfully!");
-                } catch (error) {
-                    //console.error("Sharing failed", error);
-                }
-            } else {
-                //console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            try {
+                // Create a file input element
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'video/*'; // Accept only video files
+                
+                // Add event listener for when user selects a file
+                fileInput.onchange = async (event) => {
+                    const selectedFile = event.target.files[0];
+                    
+                    if (selectedFile && selectedFile.type.startsWith('video/')) {
+                        console.log("Video selected from gallery:", selectedFile.name, selectedFile.size, "bytes");
+                        
+                        // Check if sharing is supported
+                        if (navigator.canShare && navigator.canShare({ files: [selectedFile] })) {
+                            try {
+                                await navigator.share({
+                                    text: getLinesXHS(2),
+                                    files: [selectedFile]
+                                });
+                                console.log("Video shared successfully!");
+                            } catch (shareError) {
+                                console.error("Video sharing failed:", shareError);
+                            }
+                        } else {
+                            console.log("Your browser does not support sharing video files.");
+                        }
+                    } else {
+                        console.error("No valid video file selected");
+                        
+                        // Fallback to images if video selection fails
+                        if (savedImageFiles && savedImageFiles.length > 0 && 
+                            navigator.canShare && navigator.canShare({ files: savedImageFiles })) {
+                            try {
+                                await navigator.share({
+                                    text: getLinesXHS(2),
+                                    files: savedImageFiles
+                                });
+                                console.log("Shared images as fallback successfully!");
+                            } catch (fallbackError) {
+                                console.error("Fallback sharing failed:", fallbackError);
+                            }
+                        }
+                    }
+                };
+                
+                // Trigger the file selection dialog
+                fileInput.click();
+                
+            } catch (error) {
+                console.error("Error in video sharing process:", error);
             }
         }
 
