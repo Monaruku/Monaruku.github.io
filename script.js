@@ -483,56 +483,104 @@ document.addEventListener("DOMContentLoaded", function () {
             // Fetch the video file using the same CORS proxy method
             console.log("Video sharing mode activated");
             try {
-                // Create a file input element
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'video/*'; // Accept only video files
+                console.log("Video sharing mode activated with direct video");
                 
-                // Add event listener for when user selects a file
-                fileInput.onchange = async (event) => {
-                    const selectedFile = event.target.files[0];
+                // Define the specific video file to share
+                const videoFileName = "final-1747902221090.mp4";
+                let videoFile = null;
+                
+                // 1. First check if we already have videos loaded
+                if (savedVideoFiles && savedVideoFiles.length > 0 && 
+                    savedVideoFiles[0] && savedVideoFiles[0].size > 0) {
+                    videoFile = savedVideoFiles[0];
+                    console.log("Using preloaded video:", videoFile.name, videoFile.size, "bytes");
+                } 
+                // 2. Check WA videos as fallback
+                else if (savedVideoFilesWA && savedVideoFilesWA.size > 0) {
+                    videoFile = savedVideoFilesWA;
+                    console.log("Using preloaded WA video:", videoFile.name, videoFile.size, "bytes");
+                } 
+                // 3. If no preloaded videos, try to load the specific one
+                else {
+                    console.log("No preloaded video found, fetching specific video");
                     
-                    if (selectedFile && selectedFile.type.startsWith('video/')) {
-                        console.log("Video selected from gallery:", selectedFile.name, selectedFile.size, "bytes");
-                        
-                        // Check if sharing is supported
-                        if (navigator.canShare && navigator.canShare({ files: [selectedFile] })) {
-                            try {
-                                await navigator.share({
-                                    text: getLinesXHS(2),
-                                    files: [selectedFile]
-                                });
-                                console.log("Video shared successfully!");
-                            } catch (shareError) {
-                                console.error("Video sharing failed:", shareError);
+                    // List of potential paths to try
+                    const pathsToTry = [
+                        "./Videos/" + videoFileName,
+                        "Videos/" + videoFileName,
+                        "/Videos/" + videoFileName,
+                        "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/" + videoFileName
+                    ];
+                    
+                    // Try each path until we find one that works
+                    for (const path of pathsToTry) {
+                        console.log("Attempting to load video from:", path);
+                        try {
+                            const file = await fetchVideoAsFile(path, videoFileName);
+                            if (file && file.size >= 1000) {
+                                videoFile = file;
+                                console.log("Successfully loaded video from:", path);
+                                break;
                             }
-                        } else {
-                            console.log("Your browser does not support sharing video files.");
-                        }
-                    } else {
-                        console.error("No valid video file selected");
-                        
-                        // Fallback to images if video selection fails
-                        if (savedImageFiles && savedImageFiles.length > 0 && 
-                            navigator.canShare && navigator.canShare({ files: savedImageFiles })) {
-                            try {
-                                await navigator.share({
-                                    text: getLinesXHS(2),
-                                    files: savedImageFiles
-                                });
-                                console.log("Shared images as fallback successfully!");
-                            } catch (fallbackError) {
-                                console.error("Fallback sharing failed:", fallbackError);
-                            }
+                        } catch (fetchError) {
+                            console.warn("Failed to load from path:", path, fetchError);
                         }
                     }
-                };
+                }
                 
-                // Trigger the file selection dialog
-                fileInput.click();
-                
+                // If we have a valid video file, share it
+                if (videoFile && videoFile.size >= 1000) {
+                    console.log("Preparing to share video:", videoFile.name, videoFile.size, "bytes");
+                    
+                    if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
+                        await navigator.share({
+                            text: getLinesXHS(2),
+                            files: [videoFile]
+                        });
+                        console.log("Video shared successfully!");
+                        return;
+                    } else {
+                        throw new Error("Browser doesn't support sharing this video file");
+                    }
+                } else {
+                    throw new Error("No valid video file available to share");
+                }
             } catch (error) {
-                console.error("Error in video sharing process:", error);
+                console.error("Video sharing failed:", error);
+                
+                // Fallback to images if video sharing fails
+                try {
+                    console.log("Falling back to image sharing");
+                    
+                    // Try to share the first valid image file
+                    if (savedImageFiles && savedImageFiles.length > 0) {
+                        const validImage = savedImageFiles.find(img => img && img.size > 0);
+                        if (validImage && navigator.canShare && navigator.canShare({ files: [validImage] })) {
+                            await navigator.share({
+                                text: getLinesXHS(2),
+                                files: [validImage]
+                            });
+                            console.log("Image fallback shared successfully!");
+                            return;
+                        }
+                    }
+                    
+                    // If no valid images, fall back to text only
+                    await navigator.share({
+                        text: getLinesXHS(2)
+                    });
+                    console.log("Text-only fallback shared successfully!");
+                } catch (fallbackError) {
+                    console.error("All sharing attempts failed:", fallbackError);
+                    
+                    // Last resort - copy to clipboard
+                    try {
+                        await navigator.clipboard.writeText(getLinesXHS(2));
+                        alert("Content copied to clipboard!");
+                    } catch (clipboardError) {
+                        console.error("Even clipboard copy failed:", clipboardError);
+                    }
+                }
             }
         }
 
