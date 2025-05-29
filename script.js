@@ -264,7 +264,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Fetch and convert
             const videoFile = await fetchVideoAsFile(videoUrl, "video1.mp4");
-
+            // **Log video file details for debugging**
+            if (videoFile) {
+                console.log("Video file details:", {
+                    name: videoFile.name,
+                    type: videoFile.type,
+                    size: videoFile.size + " bytes"
+                });
+            }
             // Save to array (only if the fetch was successful)
             if (videoFile) {
                 savedVideoFiles = [videoFile];
