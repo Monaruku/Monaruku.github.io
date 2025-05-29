@@ -482,91 +482,82 @@ document.addEventListener("DOMContentLoaded", function () {
             // Use the same approach as image sharing
             // Fetch the video file using the same CORS proxy method
             try {
-                // Create a file input element
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'video/*'; // Accept only video files
+                // Check if we have preloaded videos
+                if (!savedVideoFiles || savedVideoFiles.length === 0 || !savedVideoFiles[0]) {
+                    console.error("No preloaded video files available");
+                    alert("No videos available to share. Please try again later.");
+                    return;
+                }
 
-                // Add event listener for when user selects a file
-                fileInput.onchange = async (event) => {
-                    const selectedFile = event.target.files[0];
+                const videoFile = savedVideoFiles[0];
+                console.log("Using preloaded video:", videoFile.name, videoFile.size, "bytes");
 
-                    if (selectedFile && selectedFile.type.startsWith('video/')) {
-                        console.log("Video selected from gallery:", selectedFile.name, selectedFile.size, "bytes");
+                // Create a combined array with the preloaded video and images
+                const combinedFiles = [];
 
-                        // Create a combined array with the selected video and preloaded image
-                        const combinedFiles = [];
+                // Add the video first
+                combinedFiles.push(videoFile);
 
-                        // Add the selected video first
-                        combinedFiles.push(selectedFile);
+                // Add the preloaded images if available
+                if (savedImageFiles && savedImageFiles.length > 0) {
+                    const validImages = savedImageFiles.filter(Boolean);
+                    console.log("Adding preloaded images to share:", validImages.length, "images");
+                    combinedFiles.push(...validImages);
+                }
 
-                        // Add the preloaded images if available
-                        if (savedImageFiles && savedImageFiles.length > 0) {
-                            const validImages = savedImageFiles.filter(Boolean);
-                            console.log("Adding preloaded images to share:", validImages.length, "images");
-                            combinedFiles.push(...validImages);
-                        }
+                // Create and show a confirmation dialog
+                const confirmDialog = document.createElement('div');
+                confirmDialog.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center;';
 
-                        // Create and show a confirmation dialog
-                        const confirmDialog = document.createElement('div');
-                        confirmDialog.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:9999; display:flex; align-items:center; justify-content:center;';
+                const dialogContent = document.createElement('div');
+                dialogContent.style.cssText = 'background:white; padding:20px; border-radius:10px; max-width:80%; text-align:center;';
+                dialogContent.innerHTML = `
+                    <h3>Share Video</h3>
+                    <p>Ready to share: ${videoFile.name}</p>
+                    <button id="confirmShare" style="background:#4CAF50; color:white; border:none; padding:10px 20px; margin:10px; border-radius:5px; cursor:pointer;">Share Now</button>
+                    <button id="cancelShare" style="background:#f44336; color:white; border:none; padding:10px 20px; margin:10px; border-radius:5px; cursor:pointer;">Cancel</button>
+                `;
 
-                        const dialogContent = document.createElement('div');
-                        dialogContent.style.cssText = 'background:white; padding:20px; border-radius:10px; max-width:80%; text-align:center;';
-                        dialogContent.innerHTML = `
-                            <h3>Share Video</h3>
-                            <p>Selected: ${selectedFile.name}</p>
-                            <button id="confirmShare" style="background:#4CAF50; color:white; border:none; padding:10px 20px; margin:10px; border-radius:5px; cursor:pointer;">Share Now</button>
-                            <button id="cancelShare" style="background:#f44336; color:white; border:none; padding:10px 20px; margin:10px; border-radius:5px; cursor:pointer;">Cancel</button>
-                        `;
+                confirmDialog.appendChild(dialogContent);
+                document.body.appendChild(confirmDialog);
 
-                        confirmDialog.appendChild(dialogContent);
-                        document.body.appendChild(confirmDialog);
+                // Add event listeners to the buttons
+                document.getElementById('confirmShare').addEventListener('click', async () => {
+                    // Remove the dialog
+                    document.body.removeChild(confirmDialog);
 
-                        // Add event listeners to the buttons
-                        document.getElementById('confirmShare').addEventListener('click', async () => {
-                            // Remove the dialog
-                            document.body.removeChild(confirmDialog);
+                    // This click event is a direct user gesture, so share should work
+                    if (navigator.canShare && navigator.canShare({ files: combinedFiles })) {
+                        try {
+                            await navigator.share({
+                                text: getLines(2),
+                                files: combinedFiles
+                            });
+                            console.log("Video and images shared successfully!");
+                        } catch (shareError) {
+                            console.error("Sharing failed:", shareError);
 
-                            // This click event is a direct user gesture, so share should work
-                            if (navigator.canShare && navigator.canShare({ files: combinedFiles })) {
+                            // Try to share just the video if combined sharing fails
+                            if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
                                 try {
                                     await navigator.share({
                                         text: getLines(2),
-                                        files: combinedFiles
+                                        files: [videoFile]
                                     });
-                                    console.log("Video and image shared successfully!");
-                                } catch (shareError) {
-                                    console.error("Sharing failed:", shareError);
-
-                                    // Try to share just the video if combined sharing fails
-                                    if (navigator.canShare && navigator.canShare({ files: [selectedFile] })) {
-                                        try {
-                                            await navigator.share({
-                                                text: getLines(2),
-                                                files: [selectedFile]
-                                            });
-                                            console.log("Shared only video as fallback successfully!");
-                                        } catch (fallbackError) {
-                                            console.error("Fallback sharing failed:", fallbackError);
-                                        }
-                                    }
+                                    console.log("Shared only video as fallback successfully!");
+                                } catch (fallbackError) {
+                                    console.error("Fallback sharing failed:", fallbackError);
                                 }
-                            } else {
-                                console.log("Your browser does not support sharing these files.");
                             }
-                        });
-
-                        document.getElementById('cancelShare').addEventListener('click', () => {
-                            document.body.removeChild(confirmDialog);
-                        });
+                        }
                     } else {
-                        console.error("No valid video file selected");
+                        console.log("Your browser does not support sharing these files.");
                     }
-                };
+                });
 
-                // Trigger the file selection dialog
-                fileInput.click();
+                document.getElementById('cancelShare').addEventListener('click', () => {
+                    document.body.removeChild(confirmDialog);
+                });
 
             } catch (error) {
                 console.error("Error in video sharing process:", error);
