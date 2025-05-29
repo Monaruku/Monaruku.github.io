@@ -495,91 +495,47 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (selectedFile && selectedFile.type.startsWith('video/')) {
                         console.log("Video selected from gallery:", selectedFile.name, selectedFile.size, "bytes");
                         
-                        // Create an array to combine selected video with preloaded images
+                        // Create a combined array with the selected video and preloaded image
                         const combinedFiles = [];
                         
                         // Add the selected video first
                         combinedFiles.push(selectedFile);
                         
-                        // Add preloaded images
-                        if (savedImageFiles && savedImageFiles.length > 0) {
-                            // Add regular preloaded images
-                            const validImages = savedImageFiles.filter(img => img && img instanceof File && img.size > 0);
-                            if (validImages.length > 0) {
-                                console.log(`Adding ${validImages.length} preloaded images to share`);
-                                combinedFiles.push(...validImages);
-                            }
-                        } else if (savedImageFilesWA) {
-                            // Fallback to WA image if available
-                            console.log("Adding WA image to share");
+                        // Add the preloaded image if available
+                        if (savedImageFilesWA) {
+                            console.log("Adding preloaded image to share:", savedImageFilesWA.name);
                             combinedFiles.push(savedImageFilesWA);
                         }
                         
-                        // Check if sharing is supported with our combined files
+                        // Check if sharing is supported
                         if (navigator.canShare && navigator.canShare({ files: combinedFiles })) {
                             try {
                                 await navigator.share({
-                                    text: getLinesXHS(2),
+                                    text: getLines(2),
                                     files: combinedFiles
                                 });
-                                console.log("Video and images shared successfully!");
+                                console.log("Video and image shared successfully!");
                             } catch (shareError) {
                                 console.error("Sharing failed:", shareError);
-                                
-                                // Fallback: Try to share just the video if combined share fails
-                                try {
-                                    await navigator.share({
-                                        text: getLinesXHS(2),
-                                        files: [selectedFile]
-                                    });
-                                    console.log("Fallback: Video-only shared successfully");
-                                } catch (videoOnlyError) {
-                                    console.error("Video-only sharing also failed:", videoOnlyError);
-                                }
                             }
                         } else {
-                            console.log("Your browser doesn't support sharing these combined files");
+                            console.log("Your browser does not support sharing these files.");
                             
-                            // Try to share just the video
+                            // Try to share just the video if combined sharing fails
                             if (navigator.canShare && navigator.canShare({ files: [selectedFile] })) {
                                 try {
                                     await navigator.share({
-                                        text: getLinesXHS(2),
+                                        text: getLines(2),
                                         files: [selectedFile]
                                     });
-                                    console.log("Video-only shared successfully!");
-                                } catch (err) {
-                                    console.error("Video-only sharing failed:", err);
+                                    console.log("Shared only video as fallback successfully!");
+                                } catch (fallbackError) {
+                                    console.error("Fallback sharing failed:", fallbackError);
                                 }
                             }
                         }
                     } else {
                         console.error("No valid video file selected");
-                        
-                        // Fallback to sharing just preloaded images
-                        if (savedImageFiles && savedImageFiles.length > 0 && 
-                            navigator.canShare && navigator.canShare({ files: savedImageFiles })) {
-                            try {
-                                await navigator.share({
-                                    text: getLinesXHS(2),
-                                    files: savedImageFiles
-                                });
-                                console.log("Shared preloaded images as fallback!");
-                            } catch (fallbackError) {
-                                console.error("Fallback sharing failed:", fallbackError);
-                            }
-                        } else if (savedImageFilesWA && 
-                                  navigator.canShare && navigator.canShare({ files: [savedImageFilesWA] })) {
-                            try {
-                                await navigator.share({
-                                    text: getLinesXHS(2),
-                                    files: [savedImageFilesWA]
-                                });
-                                console.log("Shared WA image as fallback!");
-                            } catch (waError) {
-                                console.error("WA image sharing failed:", waError);
-                            }
-                        }
                     }
                 };
                 
