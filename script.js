@@ -501,10 +501,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         // Add the selected video first
                         combinedFiles.push(selectedFile);
                         
-                        // Add the preloaded image if available
-                        if (savedImageFilesWA) {
-                            console.log("Adding preloaded image to share:", savedImageFilesWA.name);
-                            combinedFiles.push(savedImageFilesWA);
+                        // Add the preloaded images if available
+                        if (savedImageFiles && savedImageFiles.length > 0) {
+                            const validImages = savedImageFiles.filter(Boolean);
+                            console.log("Adding preloaded images to share:", validImages.length, "images");
+                            combinedFiles.push(...validImages);
                         }
                         
                         // Check if sharing is supported
