@@ -529,29 +529,35 @@ document.addEventListener("DOMContentLoaded", function () {
                     // This click event is a direct user gesture, so share should work
                     if (navigator.canShare && navigator.canShare({ files: combinedFiles })) {
                         try {
+                            console.log("Attempting to share files:", combinedFiles.length);
+
+                            // Log file sizes to debug
+                            combinedFiles.forEach((file, index) => {
+                                console.log(`File ${index}: ${file.name}, ${file.size} bytes, type: ${file.type}`);
+                            });
+
+                            // Ensure files are valid
+                            const validFiles = combinedFiles.filter(file =>
+                                file && file instanceof File && file.size > 0
+                            );
+
+                            if (validFiles.length === 0) {
+                                throw new Error("No valid files to share");
+                            }
+
                             await navigator.share({
                                 text: getLines(2),
-                                files: combinedFiles
+                                files: validFiles
                             });
-                            console.log("Video and images shared successfully!");
+                            console.log("Media shared successfully!");
+
                         } catch (shareError) {
                             console.error("Sharing failed:", shareError);
-
-                            // Try to share just the video if combined sharing fails
-                            if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                                try {
-                                    await navigator.share({
-                                        text: getLines(2),
-                                        files: [videoFile]
-                                    });
-                                    console.log("Shared only video as fallback successfully!");
-                                } catch (fallbackError) {
-                                    console.error("Fallback sharing failed:", fallbackError);
-                                }
-                            }
+                            alert("Unable to share media. Please try again later.");
                         }
                     } else {
                         console.log("Your browser does not support sharing these files.");
+                        alert("Your browser doesn't support sharing these files.");
                     }
                 });
 
