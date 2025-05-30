@@ -139,15 +139,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     // Try direct fetch first - this should work from GitHub Pages to githubusercontent
                     const response = await fetch(url, {
-                        headers: { 'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8' },
+                        headers: { 
+                            'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8'
+                        },
                         cache: 'no-store'  // Prevent caching issues
                     });
 
                     if (response.ok) {
                         const blob = await response.blob();
                         if (blob.size > 1000) {
-                            console.log(`Successfully fetched video directly: ${fileName}, Size: ${blob.size} bytes, type: ${blob.type}`);
-                            return new File([blob], fileName, { type: blob.type || "video/mp4" });
+                            console.log(`Successfully fetched video directly: ${fileName}, Size: ${blob.size} bytes, original type: ${blob.type}`);
+                            // Always use video/mp4 type regardless of what the server returns
+                            return new File([blob], fileName, { type: "video/mp4" });
                         } else {
                             throw new Error("Video file too small, likely invalid");
                         }
@@ -162,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // If we're here, the direct fetch failed
             // Try an alternative approach with simpler URL
-            // Sometimes removing some parameters helps
             try {
                 const simplifiedUrl = url.split('?')[0]; // Remove query parameters
                 console.log("Trying simplified URL:", simplifiedUrl);
@@ -175,8 +177,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (response.ok) {
                     const blob = await response.blob();
                     if (blob.size > 1000) {
-                        console.log(`Successfully fetched video with simplified URL: ${fileName}, Size: ${blob.size} bytes`);
-                        return new File([blob], fileName, { type: blob.type || "video/mp4" });
+                        console.log(`Successfully fetched video with simplified URL: ${fileName}, Size: ${blob.size} bytes, original type: ${blob.type}`);
+                        // Always use video/mp4 type regardless of what the server returns
+                        return new File([blob], fileName, { type: "video/mp4" });
                     }
                 }
             } catch (simplifiedError) {
@@ -198,6 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
             for (let i = 0; i < binaryString.length; i++) {
                 bytes[i] = binaryString.charCodeAt(i);
             }
+            // Ensure placeholder is also video/mp4 type
             return new File([bytes], fileName, { type: "video/mp4" });
         }
     }
