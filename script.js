@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
     //Download video from url thru CORS proxy
     async function fetchVideoAsFile(url, fileName) {
         try {
-            console.log("Attempting to fetch video directly:", url);
+            // console.log("Attempting to fetch video directly:", url);
 
             // For GitHub raw content, we can often access it directly from GitHub Pages
             if (url.includes('githubusercontent.com')) {
@@ -265,13 +265,14 @@ document.addEventListener("DOMContentLoaded", function () {
             // Shuffle and randomly select one video URL
             const randomIndex = Math.floor(Math.random() * videoUrls.length);
             const videoUrl = videoUrls[randomIndex];
+            console.log("Selected video URL:", videoUrl);
 
             // Fetch and convert
             const videoFile = await fetchVideoAsFile(videoUrl, "video1.mp4");
             // Save to array (only if the fetch was successful)
             if (videoFile) {
                 savedVideoFiles = [videoFile];
-                console.log("Video loaded successfully:", videoFile.size, "bytes");
+                console.log("Video loaded successfully");
             } else {
                 console.error("Failed to load video");
                 savedVideoFiles = [];
