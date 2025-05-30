@@ -815,6 +815,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 prompt(isEnglish ? "Please copy this text manually:" : "请手动复制此文本:", textTC);
             }
         } else if (mode == 2) {
+            // Try to copy the text to clipboard
+            try {
+                window.focus(); // Try to focus the window to help with clipboard permissions
+                navigator.clipboard.writeText(textTC)
+                    .then(() => {
+                        console.log("Text copied to clipboard successfully");
+                    })
+                    .catch(err => {
+                        console.error("Failed to copy text: ", err);
+                    });
+            } catch (error) {
+                console.error("Clipboard operation failed:", error);
+            }
             return textTC; // Just return the text without clipboard operations
         }
     }
