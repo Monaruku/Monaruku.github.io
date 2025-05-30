@@ -262,20 +262,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 return [];
             }
 
-            // Just use the first video URL
-            const videoUrl = videoUrls[0];
-            console.log("Using video URL:", videoUrl);
+            // Shuffle and randomly select one video URL
+            const randomIndex = Math.floor(Math.random() * videoUrls.length);
+            const videoUrl = videoUrls[randomIndex];
 
             // Fetch and convert
             const videoFile = await fetchVideoAsFile(videoUrl, "video1.mp4");
-            // **Log video file details for debugging**
-            if (videoFile) {
-                console.log("Video file details:", {
-                    name: videoFile.name,
-                    type: videoFile.type,
-                    size: videoFile.size + " bytes"
-                });
-            }
             // Save to array (only if the fetch was successful)
             if (videoFile) {
                 savedVideoFiles = [videoFile];
