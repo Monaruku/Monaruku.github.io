@@ -218,6 +218,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var imagesLoaded = false;
     var videosLoaded = false;
 
+    var savedImageFilesWA = [];
+    var savedVideoFilesWA = [];
+    var combinedMediaFilesWA = [];
+
     // Improved function to handle image loading with proper Promise resolution
     async function loadRandomImages() {
         try {
@@ -373,59 +377,57 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
 
-    var savedImageFilesWA;
-    var savedVideoFilesWA;
-    var combinedMediaFilesWA = [];
 
-    async function loadRandomImagesWA() {
-        // Shuffle and select
-        const selectedUrls = "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg";
-        console.log("Selected URLs:", selectedUrls);
 
-        // Fetch and convert
-        const files = await fetchImageAsFile(selectedUrls, "image1.jpg");
-        //const files = (await Promise.all(filePromises)).filter(Boolean);
+    // async function loadRandomImagesWA() {
+    //     // Shuffle and select
+    //     const selectedUrls = "https://raw.githubusercontent.com/Monaruku/Monaruku.github.io/refs/heads/main/Image/Event%20Photos/2025-LHDN-E-Invoice-Seminar-Poster.jpg";
+    //     console.log("Selected URLs:", selectedUrls);
 
-        // Save to array
-        savedImageFilesWA = files;
-        //hideLoadingScreen();
-        console.log(savedImageFilesWA);
-    }
+    //     // Fetch and convert
+    //     const files = await fetchImageAsFile(selectedUrls, "image1.jpg");
+    //     //const files = (await Promise.all(filePromises)).filter(Boolean);
 
-    async function loadRandomVideosWA() {
-        // Use a specific video URL
-        const selectedUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
-        console.log("Selected Video URL:", selectedUrl);
+    //     // Save to array
+    //     savedImageFilesWA = files;
+    //     //hideLoadingScreen();
+    //     console.log(savedImageFilesWA);
+    // }
 
-        // Fetch and convert
-        const file = await fetchVideoAsFile(selectedUrl, "video1.mp4");
+    // async function loadRandomVideosWA() {
+    //     // Use a specific video URL
+    //     const selectedUrl = "https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/main/Videos/final-1747902221090.mp4";
+    //     console.log("Selected Video URL:", selectedUrl);
 
-        // Save to variable
-        savedVideoFilesWA = file;
-        console.log("Video loaded:", savedVideoFilesWA);
-    }
+    //     // Fetch and convert
+    //     const file = await fetchVideoAsFile(selectedUrl, "video1.mp4");
 
-    // Run both functions and combine results when done
-    Promise.all([loadRandomImagesWA(), loadRandomVideosWA()])
-        .then(() => {
-            // Create combined media files with video first, then image
-            combinedMediaFilesWA = [];
+    //     // Save to variable
+    //     savedVideoFilesWA = file;
+    //     console.log("Video loaded:", savedVideoFilesWA);
+    // }
 
-            // Add video first if it exists
-            if (savedVideoFilesWA) {
-                combinedMediaFilesWA.push(savedVideoFilesWA);
-            }
+    // // Run both functions and combine results when done
+    // Promise.all([loadRandomImagesWA(), loadRandomVideosWA()])
+    //     .then(() => {
+    //         // Create combined media files with video first, then image
+    //         combinedMediaFilesWA = [];
 
-            // Add image if it exists
-            if (savedImageFilesWA) {
-                combinedMediaFilesWA.push(savedImageFilesWA);
-            }
+    //         // Add video first if it exists
+    //         if (savedVideoFilesWA) {
+    //             combinedMediaFilesWA.push(savedVideoFilesWA);
+    //         }
 
-            console.log("Combined media files(WA):", combinedMediaFilesWA);
-        })
-        .catch(error => {
-            console.error("Error loading media files:", error);
-        });
+    //         // Add image if it exists
+    //         if (savedImageFilesWA) {
+    //             combinedMediaFilesWA.push(savedImageFilesWA);
+    //         }
+
+    //         console.log("Combined media files(WA):", combinedMediaFilesWA);
+    //     })
+    //     .catch(error => {
+    //         console.error("Error loading media files:", error);
+    //     });
 
 
 
