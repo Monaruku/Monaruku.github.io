@@ -518,41 +518,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Sharing failed", error);
             }
         }
-        if (mode == 4) {
-            // Mode 4: Share to Facebook with both images and videos
-            console.log("Sharing to Facebook mode activated");
-
-            try {
-                // // Create array with both video and images
-                // const filesToShare = [];
-
-                // // Add video if available (using savedVideoFilesWA)
-                // if (savedVideoFilesWA) {
-                //     console.log("Adding video to Facebook share:", savedVideoFilesWA.name);
-                //     filesToShare.push(savedVideoFilesWA);
-                // }
-
-                // // Add images
-                // if (savedImageFiles && savedImageFiles.length > 0) {
-                //     console.log("Adding images to Facebook share:", savedImageFiles.length, "images");
-                //     filesToShare.push(...savedImageFiles.filter(Boolean));
-                // } else if (savedImageFilesWA) {
-                //     // Fallback to WA image if regular images aren't available
-                //     filesToShare.push(savedImageFilesWA);
-                // }
-
-                // Share content
-                console.log("Combined media files for Facebook share:", combinedMediaFiles);
-                await navigator.share({
-                    text: getLines(2),
-                    files: combinedMediaFiles
-                });
-
-                console.log("Facebook share successful!");
-            } catch (error) {
-                console.error("Facebook sharing failed", error);
-            }
-        }
+       
     }
 
 
@@ -912,64 +878,21 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             else if (platform == 'others_insta') {
                 //Check if can use web share API level 2
-                // if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
-                //Copy Share Text
-                //var line = getLines(2);
-                logClick(4);
-                try {
-                    // Get the share text first
-                    const shareText = getLines(2);
-
-                    // Try Web Share API first for video
-                    if (savedVideoFiles && savedVideoFiles.length > 0 &&
-                        savedVideoFiles[0] && savedVideoFiles[0].size > 0) {
-
-                        const videoFile = savedVideoFiles[0];
-                        console.log("Attempting to share video:", videoFile.name, videoFile.size);
-
-                        if (navigator.canShare && navigator.canShare({ files: [videoFile] })) {
-                            try {
-                                await navigator.share({
-                                    text: shareText,
-                                    files: [videoFile]
-                                });
-                                console.log("Video sharing successful!");
-                                return;
-                            } catch (shareError) {
-                                console.log("Web Share API failed for video:", shareError);
-                                // Fall through to alternative method
-                            }
-                        }
-
-                        // If Web Share API failed, use our alternative download approach
-                        shareVideoWithDownloadLink(videoFile, shareText);
-                        return;
-                    }
-
-                    // Fallback to image if no video
-                    if (savedImageFiles && savedImageFiles.length > 0) {
-                        const validImage = savedImageFiles.find(file => file && file.size > 0);
-                        if (validImage) {
-                            try {
-                                await navigator.share({
-                                    text: shareText,
-                                    files: [validImage]
-                                });
-                                console.log("Image sharing successful!");
-                                return;
-                            } catch (error) {
-                                console.error("Image sharing failed:", error);
-                            }
-                        }
-                    }
-
-                    // Final fallback - just copy text
-                    await navigator.clipboard.writeText(shareText);
-                    alert("Text copied to clipboard!");
-
-                } catch (error) {
-                    console.error("Sharing error:", error);
-                    alert("Unable to share. Please try again.");
+                if (navigator.canShare && navigator.canShare({ files: [new File(["test"], "test.txt", { type: "text/plain" })] })) {
+                    //Copy Share Text
+                    //var line = getLines(2);
+                    logClick(4);
+                    // if(isIOS){
+                    //     shareImages(2);
+                    // }
+                    // else {
+                    //     shareImages(2);
+                    // }
+                    shareImages(2);
+                    return true;
+                } else {
+                    alert("Web Share API Level 2 is NOT supported. Sharing multiple files may not work.");
+                    return false;
                 }
             }
             else if (platform == 'others_fixed') {
