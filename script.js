@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (response.ok) {
                         const blob = await response.blob();
                         if (blob.size > 1000) {
-                            console.log(`Successfully fetched video directly: ${fileName}, Size: ${blob.size} bytes`);
+                            console.log(`Successfully fetched video directly: ${fileName}, Size: ${blob.size} bytes, type: ${blob.type}`);
                             return new File([blob], fileName, { type: blob.type || "video/mp4" });
                         } else {
                             throw new Error("Video file too small, likely invalid");
