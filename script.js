@@ -87,22 +87,22 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     // Tiktok Authentication class
-    const tiktokAuthentication = new Authentication({
-        client_key: 'sbawgv8e7j4nbi22wy',
-        client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
-    });
+    // const tiktokAuthentication = new Authentication({
+    //     client_key: 'sbawgv8e7j4nbi22wy',
+    //     client_secret: 'a9UD0KvMZd3XZHie9K6zLYNvndnFDhNf'
+    // });
 
-    // Must match the URI registered in Sandbox/Production
-    const redirectUri = 'https://monaruku.github.io/tiktok_post_vid.html';
+    // // Must match the URI registered in Sandbox/Production
+    // const redirectUri = 'https://monaruku.github.io/tiktok_post_vid.html';
 
-    const tiktokScopes = [
-        'user.info.basic',
-        'video.upload',
-        'video.publish'
-    ];
+    // const tiktokScopes = [
+    //     'user.info.basic',
+    //     'video.upload',
+    //     'video.publish'
+    // ];
 
-    // Get TikTok login URL
-    const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
+    // // Get TikTok login URL
+    // const tiktokAuthenticationUrl = tiktokAuthentication.getAuthenticationUrl(redirectUri, tiktokScopes);
 
     //Loading Screen Stuff-------------------------------------------
     function hideLoadingScreen() {
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 try {
                     // Try direct fetch first - this should work from GitHub Pages to githubusercontent
                     const response = await fetch(url, {
-                        headers: { 
+                        headers: {
                             'Accept': 'video/mp4,video/*;q=0.9,*/*;q=0.8'
                         },
                         cache: 'no-store'  // Prevent caching issues
@@ -495,8 +495,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     //console.error("Sharing failed", error);
                 }
             } else {
-            //console.log("Your browser does not support sharing multiple files or image fetch failed.");
-                }
+                //console.log("Your browser does not support sharing multiple files or image fetch failed.");
+            }
         }
 
         else if (mode == 3) {
@@ -511,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Sharing failed", error);
             }
         }
-       
+
     }
 
 
@@ -655,8 +655,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const linesCN = text.split('@').map(part => part.trim());
             lineCN = linesCN;
             //console.log(lineCN);
-
-
         })
         .catch(error => console.error("Error fetching the file:", error));
 
