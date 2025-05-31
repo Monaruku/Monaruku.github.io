@@ -261,6 +261,39 @@ h1 {
     animation: spin 1s linear infinite;
     margin-bottom: 10px;
   }
+
+  .disabled-card {
+      opacity: 0.5;
+      cursor: not-allowed;
+      position: relative;
+  }
+
+  .disabled-card img:hover {
+      box-shadow: none;
+  }
+
+  .disabled-card img:active {
+      box-shadow: none;
+  }
+
+  .loading-indicator {
+      position: absolute;
+      bottom: -15px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #fff;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 3px;
+      display: block;
+  }
+
+  /* Hide loading indicator when card is enabled */
+  .card:not(.disabled-card) .loading-indicator {
+      display: none;
+  }
   
   @keyframes spin {
     to {

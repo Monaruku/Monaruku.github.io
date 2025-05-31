@@ -321,6 +321,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 console.log("Combined media files updated:", combinedMediaFiles.length, "files");
+
+                // Enable sharing cards if we have media files
+                if (combinedMediaFiles.length > 0) {
+                    const shareCards = document.querySelectorAll('#others, #others_insta');
+                    shareCards.forEach(card => {
+                        card.classList.remove('disabled-card');
+                    });
+                }
             } catch (error) {
                 console.error("Error combining media files:", error);
                 combinedMediaFiles = [];
