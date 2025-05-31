@@ -353,25 +353,33 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
     //Preload VideoURLs from text file with better error handling
-    fetch("https://raw.githubusercontent.com/AppleCakes14/SQL-Link-Tree/refs/heads/main/VideoLink.txt")
+    fetch("https://api.github.com/repos/AppleCakes14/SQL-Link-Tree/contents/Videos")
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            return response.text();
+            return response.json();
         })
-        .then(text => {
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            if (lines.length === 0) {
-                throw new Error("No video URLs found in the file");
+        .then(data => {
+            // Filter for .mp4 files
+            const mp4Files = data.filter(file => file.name.toLowerCase().endsWith('.mp4'));
+            
+            if (mp4Files.length === 0) {
+                throw new Error("No MP4 files found in the repository folder");
             }
-            videoUrls = lines;
-            console.log("Video URLs loaded:", videoUrls.length);
+            
+            // Randomly select one MP4 file
+            const randomIndex = Math.floor(Math.random() * mp4Files.length);
+            const selectedFile = mp4Files[randomIndex];
+            
+            // Set videoUrls to just contain the one selected URL
+            videoUrls = [selectedFile.download_url];
+            console.log("Random video URL selected:", videoUrls[0]);
             return loadRandomVideos();
         })
         .catch(error => {
-            console.error("Error fetching video links:", error);
-            videoUrls = []; ``
+            console.error("Error fetching video links from GitHub:", error);
+            videoUrls = [];
             videosLoaded = true;
             updateCombinedMedia();
         });
