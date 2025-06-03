@@ -245,16 +245,14 @@ document.addEventListener("DOMContentLoaded", function () {
             savedImageFiles = files;
             console.log("Images loaded successfully:", files.length);
 
-            imagesLoaded = true;
-            updateCombinedMedia();
-            hideLoadingScreen();
             return files;
         } catch (error) {
             console.error("Error in loadRandomImages:", error);
-            imagesLoaded = true;
+            return [];
+        } finally {
+            videosLoaded = true;
             updateCombinedMedia();
             hideLoadingScreen();
-            return [];
         }
     }
 
@@ -280,18 +278,15 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 console.error("Failed to load video");
                 savedVideoFiles = [];
-            }
-
-            videosLoaded = true;
-            updateCombinedMedia();
-            hideLoadingScreen();
+            }   
             return savedVideoFiles;
         } catch (error) {
             console.error("Error in loadRandomVideos:", error);
+            return [];
+        } finally {
             videosLoaded = true;
             updateCombinedMedia();
             hideLoadingScreen();
-            return [];
         }
     }
 
@@ -321,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
 
                 console.log("Combined media files updated:", combinedMediaFiles.length, "files");
+                console.log("Combined media files:", combinedMediaFiles);
 
                 // Enable sharing cards if we have media files
                 if (combinedMediaFiles.length > 0) {
