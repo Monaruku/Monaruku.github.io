@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         'insta_en': "Instagram",
         'insta_cn': "Instagram",
+        
+        'tiktok_en': "TikTok",
+        'tiktok_cn': "抖音",
 
         'others_en': "Share to Facebook",
         'others_cn': "分享给你的朋友",
@@ -45,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function load_lang () {
         var currentLang = (isEnglish) ? "_en" : "_cn";
         //const media_list = ['tiktok', 'rednote', 'google', 'fb', 'insta', 'others', 'store', 'others_fixed'];
-        const media_list = ['rednote', 'fb', 'insta', 'others', 'others_insta'];
+        const media_list = ['rednote', 'fb', 'insta', 'tiktok', 'others', 'others_insta'];
         media_list.forEach(media => {
             document.getElementById(media).querySelector('h3').textContent = text_lang[media + currentLang];
         });
@@ -84,6 +87,7 @@ document.addEventListener("DOMContentLoaded", function () {
         'fb': 'https://www.facebook.com/SQLEstream/',
         'insta': 'https://www.instagram.com/sqlestream/?hl=ms',
         'google': 'https://search.google.com/local/writereview?placeid=ChIJd904jxpTzDER2KhXom8b_zI',
+        'tiktok' : 'https://www.tiktok.com/@sqlaccounthq_oe?_t=ZS-8x3H0Kh1ZBq&_r=1 ',
     };
 
     // Tiktok Authentication class
@@ -460,6 +464,9 @@ document.addEventListener("DOMContentLoaded", function () {
         else if (mode == 4) {                                   //Share
             formData.append("entry.2141122930", "Share");
         }
+        else if (mode == 5) {                                   //Log TikTok
+            formData.append("entry.2141122930", "TikTok");
+        }
     
         fetch(formUrl, {
           method: "POST",
@@ -652,6 +659,10 @@ document.addEventListener("DOMContentLoaded", function () {
             else if (platform == 'insta') {
                 window.open(links[platform], '_blank');
                 logClick(3);
+            }
+            else if (platform == 'tiktok') {
+                window.open(links[platform], '_blank');
+                logClick(5);
             }
         });
     });
