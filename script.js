@@ -504,7 +504,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
             }
             else if (platform == 'fb') {
-                window.open(links[platform], '_blank');
+                //window.open(links[platform], '_blank');
+                window.open('https://www.facebook.com/sharer/sharer.php?u=https://monaruku.github.io/', '_blank');
                 logClick(1);
             }
             else if (platform == 'insta') {
