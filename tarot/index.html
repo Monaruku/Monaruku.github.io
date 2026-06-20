@@ -4,13 +4,103 @@ title: Tarot
 permalink: /tarot/
 ---
 
+<link rel="stylesheet" href="{{ '/assets/tarot/tarot.css' | relative_url }}">
+
 <div class="page">
-  <a href="{{ '/' | relative_url }}" class="back-link">← Back to portal</a>
+  <a href="{{ '/' | relative_url }}" class="back-link">&larr; Back to portal</a>
   <h1 class="page-title gradient-tarot">Tarot</h1>
-  <div class="page-body">
-    <p>Explore tarot readings, card meanings, and your inner path.</p>
-    <div class="page-placeholder">
-      Tarot experience coming soon.
+</div>
+
+<div class="tarot-app">
+
+  <!-- Phase 1: Intention -->
+  <div id="phase-intention" class="phase phase-active">
+    <div class="intention-content">
+      <span class="phase-icon">&#x2726;</span>
+      <h2>Set Your Intention</h2>
+      <p>Take a moment to center yourself. Focus on a question, situation, or area of your life where you seek guidance.</p>
+      <input type="text" id="intention-input"
+             placeholder="What seeks your attention today?"
+             maxlength="200" autocomplete="off">
+      <p class="intention-hint">You may type a question or leave it open.</p>
+      <button id="btn-shuffle" class="tarot-btn">Shuffle the Deck</button>
     </div>
   </div>
+
+  <!-- Phase 2: Category -->
+  <div id="phase-category" class="phase">
+    <h2>Choose Your Focus</h2>
+    <p>Select the area of life you'd like the reading to illuminate.</p>
+    <div class="category-grid">
+      <div class="category-card" data-category="love">
+        <span class="cat-icon">&#9829;</span>
+        <span class="cat-label">Love</span>
+      </div>
+      <div class="category-card" data-category="career">
+        <span class="cat-icon">&#9733;</span>
+        <span class="cat-label">Career</span>
+      </div>
+      <div class="category-card" data-category="health">
+        <span class="cat-icon">&#10022;</span>
+        <span class="cat-label">Health</span>
+      </div>
+      <div class="category-card" data-category="spiritual">
+        <span class="cat-icon">&#10023;</span>
+        <span class="cat-label">Spiritual</span>
+      </div>
+      <div class="category-card" data-category="general">
+        <span class="cat-icon">&#9678;</span>
+        <span class="cat-label">General</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Phase 3: Shuffle -->
+  <div id="phase-shuffle" class="phase">
+    <div class="shuffle-container">
+      <h2>Shuffling the Deck...</h2>
+      <p>The cards are mixing with your intention. Stop when it feels right.</p>
+      <div class="shuffle-deck">
+        <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
+        <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
+        <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
+        <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
+        <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
+      </div>
+      <button id="btn-stop-shuffle" class="tarot-btn">Stop Shuffling</button>
+    </div>
+  </div>
+
+  <!-- Phase 4: Select -->
+  <div id="phase-select" class="phase">
+    <h2>Select Three Cards</h2>
+    <p class="select-instruction">Choose a card for: <span id="position-prompt" class="position-prompt past">Past</span></p>
+    <div id="select-fan" class="select-fan"></div>
+  </div>
+
+  <!-- Phase 5: Reveal -->
+  <div id="phase-reveal" class="phase">
+    <h2>Revealing Your Cards...</h2>
+    <div id="reveal-spread" class="spread"></div>
+  </div>
+
+  <!-- Phase 6: Reading -->
+  <div id="phase-reading" class="phase">
+    <h2>Your Reading</h2>
+    <div id="reading-spread" class="spread"></div>
+    <div class="reading-panel">
+      <div id="reading-content"></div>
+    </div>
+    <div class="reading-actions">
+      <button id="btn-new-reading" class="tarot-btn">New Reading</button>
+    </div>
+  </div>
+
 </div>
+
+<script>
+  window.TAROT_CARD_BACK = "{{ '/assets/tarot/card-back.png' | relative_url }}";
+</script>
+<script src="{{ '/assets/tarot/cards.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
+<script src="{{ '/assets/tarot/interpretations.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
+<script src="{{ '/assets/tarot/tarot.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
