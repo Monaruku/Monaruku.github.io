@@ -1,0 +1,283 @@
+/* ──────────────────────────────────────────
+   Reset & Base
+   ────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #0a0a0f;
+  color: #f0f0f5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ──────────────────────────────────────────
+   Animated background blobs
+   ────────────────────────────────────────── */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.25;
+  z-index: 0;
+  pointer-events: none;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+body::before {
+  width: 500px; height: 500px;
+  background: #7b2ff7;
+  top: -150px; left: -100px;
+}
+
+body::after {
+  width: 450px; height: 450px;
+  background: #ff6ec7;
+  bottom: -120px; right: -80px;
+  animation-delay: -9s;
+}
+
+@keyframes drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(60px, 40px) scale(1.1); }
+}
+
+/* ──────────────────────────────────────────
+   Portal layout
+   ────────────────────────────────────────── */
+.portal {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 3rem 1.5rem;
+}
+
+/* ──────────────────────────────────────────
+   Header
+   ────────────────────────────────────────── */
+.portal-header { text-align: center; margin-bottom: 3.5rem; }
+
+.portal-title {
+  font-size: clamp(2.8rem, 8vw, 5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #a78bfa, #f472b6, #fb923c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.portal-subtitle {
+  margin-top: 0.6rem;
+  font-size: 1.1rem;
+  color: rgba(240, 240, 245, 0.5);
+  letter-spacing: 0.05em;
+}
+
+/* ──────────────────────────────────────────
+   Cards grid
+   ────────────────────────────────────────── */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.75rem;
+  width: 100%;
+  max-width: 960px;
+}
+
+/* ──────────────────────────────────────────
+   Card base
+   ────────────────────────────────────────── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem 1.75rem;
+  border-radius: 1.25rem;
+  text-decoration: none;
+  color: #f0f0f5;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  border-color: transparent;
+}
+
+.card:hover::before { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.card-icon svg { width: 26px; height: 26px; }
+
+.card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.card-desc {
+  font-size: 0.9rem;
+  color: rgba(240, 240, 245, 0.55);
+  line-height: 1.5;
+}
+
+.card-arrow {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.75rem;
+  font-size: 1.4rem;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ──────────────────────────────────────────
+   Card variants – gradient on hover
+   ────────────────────────────────────────── */
+
+/* Blog */
+.card-blog::before {
+  background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(59,130,246,0.25));
+}
+.card-blog:hover {
+  box-shadow: 0 20px 50px -12px rgba(124, 58, 237, 0.45);
+  border-color: rgba(124, 58, 237, 0.5);
+}
+.card-blog .card-icon svg { stroke: #a78bfa; }
+
+/* Tarot */
+.card-tarot::before {
+  background: linear-gradient(135deg, rgba(236,72,153,0.35), rgba(249,115,22,0.25));
+}
+.card-tarot:hover {
+  box-shadow: 0 20px 50px -12px rgba(236, 72, 153, 0.45);
+  border-color: rgba(236, 72, 153, 0.5);
+}
+.card-tarot .card-icon svg { stroke: #f472b6; }
+
+/* About */
+.card-about::before {
+  background: linear-gradient(135deg, rgba(16,185,129,0.35), rgba(59,130,246,0.25));
+}
+.card-about:hover {
+  box-shadow: 0 20px 50px -12px rgba(16, 185, 129, 0.45);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+.card-about .card-icon svg { stroke: #34d399; }
+
+/* ──────────────────────────────────────────
+   Footer
+   ────────────────────────────────────────── */
+.portal-footer {
+  margin-top: 4rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba(240, 240, 245, 0.25);
+}
+
+/* ──────────────────────────────────────────
+   Sub-page layout (blog / tarot / about)
+   ────────────────────────────────────────── */
+.page {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  color: rgba(240, 240, 245, 0.5);
+  text-decoration: none;
+  margin-bottom: 2.5rem;
+  transition: color 0.2s ease;
+}
+
+.page-back:hover { color: #f0f0f5; }
+
+.page-title {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
+
+.page-title.gradient-blog {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-title.gradient-tarot {
+  background: linear-gradient(135deg, #f472b6, #fb923c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-title.gradient-about {
+  background: linear-gradient(135deg, #34d399, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.page-body {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: rgba(240, 240, 245, 0.75);
+}
+
+.page-body p { margin-bottom: 1.2rem; }
+
+.page-placeholder {
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  text-align: center;
+  font-size: 0.95rem;
+  color: rgba(240, 240, 245, 0.4);
+}

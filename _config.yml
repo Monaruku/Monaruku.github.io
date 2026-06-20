@@ -1,0 +1,15 @@
+title: Monaruku
+description: Portal homepage
+baseurl: ""
+url: ""
+
+# GitHub Pages settings
+markdown: kramdown
+permalink: pretty
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - .gitignore
