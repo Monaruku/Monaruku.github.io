@@ -61,6 +61,37 @@
   margin-bottom: 2rem !important;
 }
 
+/* ── Button ── */
+.tarot-btn {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  border: none; border-radius: 2rem;
+  background: linear-gradient(135deg, #f472b6, #fb923c);
+  color: #fff; font-size: 1rem; font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 4px 20px rgba(244,114,182,0.25);
+}
+.tarot-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(244,114,182,0.4);
+}
+.tarot-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 12px rgba(244,114,182,0.2);
+}
+.tarot-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* ── Phase: Category ── */
 .category-grid {
   display: grid;

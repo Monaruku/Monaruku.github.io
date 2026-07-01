@@ -4,50 +4,109 @@ title: Home
 permalink: /
 ---
 
+<!-- Decorative background layers -->
+<div class="particles" aria-hidden="true">
+  <span class="particle" style="left:5%;animation-duration:12s;animation-delay:0s"></span>
+  <span class="particle" style="left:15%;animation-duration:16s;animation-delay:2s"></span>
+  <span class="particle" style="left:25%;animation-duration:14s;animation-delay:4s"></span>
+  <span class="particle" style="left:38%;animation-duration:18s;animation-delay:1s"></span>
+  <span class="particle" style="left:50%;animation-duration:13s;animation-delay:3s"></span>
+  <span class="particle" style="left:62%;animation-duration:17s;animation-delay:5s"></span>
+  <span class="particle" style="left:75%;animation-duration:15s;animation-delay:2.5s"></span>
+  <span class="particle" style="left:85%;animation-duration:19s;animation-delay:0.5s"></span>
+  <span class="particle" style="left:93%;animation-duration:14s;animation-delay:4.5s"></span>
+</div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
 <div class="portal">
-  <header class="portal-header">
-    <h1 class="portal-title">Monaruku</h1>
-    <p class="portal-subtitle">Choose your destination</p>
-  </header>
+  <!-- Hero: Full viewport title -->
+  <section class="portal-hero">
+    <header class="portal-header">
+      <h1 class="portal-title">Monaruku</h1>
+      <p class="portal-subtitle">A portal into my world</p>
+    </header>
+    <div class="scroll-hint" aria-hidden="true">Explore</div>
+  </section>
 
-  <div class="cards">
-    <a href="{{ '/blog/' | relative_url }}" class="card card-blog">
-      <div class="card-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
-          <path d="M6 8h12M6 12h8M6 16h10"/>
-        </svg>
-      </div>
-      <h2 class="card-title">Blog</h2>
-      <p class="card-desc">Thoughts, stories & ideas</p>
-      <span class="card-arrow">→</span>
-    </a>
+  <!-- Divider -->
+  <div class="portal-divider" aria-hidden="true"></div>
 
-    <a href="{{ '/tarot/' | relative_url }}" class="card card-tarot">
-      <div class="card-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/>
-        </svg>
-      </div>
-      <h2 class="card-title">Tarot</h2>
-      <p class="card-desc">Explore the cards & your path</p>
-      <span class="card-arrow">→</span>
-    </a>
+  <!-- Cards section -->
+  <section class="portal-cards-section">
+    <p class="portal-cards-heading">Choose your destination</p>
 
-    <a href="{{ '/about/' | relative_url }}" class="card card-about">
-      <div class="card-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <circle cx="12" cy="8" r="4"/>
-          <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
-        </svg>
-      </div>
-      <h2 class="card-title">About Me</h2>
-      <p class="card-desc">Who I am & what I do</p>
-      <span class="card-arrow">→</span>
-    </a>
-  </div>
+    <div class="cards">
+      <a href="{{ '/blog/' | relative_url }}" class="card card-blog">
+        <div class="card-glow"></div>
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+            <path d="M6 8h12M6 12h8M6 16h10"/>
+          </svg>
+        </div>
+        <h2 class="card-title">Blog</h2>
+        <p class="card-desc">Thoughts, stories & ideas</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="{{ '/tarot/' | relative_url }}" class="card card-tarot">
+        <div class="card-glow"></div>
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/>
+          </svg>
+        </div>
+        <h2 class="card-title">Tarot</h2>
+        <p class="card-desc">Explore the cards & your path</p>
+        <span class="card-arrow">→</span>
+      </a>
+
+      <a href="{{ '/about/' | relative_url }}" class="card card-about">
+        <div class="card-glow"></div>
+        <div class="card-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M4 20c0-4 4-7 8-7s8 3 8 7"/>
+          </svg>
+        </div>
+        <h2 class="card-title">About Me</h2>
+        <p class="card-desc">Who I am & what I do</p>
+        <span class="card-arrow">→</span>
+      </a>
+    </div>
+  </section>
 
   <footer class="portal-footer">
     <p>&copy; {{ 'now' | date: "%Y" }} Monaruku</p>
   </footer>
 </div>
+
+<script>
+  // Card mouse-tracking glow & subtle tilt
+  document.querySelectorAll('.card').forEach(card => {
+    const glow = card.querySelector('.card-glow');
+
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Move glow to cursor position
+      if (glow) {
+        glow.style.left = x + 'px';
+        glow.style.top = y + 'px';
+      }
+
+      // Subtle 3D tilt
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -3;
+      const rotateY = ((x - centerX) / centerX) * 3;
+      card.style.transform = `translateY(-10px) scale(1.02) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    });
+
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+</script>
