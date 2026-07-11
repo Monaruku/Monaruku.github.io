@@ -1,0 +1,127 @@
+---
+layout: default
+---
+
+<div class="project-page">
+  <a href="{{ '/work/' | relative_url }}" class="back-link">← Back to work</a>
+
+  <article class="project-article">
+    {% if page.cover %}
+    <div class="project-cover">
+      <img src="{{ page.cover | relative_url }}" alt="{{ page.title }}">
+    </div>
+    {% endif %}
+
+    <header class="project-header">
+      <h1 class="project-title">{{ page.title }}</h1>
+      {% if page.summary %}
+      <p class="project-summary">{{ page.summary }}</p>
+      {% endif %}
+    </header>
+
+    <div class="project-layout">
+      <aside class="project-meta-rail" aria-label="Project details">
+        {% if page.year %}
+        <div class="project-meta-item">
+          <span class="project-meta-label">Year</span>
+          <span class="project-meta-value">{{ page.year }}</span>
+        </div>
+        {% endif %}
+        {% if page.role %}
+        <div class="project-meta-item">
+          <span class="project-meta-label">Role</span>
+          <span class="project-meta-value">{{ page.role }}</span>
+        </div>
+        {% endif %}
+        {% if page.stack %}
+        <div class="project-meta-item">
+          <span class="project-meta-label">Stack</span>
+          <div class="stack-chips">
+            {% for tech in page.stack %}<span class="stack-chip">{{ tech }}</span>{% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% if page.links %}
+        <div class="project-meta-item">
+          <span class="project-meta-label">Links</span>
+          <div class="project-links">
+            {% if page.links.live %}
+            <a class="project-link" href="{{ page.links.live | relative_url }}">
+              <span>Live</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            {% endif %}
+            {% if page.links.itch %}
+            <a class="project-link" href="{{ page.links.itch }}" rel="noopener">
+              <span>Play on itch.io</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            {% endif %}
+            {% if page.links.source %}
+            <a class="project-link" href="{{ page.links.source }}" rel="noopener">
+              <span>Source</span>
+              <span aria-hidden="true">↗</span>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+      </aside>
+
+      <div class="project-body">
+        {% if page.embed %}
+        {% assign embed_w = page.embed.width | default: 960 %}
+        {% assign embed_h = page.embed.height | default: 540 %}
+        <div class="project-embed" style="max-width: {{ embed_w }}px; aspect-ratio: {{ embed_w }} / {{ embed_h }};">
+          <iframe src="{{ page.embed.url }}"
+                  title="{{ page.title }} — playable embed"
+                  allowfullscreen
+                  loading="lazy"></iframe>
+        </div>
+        {% endif %}
+
+        {{ content }}
+
+        {% if page.gallery %}
+        <div class="project-gallery">
+          {% for img in page.gallery %}
+          <figure class="project-gallery-item">
+            <img src="{{ img.src | relative_url }}" alt="{{ img.alt | default: page.title }}">
+            {% if img.caption %}<figcaption>{{ img.caption }}</figcaption>{% endif %}
+          </figure>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+
+  {% assign sorted = site.projects | sort: 'order' %}
+  {% assign total = sorted | size %}
+  {% if total > 1 %}
+  {% assign next_idx = -1 %}
+  {% for p in sorted %}
+    {% if p.url == page.url %}
+      {% assign next_idx = forloop.index0 | plus: 1 %}
+      {% if next_idx >= total %}{% assign next_idx = 0 %}{% endif %}
+    {% endif %}
+  {% endfor %}
+  {% assign next = nil %}
+  {% if next_idx >= 0 %}
+    {% for p in sorted %}
+      {% if forloop.index0 == next_idx %}
+        {% assign next = p %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% if next %}
+  <a href="{{ next.url | relative_url }}" class="next-project">
+    <span>
+      <span class="next-project-label">Next project</span>
+      <span class="next-project-title">{{ next.title }}</span>
+    </span>
+    <span class="next-project-arrow" aria-hidden="true">→</span>
+  </a>
+  {% endif %}
+  {% endif %}
+</div>

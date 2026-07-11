@@ -1,0 +1,93 @@
+---
+layout: default
+title: Work
+permalink: /work/
+---
+
+<div class="page work-page">
+  <header class="work-header">
+    <p class="section-eyebrow">Selected work</p>
+    <h1 class="page-title gradient-work">Things I've built</h1>
+    <p class="work-intro">Interactive projects and coded experiments. Each entry links to a case study and, where possible, the live version.</p>
+  </header>
+
+  {% assign projects = site.projects | sort: 'order' %}
+
+  {% assign stack_set = "" | split: "" %}
+  {% for p in projects %}
+    {% if p.stack %}
+      {% for tech in p.stack %}
+        {% unless stack_set contains tech %}
+          {% assign stack_set = stack_set | push: tech %}
+        {% endunless %}
+      {% endfor %}
+    {% endif %}
+  {% endfor %}
+
+  {% if stack_set.size > 0 %}
+  <div class="work-filters" role="group" aria-label="Filter projects by stack">
+    <button type="button" class="filter-chip is-active" data-filter="all">All</button>
+    {% for tech in stack_set %}
+    <button type="button" class="filter-chip" data-filter="{{ tech | slugify }}">{{ tech }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="work-grid">
+    {% for project in projects %}
+    {% assign slug_tags = "" %}
+    {% if project.stack %}
+      {% for tech in project.stack %}{% assign slug_tags = slug_tags | append: tech | append: " " | append: tech | slugify | append: " " %}{% endfor %}
+    {% endif %}
+    <a href="{{ project.url | relative_url }}" class="project-card" data-stack="{{ slug_tags | strip }}">
+      <div class="project-card-glow"></div>
+      {% if project.thumb or project.cover %}
+      <div class="project-card-media">
+        <img src="{{ project.thumb | default: project.cover | relative_url }}" alt="{{ project.title }}">
+      </div>
+      {% endif %}
+      <div class="project-card-body">
+        <div class="project-card-meta">
+          {% if project.year %}<span>{{ project.year }}</span>{% endif %}
+          {% if project.role %}<span aria-hidden="true">·</span><span>{{ project.role }}</span>{% endif %}
+        </div>
+        <h2 class="project-card-title">{{ project.title }}</h2>
+        {% if project.summary %}
+        <p class="project-card-summary">{{ project.summary }}</p>
+        {% endif %}
+        {% if project.stack %}
+        <div class="stack-chips">
+          {% for tech in project.stack %}<span class="stack-chip">{{ tech }}</span>{% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      <span class="project-card-arrow" aria-hidden="true">→</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if projects.size == 0 %}
+  <div class="page-placeholder">More projects on the way.</div>
+  {% endif %}
+</div>
+
+<script>
+  (function () {
+    const chips = document.querySelectorAll('.work-filters .filter-chip');
+    const cards = document.querySelectorAll('.work-grid .project-card');
+    if (!chips.length || !cards.length) return;
+
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        const filter = chip.dataset.filter;
+        cards.forEach(card => {
+          const stack = (card.dataset.stack || '').toLowerCase();
+          const show = filter === 'all' || stack.split(/\s+/).includes(filter);
+          card.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  })();
+</script>

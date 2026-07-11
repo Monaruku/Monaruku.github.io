@@ -4,13 +4,42 @@ title: About Me
 permalink: /about/
 ---
 
-<div class="page">
-  <a href="{{ '/' | relative_url }}" class="back-link">← Back to portal</a>
-  <h1 class="page-title gradient-about">About Me</h1>
-  <div class="page-body">
-    <p>Hi, I'm Monaruku. This is my corner of the internet.</p>
-    <div class="page-placeholder">
-      More about me coming soon.
-    </div>
+<div class="page about-page">
+  <header class="about-header">
+    <p class="section-eyebrow">About</p>
+    <h1 class="page-title gradient-about">Hi, I'm Monaruku</h1>
+    <p class="about-lede">I build small web experiments and write long-form pieces about the games I spend real time in. This site is where those two things live.</p>
+  </header>
+
+  <div class="about-body">
+    <section class="about-block">
+      <h2 class="about-block-title">What I work with</h2>
+      <div class="stack-chips">
+        <span class="stack-chip">Jekyll</span>
+        <span class="stack-chip">Vanilla JS</span>
+        <span class="stack-chip">CSS</span>
+        <span class="stack-chip">HTML</span>
+        <span class="stack-chip">GitHub Pages</span>
+      </div>
+    </section>
+
+    <section class="about-block">
+      <h2 class="about-block-title">Currently</h2>
+      <p class="about-paragraph">Refining the site's portfolio, writing new game reviews, and slowly expanding the Mystic Tarot experience.</p>
+    </section>
+
+    <section class="about-block">
+      <h2 class="about-block-title">Say hello</h2>
+      <div class="contact-strip">
+        <a class="contact-pill" href="https://github.com/monaruku" rel="noopener">
+          <span>GitHub</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a class="contact-pill" href="{{ '/work/' | relative_url }}">
+          <span>See my work</span>
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
   </div>
 </div>

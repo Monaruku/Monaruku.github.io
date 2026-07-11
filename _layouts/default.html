@@ -8,7 +8,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="{{ '/assets/favicon.ico' | relative_url }}">
 </head>
-<body>
+<body{% unless page.url == '/' %} class="body--sub"{% endunless %}>
+  {% assign url = page.url %}
+  {% assign is_work = false %}
+  {% if url contains '/work/' %}{% assign is_work = true %}{% endif %}
+  {% assign is_blog = false %}
+  {% if url contains '/blog/' %}{% assign is_blog = true %}{% endif %}
+  {% assign is_about = false %}
+  {% if url contains '/about/' %}{% assign is_about = true %}{% endif %}
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav-inner">
+      <a href="{{ '/' | relative_url }}" class="site-nav-brand">Monaruku</a>
+      <ul class="site-nav-links">
+        <li><a href="{{ '/work/' | relative_url }}"{% if is_work %} aria-current="page"{% endif %}>Work</a></li>
+        <li><a href="{{ '/blog/' | relative_url }}"{% if is_blog %} aria-current="page"{% endif %}>Blog</a></li>
+        <li><a href="{{ '/about/' | relative_url }}"{% if is_about %} aria-current="page"{% endif %}>About</a></li>
+      </ul>
+    </div>
+  </nav>
+
   {{ content }}
 </body>
 </html>

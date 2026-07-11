@@ -1,14 +1,29 @@
 title: Monaruku
-description: Personal portal homepage
+description: Portfolio & writing by Monaruku
 baseurl: ""
 url: ""
 
 markdown: kramdown
 permalink: /blog/:year/:month/:day/:title/
 
+collections:
+  projects:
+    output: true
+    permalink: /work/:path/
+
+defaults:
+  - scope:
+      path: ""
+      type: projects
+    values:
+      layout: project
+
 exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
   - .gitignore
+  - MysticTarot-Spec.md
+  - preview.html
+  - vibe_images
   - vendor
