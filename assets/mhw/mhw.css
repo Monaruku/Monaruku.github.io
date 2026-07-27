@@ -30,6 +30,14 @@
   gap: 1.25rem;
 }
 
+/* Dashboard sections stack with the same rhythm as .mhw-app.
+   :not([hidden]) keeps the attribute-based hiding intact. */
+#dashboard:not([hidden]) {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 /* ── Cards ── */
 .mhw-card {
   background: rgba(255, 255, 255, 0.035);
@@ -238,25 +246,49 @@
   font-weight: 600;
 }
 
-/* ── Stat grid ── */
-.stat-grid {
+/* ── Stats overview strip ── */
+.stats-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+  padding: 0.7rem 1rem;
 }
-.stat-card {
-  background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(247, 209, 84, 0.14);
-  border-radius: 14px;
-  padding: 1.1rem 1rem;
+.stat-seg {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.2rem;
-  text-align: center;
+  gap: 0.18rem;
+  padding: 0.75rem 0.5rem 0.65rem;
+  border-radius: 10px;
+  position: relative;
+  transition: background 0.15s ease;
+  animation: seg-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both;
 }
+.stat-seg:nth-child(2) { animation-delay: 0.04s; }
+.stat-seg:nth-child(3) { animation-delay: 0.08s; }
+.stat-seg:nth-child(4) { animation-delay: 0.12s; }
+.stat-seg:nth-child(5) { animation-delay: 0.16s; }
+.stat-seg:nth-child(6) { animation-delay: 0.20s; }
+.stat-seg:nth-child(7) { animation-delay: 0.24s; }
+@keyframes seg-pop { from { opacity: 0; transform: translateY(10px); } }
+.stat-seg:hover { background: rgba(247, 209, 84, 0.05); }
+
+.stat-ico {
+  width: 27px;
+  height: 27px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f7d154;
+  background: rgba(247, 209, 84, 0.09);
+  border: 1px solid rgba(247, 209, 84, 0.22);
+  margin-bottom: 0.15rem;
+}
+.stat-ico svg { width: 16px; height: 16px; display: block; }
+
 .stat-value {
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   font-weight: 800;
   background: linear-gradient(120deg, #f7d154, #e8a13a);
   -webkit-background-clip: text;
@@ -264,34 +296,89 @@
   -webkit-text-fill-color: transparent;
 }
 .stat-label {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: rgba(240, 240, 245, 0.55);
+  text-align: center;
+  line-height: 1.3;
 }
 
-/* ── Weapon chart ── */
+/* Hairline dividers between segments (single-row layout only) */
+@media (min-width: 940px) {
+  .stat-seg + .stat-seg::before {
+    content: '';
+    position: absolute;
+    left: -2px;
+    top: 22%;
+    bottom: 22%;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(247, 209, 84, 0.16), transparent);
+  }
+}
+
+/* Mid widths: balanced 4 + 3 */
+@media (max-width: 939px) {
+  .stats-strip { grid-template-columns: repeat(4, 1fr); }
+  .stat-value { font-size: 1.3rem; }
+}
+
+/* ── Charts: shared row styles (quest log & weapon usage) ── */
 .weapon-chart {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 .weapon-row {
   display: grid;
-  grid-template-columns: 130px 1fr 56px;
+  grid-template-columns: 32px minmax(0, 150px) 1fr 76px;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.7rem;
   font-size: 0.85rem;
+  padding: 0.18rem 0.4rem;
+  margin: 0 -0.4rem;
+  border-radius: 9px;
+  transition: background 0.15s ease;
 }
+.weapon-row.is-hot { background: rgba(255, 255, 255, 0.05); }
+.weapon-row--zero { opacity: 0.42; }
+
+.weapon-ico {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.weapon-ico svg { width: 19px; height: 19px; display: block; }
+
 .weapon-name {
   color: rgba(240, 240, 245, 0.85);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 .weapon-row--top .weapon-name { color: #f7d154; font-weight: 700; }
+.weapon-badge {
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: #14100a;
+  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  border-radius: 4px;
+  padding: 0.1rem 0.38rem;
+  flex-shrink: 0;
+}
+
 .weapon-bar-track {
-  height: 14px;
+  height: 13px;
   background: rgba(255, 255, 255, 0.06);
   border-radius: 7px;
   overflow: hidden;
@@ -299,26 +386,187 @@
 }
 .weapon-bar-fill {
   height: 100%;
-  border-radius: 0;
-  background: linear-gradient(90deg, #e8a13a, #b8e356);
-  min-width: 2px;
-  transition: width 0.6s ease;
+  min-width: 0;
+  transition: width 0.7s cubic-bezier(0.25, 0.9, 0.3, 1);
 }
-.weapon-bar-fill--sub {
-  background: linear-gradient(90deg, rgba(232, 161, 58, 0.45), rgba(184, 227, 86, 0.45));
-}
-.weapon-row--top .weapon-bar-fill {
-  background: linear-gradient(90deg, #f7d154, #e8a13a);
-}
-.weapon-row--top .weapon-bar-fill--sub {
-  background: linear-gradient(90deg, rgba(247, 209, 84, 0.45), rgba(232, 161, 58, 0.45));
-}
-.quest-row--zero { opacity: 0.45; }
+
 .weapon-count {
-  text-align: right;
-  color: rgba(240, 240, 245, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.15;
+}
+.weapon-count strong {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #f0f0f5;
   font-variant-numeric: tabular-nums;
 }
+.weapon-count em {
+  font-style: normal;
+  font-size: 0.68rem;
+  color: rgba(240, 240, 245, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Weapon donut ── */
+.weapon-layout {
+  display: grid;
+  grid-template-columns: 225px 1fr;
+  gap: 1.9rem;
+  align-items: center;
+}
+.weapon-donut { width: 100%; max-width: 225px; margin: 0 auto; }
+.weapon-donut svg { display: block; width: 100%; height: auto; }
+.donut-track { fill: none; stroke: rgba(255, 255, 255, 0.07); stroke-width: 26; }
+/* NOTE: no CSS transforms here — they would override the SVG
+   rotate() attribute and displace the slices. */
+.donut-slice {
+  fill: none;
+  stroke-width: 26;
+  cursor: pointer;
+  transition: opacity 0.18s ease, stroke-width 0.18s ease;
+  animation: slice-in 0.55s ease both;
+}
+@keyframes slice-in { from { opacity: 0; } }
+.weapon-donut.has-focus .donut-slice:not(.is-hot) { opacity: 0.22; }
+.donut-slice.is-hot { stroke-width: 32; }
+.donut-center-name {
+  fill: #f0f0f5;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+.donut-center-sub {
+  fill: rgba(240, 240, 245, 0.55);
+  font-family: inherit;
+  font-size: 10.5px;
+  text-anchor: middle;
+}
+
+/* ── Quest tiles (column chart × category cards) ── */
+.quest-tiles {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.6rem;
+}
+.qtile {
+  --qc: rgba(240, 240, 245, 0.3);
+  --qc-bg: rgba(255, 255, 255, 0.04);
+  --qc-line: rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.8rem 0.5rem 0.7rem;
+  border-radius: 12px;
+  background: var(--qc-bg);
+  border: 1px solid var(--qc-line);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  animation: seg-pop 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+.qtile:hover,
+.qtile.is-hot {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -12px var(--qc-line);
+}
+.qtile--zero { opacity: 0.45; }
+.qtile-ico {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+  background: var(--qc-bg);
+  border: 1px solid var(--qc-line);
+}
+.qtile-val {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--qc);
+  font-variant-numeric: tabular-nums;
+}
+.qtile-track {
+  height: 84px;
+  width: 28px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.qtile-fill {
+  width: 100%;
+  border-radius: 5px;
+  transition: height 0.7s cubic-bezier(0.25, 0.9, 0.3, 1);
+}
+.qtile-name {
+  font-size: 0.7rem;
+  color: rgba(240, 240, 245, 0.6);
+  text-align: center;
+  line-height: 1.25;
+  min-height: 2.5em;
+}
+.qtile-pct {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--qc);
+  opacity: 0.85;
+  margin-top: -0.3rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Must come after the base .quest-tiles rule to win source order */
+.quest-layout {
+  display: grid;
+  grid-template-columns: 215px 1fr;
+  gap: 1.6rem;
+  align-items: center;
+}
+.quest-layout .quest-tiles { grid-template-columns: repeat(4, 1fr); }
+.quest-donut .donut-center-name { font-size: 16px; font-weight: 800; }
+
+/* ── Crown progress rings ── */
+.crown-overview {
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  flex-wrap: wrap;
+  margin: -0.6rem 0 1rem;
+}
+.crown-rings { display: flex; gap: 1.4rem; }
+.cring { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+.cring svg { width: 82px; height: 82px; }
+.cring-track { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 7; }
+.cring-fill,
+.cring-silver {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  animation: ring-in 1.1s cubic-bezier(0.25, 0.9, 0.3, 1) both;
+}
+.cring-silver { stroke: #c9ced6; animation-delay: 0.25s; }
+@keyframes ring-in { from { stroke-dashoffset: var(--C); } }
+.cring-pct {
+  fill: #f0f0f5;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  text-anchor: middle;
+}
+.cring-label {
+  font-size: 0.72rem;
+  color: rgba(240, 240, 245, 0.55);
+  text-align: center;
+  line-height: 1.4;
+}
+.cring-label strong { color: #f0f0f5; font-size: 0.85rem; }
+.crown-summary-text { flex: 1; min-width: 220px; margin: 0; }
 
 /* ── Hunting log ── */
 .log-controls {
@@ -375,6 +623,21 @@
 .monster-name { font-weight: 600; }
 .monster-zerocount td { color: rgba(240, 240, 245, 0.35); }
 
+/* Inline data-bar in the Hunted column */
+.td-bar { position: relative; }
+.td-bar-fill {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: 0;
+  width: var(--w, 0%);
+  background: linear-gradient(90deg, rgba(247, 209, 84, 0), rgba(247, 209, 84, 0.13));
+  border-right: 2px solid rgba(247, 209, 84, 0.45);
+  border-radius: 3px 0 0 3px;
+  pointer-events: none;
+}
+.td-bar-num { position: relative; }
+
 .crown {
   display: inline-block;
   width: 1.15em;
@@ -416,12 +679,30 @@
 }
 
 /* ── Responsive & motion ── */
+@media (max-width: 720px) {
+  .weapon-layout { grid-template-columns: 1fr; gap: 1.25rem; }
+  .weapon-donut { max-width: 195px; }
+  .quest-layout { grid-template-columns: 1fr; gap: 1.25rem; }
+}
+
 @media (max-width: 640px) {
   .mhw-card { padding: 1.1rem; }
-  .weapon-row { grid-template-columns: 100px 1fr 48px; }
+  .weapon-row { grid-template-columns: 28px minmax(0, 100px) 1fr 60px; gap: 0.5rem; }
+  .weapon-ico { width: 26px; height: 26px; border-radius: 7px; }
+  .weapon-ico svg { width: 16px; height: 16px; }
+  .weapon-badge { display: none; }
+  .crown-overview { gap: 1.1rem; }
+  .crown-rings { gap: 1rem; }
+  .cring svg { width: 72px; height: 72px; }
   .share-bar { flex-direction: column; align-items: flex-start; }
+  .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 0.6rem; }
+  .stat-seg:last-child { grid-column: span 2; }
+  .stat-value { font-size: 1.25rem; }
+  .quest-layout .quest-tiles { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+  .qtile-track { height: 68px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mhw-btn, .weapon-bar-fill, .drop-zone { transition: none; }
+  .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill { transition: none; }
+  .donut-slice, .cring-fill, .cring-silver, .stat-seg, .qtile { animation: none; }
 }

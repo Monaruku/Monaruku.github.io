@@ -41,8 +41,12 @@
     statGuild:    $("stat-guild"),
     statZenny:    $("stat-zenny"),
     questChart:   $("quest-chart"),
+    questSummary: $("quest-summary"),
+    questDonut:   $("quest-donut"),
     weaponChart:  $("weapon-chart"),
+    weaponDonut:  $("weapon-donut"),
     crownSummary: $("crown-summary"),
+    crownRings:   $("crown-rings"),
     sortSelect:   $("sort-select"),
     filterCrowns: $("filter-crowns"),
     monsterTbody: $("monster-tbody")
@@ -340,6 +344,66 @@
   }
 
   /* ════════════════════════════════════════
+     Chart assets — weapon icons, palette, helpers
+     ════════════════════════════════════════ */
+
+  var SVG_HEAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  function ico(inner) { return SVG_HEAD + inner + "</svg>"; }
+  function fp(d) { return '<path d="' + d + '" fill="currentColor" stroke="none"/>'; }
+
+  /* Minimal 24×24 silhouettes for the 14 weapon types. */
+  var WEAPON_ICONS = {
+    great_sword:      ico(fp("M13.5 3.5H20V10l-8.5 8.5-3-3z") + '<path d="M4.5 19.5 9 15"/><path d="M7.8 13.2l3 3"/>'),
+    sword_and_shield: ico('<path d="M4 16.5 13 7.5"/><path d="M6.4 11.9l2.2 2.2"/><path d="M15.6 10.8h4.1v3.4c0 2.9-2.05 4.2-2.05 4.2s-2.05-1.3-2.05-4.2z"/>'),
+    dual_blades:      ico('<path d="M5 19.5 11 13"/><path d="M19 19.5 13 13"/>' + fp("M9 4.5l2.7 5.9-2.4.6z") + fp("M15 4.5l-2.7 5.9 2.4.6z")),
+    long_sword:       ico('<path d="M5.5 18.5C10 14 14.5 9.5 19.5 4.5"/><path d="M5.5 18.5 3.5 20.5"/><path d="M6.6 16.4l2 2"/>'),
+    hammer:           ico(fp("M12 4.5 19.5 7l-1.7 6.5-7.2-2.5z") + '<path d="M4.5 19.5 12.5 11.5"/>'),
+    hunting_horn:     ico(fp("M11 5l8 8-4 4-8-8z") + '<path d="M4 15.5 11 8.5"/><circle cx="5.8" cy="19.2" r="1.15" fill="currentColor" stroke="none"/><path d="M6.95 18.3v-2.9"/>'),
+    lance:            ico('<path d="M3.5 20.5 13.5 10.5"/>' + fp("M14 4.5 19.5 10l-6 .5z") + '<circle cx="7" cy="17" r="2.4"/>'),
+    gunlance:         ico('<path d="M3.5 20.5 11.5 12.5"/>' + fp("M11 8.5 15.5 4l4.5 4.5-4.5 4.5z") + '<path d="M19.5 2.5 21 1"/><path d="M21.5 6.5 23 5"/><path d="M21.8 10.8l1.9.2"/>'),
+    switch_axe:       ico('<path d="M4.5 19.5 12 12"/>' + fp("M11.5 3.5c5.8 0 9.5 3.8 9.5 9.5-4.7 0-9.5-3.8-9.5-9.5z") + '<circle cx="11.4" cy="12.6" r="1.25" fill="currentColor" stroke="none"/>'),
+    charge_blade:     ico('<path d="M4.5 19.5 10.5 13.5"/><path d="M8.5 12.5l2.5 2.5"/>' + fp("M10 9l3-6.5L19.5 9 16 12.5z")),
+    insect_glaive:    ico('<path d="M4 20 16 8"/>' + fp("M16 8l1-6 5 5-6 1z") + '<circle cx="16.5" cy="16.5" r="1.3" fill="currentColor" stroke="none"/><path d="M15.2 15.2 13.6 13.9"/><path d="M17.8 17.8l1.6 1.3"/>'),
+    bow:              ico('<path d="M7.5 3.5c7 3.5 7 13.5 0 17"/><path d="M7.5 3.5v17"/><path d="M7.5 12H20"/><path d="M17.2 9.2 20.6 12l-3.4 2.8"/><path d="M10.5 10.4 8.3 12l2.2 1.6"/>'),
+    heavy_bowgun:     ico(fp("M3 9.5h13v5H3z") + fp("M17.5 8h2.6v8h-2.6z") + fp("M6.5 14.5 5 20.5h3.6l1.4-6z") + fp("M9 5.8h4.6v2.6H9z") + fp("M10.6 8.4h1.4v1.1h-1.4z")),
+    light_bowgun:     ico(fp("M3 10.2h12.5v3.4H3z") + fp("M15.5 10.9H20v2h-4.5z") + fp("M6 13.6 4.6 19h3.2l1.2-5.4z") + fp("M11.5 13.6v3.2h2v-3.2z"))
+  };
+
+  /* Categorical palette — gold first (theme), then distinct hues. */
+  var PALETTE = ["#f7d154", "#f0913f", "#e4645f", "#f472b6", "#a78bfa", "#60a5fa", "#45d0c0", "#b8e356"];
+  var OTHER_COLOR = "rgba(240,240,245,0.3)";
+
+  var QUEST_ICONS = {
+    assignments: "❗", optional: "📋", field_survey: "🧭", arena: "⚔️",
+    investigations: "🔍", event: "🎪", free_challenge: "🏁", challenge: "🏆"
+  };
+
+  function hexRgb(hex) {
+    var h = hex.replace("#", "");
+    return { r: parseInt(h.substr(0, 2), 16), g: parseInt(h.substr(2, 2), 16), b: parseInt(h.substr(4, 2), 16) };
+  }
+  function tint(color, a) {
+    if (color.charAt(0) !== "#") return color;
+    var c = hexRgb(color);
+    return "rgba(" + c.r + "," + c.g + "," + c.b + "," + a + ")";
+  }
+
+  /* Bars render at size 0, then grow to their target on the next frames.
+     data-w animates width (horizontal bars), data-h animates height (columns). */
+  function animateGrow(container) {
+    var fills = container.querySelectorAll("[data-w],[data-h]");
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        Array.prototype.forEach.call(fills, function (el) {
+          if (el.hasAttribute("data-w")) el.style.width = el.getAttribute("data-w");
+          if (el.hasAttribute("data-h")) el.style.height = el.getAttribute("data-h");
+        });
+      });
+    });
+  }
+
+  /* ════════════════════════════════════════
      Rendering
      ════════════════════════════════════════ */
 
@@ -405,32 +469,155 @@
 
   function renderQuests(data) {
     var cats = (data.quests && data.quests.categories) || {};
-    var rows = DATA.questCategories.map(function (ref) {
+    var total = data.quests && isNum(data.quests.total_completed) ? data.quests.total_completed : 0;
+    var rows = DATA.questCategories.map(function (ref, i) {
       var n = isNum(cats[ref.slug]) ? cats[ref.slug] : 0;
-      return { name: ref.name, n: n };
+      return { slug: ref.slug, name: ref.name, n: n, color: PALETTE[i % PALETTE.length] };
     });
-    var max = rows.reduce(function (acc, r) { return Math.max(acc, r.n); }, 0);
+    var catSum = rows.reduce(function (s, r) { return s + r.n; }, 0);
+    var max = rows.reduce(function (s, r) { return Math.max(s, r.n); }, 0);
+    els.questSummary.textContent = fmtInt(total) + " quests completed, by category";
+
+    /* Donut: grand total in the center, categories as slices. */
+    var slices = rows.filter(function (r) { return r.n > 0; }).map(function (r) {
+      return { key: r.slug, name: r.name, value: r.n, color: r.color };
+    });
+    els.questDonut.innerHTML = donutSvgMarkup(slices, catSum);
+
+    /* Column-chart tiles, categories in canonical order. */
     els.questChart.textContent = "";
-    rows.forEach(function (c) {
-      var row = document.createElement("div");
-      row.className = "weapon-row quest-row" + (c.n === 0 ? " quest-row--zero" : "");
-      var name = document.createElement("span");
-      name.className = "weapon-name";
-      name.textContent = c.name;
+    rows.forEach(function (r, i) {
+      var pct = catSum > 0 ? Math.round((r.n / catSum) * 100) : 0;
+
+      var tile = document.createElement("div");
+      tile.className = "qtile" + (r.n === 0 ? " qtile--zero" : "");
+      tile.setAttribute("data-key", r.slug);
+      tile.style.setProperty("--qc", r.color);
+      tile.style.setProperty("--qc-bg", tint(r.color, 0.07));
+      tile.style.setProperty("--qc-line", tint(r.color, 0.22));
+      tile.style.animationDelay = (i * 45) + "ms";
+      tile.title = r.name + " — " + fmtInt(r.n) + " quests (" + pct + "% of categorized)";
+
+      var icoSpan = document.createElement("span");
+      icoSpan.className = "qtile-ico";
+      icoSpan.textContent = QUEST_ICONS[r.slug] || "•";
+
+      var val = document.createElement("span");
+      val.className = "qtile-val";
+      val.textContent = fmtInt(r.n);
+
       var track = document.createElement("div");
-      track.className = "weapon-bar-track";
+      track.className = "qtile-track";
       var fill = document.createElement("div");
-      fill.className = "weapon-bar-fill";
-      fill.style.width = max > 0 ? Math.max((c.n / max) * 100, c.n > 0 ? 2 : 0) + "%" : "0%";
+      fill.className = "qtile-fill";
+      fill.style.background = "linear-gradient(to top," + tint(r.color, 0.35) + "," + r.color + ")";
+      fill.style.height = "0%";
+      fill.setAttribute("data-h", max > 0 ? Math.max((r.n / max) * 100, r.n > 0 ? 4 : 0).toFixed(2) + "%" : "0%");
+      fill.style.transitionDelay = (i * 45 + 150) + "ms";
       track.appendChild(fill);
-      var num = document.createElement("span");
-      num.className = "weapon-count";
-      num.textContent = fmtInt(c.n);
-      row.appendChild(name);
-      row.appendChild(track);
-      row.appendChild(num);
-      els.questChart.appendChild(row);
+
+      var name = document.createElement("span");
+      name.className = "qtile-name";
+      name.textContent = r.name;
+
+      var share = document.createElement("span");
+      share.className = "qtile-pct";
+      share.textContent = pct + "%";
+
+      tile.appendChild(icoSpan);
+      tile.appendChild(val);
+      tile.appendChild(track);
+      tile.appendChild(name);
+      tile.appendChild(share);
+      els.questChart.appendChild(tile);
     });
+
+    var qMeta = {};
+    rows.forEach(function (r) {
+      var p = catSum > 0 ? Math.round((r.n / catSum) * 100) : 0;
+      qMeta[r.slug] = { name: fmtInt(r.n) + " · " + p + "%", sub: r.name };
+    });
+    var qLabel = slices.map(function (s) {
+      return s.name + " " + Math.round((s.value / catSum) * 100) + "%";
+    }).join(", ");
+    setDonutState("quest", els.questDonut, els.questChart,
+      function (key) { return qMeta[key]; },
+      function () { return { name: fmtInt(total), sub: "quests completed" }; },
+      "Quest category share: " + (qLabel || "no quests recorded"));
+    animateGrow(els.questChart);
+  }
+
+  /* ── Generic donut engine (weapon usage & quest log) ── */
+  var DONUT_R = 78;
+  var DONUT_C = 2 * Math.PI * DONUT_R;
+  var donutStates = {}; /* zoneKey -> { donutEl, listEl, nameEl, subEl, metaFor, defaultMeta } */
+
+  function donutSvgMarkup(slices, grand) {
+    var parts = ['<svg viewBox="0 0 200 200">'];
+    parts.push('<circle class="donut-track" cx="100" cy="100" r="' + DONUT_R + '"></circle>');
+    if (grand > 0 && slices.length) {
+      var acc = 0;
+      var gap = slices.length > 1 ? 3 : 0;
+      slices.forEach(function (s, i) {
+        var len = Math.max((s.value / grand) * DONUT_C - gap, 1.5);
+        parts.push('<circle class="donut-slice" data-key="' + s.key + '" cx="100" cy="100" r="' + DONUT_R +
+          '" stroke="' + s.color + '" stroke-dasharray="' + len.toFixed(2) + " " + DONUT_C.toFixed(2) +
+          '" stroke-dashoffset="' + (-(acc + gap / 2)).toFixed(2) +
+          '" transform="rotate(-90 100 100)" style="animation-delay:' + (i * 70) + 'ms"></circle>');
+        acc += (s.value / grand) * DONUT_C;
+      });
+    }
+    parts.push('<text x="100" y="96" class="donut-center-name"></text>');
+    parts.push('<text x="100" y="114" class="donut-center-sub"></text>');
+    parts.push("</svg>");
+    return parts.join("");
+  }
+
+  function donutFocus(zoneKey, key) {
+    var st = donutStates[zoneKey];
+    if (!st) return;
+    var hasSlice = !!key && !!st.donutEl.querySelector('.donut-slice[data-key="' + key + '"]');
+    st.donutEl.classList.toggle("has-focus", hasSlice);
+    Array.prototype.forEach.call(st.donutEl.querySelectorAll(".donut-slice"), function (p) {
+      p.classList.toggle("is-hot", p.getAttribute("data-key") === key);
+    });
+    if (st.listEl) {
+      Array.prototype.forEach.call(st.listEl.querySelectorAll("[data-key]"), function (r) {
+        r.classList.toggle("is-hot", !!key && r.getAttribute("data-key") === key);
+      });
+    }
+    var m = (key && st.metaFor(key)) || st.defaultMeta();
+    st.nameEl.textContent = m.name;
+    st.subEl.textContent = m.sub;
+  }
+
+  function wireDonutZone(zoneKey, donutEl, listEl) {
+    function keyFromEvent(e) {
+      if (!e.target || !e.target.closest) return null;
+      var hit = e.target.closest("[data-key]");
+      return hit ? hit.getAttribute("data-key") : null;
+    }
+    [donutEl, listEl].forEach(function (zone) {
+      if (!zone) return;
+      zone.addEventListener("mouseover", function (e) {
+        var key = keyFromEvent(e);
+        if (key) donutFocus(zoneKey, key);
+      });
+      zone.addEventListener("mouseleave", function () { donutFocus(zoneKey, null); });
+    });
+  }
+
+  function setDonutState(zoneKey, donutEl, listEl, metaFor, defaultMeta, ariaLabel) {
+    donutStates[zoneKey] = {
+      donutEl: donutEl,
+      listEl: listEl,
+      nameEl: donutEl.querySelector(".donut-center-name"),
+      subEl: donutEl.querySelector(".donut-center-sub"),
+      metaFor: metaFor,
+      defaultMeta: defaultMeta
+    };
+    if (ariaLabel) donutEl.setAttribute("aria-label", ariaLabel);
+    donutFocus(zoneKey, null);
   }
 
   function renderWeapons(data) {
@@ -438,39 +625,107 @@
       var rec = (data.weapons && data.weapons[w.slug]) || {};
       var main = isNum(rec.main) ? rec.main : 0;
       var sub  = isNum(rec.sub)  ? rec.sub  : 0;
-      return { name: w.name, main: main, sub: sub, total: main + sub };
+      return { slug: w.slug, name: w.name, main: main, sub: sub, total: main + sub };
     });
     rows.sort(function (a, b) { return b.total - a.total; });
+    var grand = rows.reduce(function (s, r) { return s + r.total; }, 0);
     var max = rows.length ? rows[0].total : 0;
+
+    /* Donut: top 7 individually, the rest pooled as "Other". */
+    var slices = [], sliceColor = {};
+    rows.slice(0, 7).forEach(function (r, i) {
+      if (r.total > 0) {
+        slices.push({ key: r.slug, name: r.name, value: r.total, color: PALETTE[i] });
+        sliceColor[r.slug] = PALETTE[i];
+      }
+    });
+    var rest = rows.slice(7).reduce(function (s, r) { return s + r.total; }, 0);
+    if (rest > 0) slices.push({ key: "__other", name: "Other weapons", value: rest, color: OTHER_COLOR });
+
+    els.weaponDonut.innerHTML = donutSvgMarkup(slices, grand);
+
+    /* Rows */
     els.weaponChart.textContent = "";
-    var topFound = false;
+    var topSlug = rows.length && rows[0].total > 0 ? rows[0].slug : null;
+    var meta = {};
     rows.forEach(function (c) {
-      var isTop = !topFound && c.total > 0;
-      if (isTop) topFound = true;
+      var pct = grand > 0 ? Math.round((c.total / grand) * 100) : 0;
+      meta[c.slug] = { name: c.name, sub: fmtInt(c.total) + " quests · " + pct + "%" };
+    });
+    if (rest > 0) meta.__other = { name: "Other weapons", sub: fmtInt(rest) + " quests · " + Math.round((rest / grand) * 100) + "%" };
+
+    rows.forEach(function (c, i) {
+      var color = sliceColor[c.slug] || OTHER_COLOR;
+      var pct = grand > 0 ? Math.round((c.total / grand) * 100) : 0;
+
       var row = document.createElement("div");
-      row.className = "weapon-row" + (isTop ? " weapon-row--top" : "");
+      row.className = "weapon-row" +
+        (c.slug === topSlug ? " weapon-row--top" : "") +
+        (c.total === 0 ? " weapon-row--zero" : "");
+      row.setAttribute("data-key", c.slug);
+      row.title = c.name + ": " + fmtInt(c.main) + " main · " + fmtInt(c.sub) + " sub";
+
+      var icoSpan = document.createElement("span");
+      icoSpan.className = "weapon-ico";
+      icoSpan.style.color = color;
+      icoSpan.style.background = tint(color, 0.09);
+      icoSpan.style.borderColor = tint(color, 0.28);
+      icoSpan.innerHTML = WEAPON_ICONS[c.slug] || "";
+
       var name = document.createElement("span");
       name.className = "weapon-name";
       name.textContent = c.name;
+      if (c.slug === topSlug) {
+        var badge = document.createElement("span");
+        badge.className = "weapon-badge";
+        badge.textContent = "top";
+        name.appendChild(badge);
+      }
+
       var track = document.createElement("div");
       track.className = "weapon-bar-track";
       var fillMain = document.createElement("div");
       fillMain.className = "weapon-bar-fill";
-      fillMain.style.width = max > 0 ? Math.max((c.main / max) * 100, c.main > 0 ? 2 : 0) + "%" : "0%";
+      fillMain.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
+      fillMain.style.width = "0%";
+      fillMain.setAttribute("data-w", max > 0 ? Math.max((c.main / max) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+      fillMain.style.transitionDelay = (i * 28) + "ms";
       var fillSub = document.createElement("div");
       fillSub.className = "weapon-bar-fill weapon-bar-fill--sub";
-      fillSub.style.width = max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0) + "%" : "0%";
+      fillSub.style.background = "linear-gradient(90deg," + tint(color, 0.14) + "," + tint(color, 0.36) + ")";
+      fillSub.style.width = "0%";
+      fillSub.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+      fillSub.style.transitionDelay = (i * 28 + 60) + "ms";
       track.appendChild(fillMain);
       track.appendChild(fillSub);
+
       var num = document.createElement("span");
       num.className = "weapon-count";
-      num.textContent = fmtInt(c.total);
-      num.title = c.main + " main · " + c.sub + " sub";
+      var strong = document.createElement("strong");
+      strong.textContent = fmtInt(c.total);
+      var em = document.createElement("em");
+      em.textContent = pct + "%";
+      num.appendChild(strong);
+      num.appendChild(em);
+
+      row.appendChild(icoSpan);
       row.appendChild(name);
       row.appendChild(track);
       row.appendChild(num);
       els.weaponChart.appendChild(row);
     });
+
+    var wLabel = slices.map(function (s) {
+      return s.name + " " + Math.round((s.value / grand) * 100) + "%";
+    }).join(", ");
+    setDonutState("weapon", els.weaponDonut, els.weaponChart,
+      function (key) { return meta[key]; },
+      function () {
+        return slices.length ? meta[slices[0].key]
+          : { name: "No quests", sub: "recorded yet" };
+      },
+      "Weapon usage share: " + (wLabel || "no quests recorded"));
+    animateGrow(els.weaponChart);
   }
 
   function crownCell(slug, m) {
@@ -522,12 +777,15 @@
       };
     });
 
-    /* Crown summary line */
+    /* Crown summary line + progress rings */
     var t = computeTotals(data);
     els.crownSummary.textContent =
       "Gold crowns: " + t.crownsSmall + "/" + DATA.monsters.length + " mini · " +
       t.crownsLarge + "/" + DATA.monsters.length + " large" +
       (t.crownsSilver > 0 ? " · " + t.crownsSilver + " silver large in progress" : "");
+    renderCrownRings(t);
+
+    var maxHunted = rows.reduce(function (acc, r) { return Math.max(acc, r.hunted); }, 0);
 
     /* Filter */
     if (els.filterCrowns.checked) {
@@ -553,7 +811,17 @@
       span.textContent = r.name;
       name.appendChild(span);
       tr.appendChild(name);
-      tr.appendChild(numTd(fmtInt(r.hunted)));
+      var huntedTd = document.createElement("td");
+      huntedTd.className = "num td-bar";
+      var barFill = document.createElement("span");
+      barFill.className = "td-bar-fill";
+      barFill.style.setProperty("--w", maxHunted > 0 ? (r.hunted / maxHunted * 100).toFixed(1) + "%" : "0%");
+      var barNum = document.createElement("span");
+      barNum.className = "td-bar-num";
+      barNum.textContent = fmtInt(r.hunted);
+      huntedTd.appendChild(barFill);
+      huntedTd.appendChild(barNum);
+      tr.appendChild(huntedTd);
       tr.appendChild(numTd(fmtInt(r.captured)));
       tr.appendChild(numTd(fmtInt(r.slain)));
       tr.appendChild(crownCell(r.slug, r.m));
@@ -561,6 +829,43 @@
       tr.appendChild(numTd(r.m ? sizeText(r.slug, r.m.max_pct) : "–"));
       els.monsterTbody.appendChild(tr);
     });
+  }
+
+  var RING_R = 30;
+  var RING_C = 2 * Math.PI * RING_R;
+
+  function ringBlock(id, label, earned, total, extra, gradA, gradB) {
+    var frac = total > 0 ? earned / total : 0;
+    var extraFrac = total > 0 ? extra / total : 0;
+    var pct = Math.round(frac * 100);
+    var len = frac > 0 ? Math.max(frac * RING_C - 1.5, 2) : 0;
+    var extraLen = extra > 0 ? Math.max(extraFrac * RING_C - 1.5, 2) : 0;
+    var extraRot = -90 + frac * 360;
+    return '<div class="cring">' +
+      '<svg viewBox="0 0 76 76" style="--C:' + RING_C.toFixed(1) + '">' +
+      '<defs><linearGradient id="grad-' + id + '" x1="0" y1="0" x2="1" y2="1">' +
+      '<stop offset="0" stop-color="' + gradA + '"/><stop offset="1" stop-color="' + gradB + '"/>' +
+      '</linearGradient></defs>' +
+      '<circle class="cring-track" cx="38" cy="38" r="' + RING_R + '"/>' +
+      (extra > 0
+        ? '<circle class="cring-silver" cx="38" cy="38" r="' + RING_R +
+          '" style="stroke-dasharray:' + extraLen.toFixed(1) + " " + RING_C.toFixed(1) +
+          '" transform="rotate(' + extraRot.toFixed(1) + ' 38 38)"/>'
+        : "") +
+      '<circle class="cring-fill" cx="38" cy="38" r="' + RING_R +
+        '" stroke="url(#grad-' + id + ')" style="stroke-dasharray:' + len.toFixed(1) + " " + RING_C.toFixed(1) +
+        '" transform="rotate(-90 38 38)"/>' +
+      '<text x="38" y="43" class="cring-pct">' + pct + "%</text>" +
+      "</svg>" +
+      '<span class="cring-label"><strong>' + fmtInt(earned) + "</strong> / " + fmtInt(total) + "<br>" + label + "</span>" +
+      "</div>";
+  }
+
+  function renderCrownRings(t) {
+    var total = DATA.monsters.length;
+    els.crownRings.innerHTML =
+      ringBlock("mini", "mini crowns", t.crownsSmall, total, 0, "#f7d154", "#e8a13a") +
+      ringBlock("large", "large crowns", t.crownsLarge, total, t.crownsSilver, "#f7d154", "#b8e356");
   }
 
   function renderDelta(id, data) {
@@ -806,6 +1111,10 @@
   /* ── Log controls ── */
   els.sortSelect.addEventListener("change", function () { if (current) renderMonsters(current.data); });
   els.filterCrowns.addEventListener("change", function () { if (current) renderMonsters(current.data); });
+
+  /* ── Donut ↔ list hover sync (weapons & quests) ── */
+  wireDonutZone("weapon", els.weaponDonut, els.weaponChart);
+  wireDonutZone("quest", els.questDonut, els.questChart);
 
   /* ════════════════════════════════════════
      Boot: shared link → roster → nothing
