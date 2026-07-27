@@ -1,0 +1,161 @@
+---
+layout: default
+title: MH Wilds Stats
+permalink: /mhw/
+---
+
+<link rel="stylesheet" href="{{ '/assets/mhw/mhw.css' | relative_url }}">
+
+<div class="page">
+  <a href="{{ '/' | relative_url }}" class="back-link">&larr; Back to portal</a>
+  <h1 class="page-title gradient-mhw">MH Wilds Stat Tracker</h1>
+  <p class="mhw-sub">View your Monster Hunter Wilds hunter profile — hunt counts, crowns, weapon usage — right in your browser. No account, no server: your data never leaves this page unless you share a link.</p>
+</div>
+
+<div class="mhw-app">
+
+  <!-- ── Intake ─────────────────────────── -->
+  <section id="intake" class="mhw-card">
+    <h2 class="mhw-h2">Load your stats</h2>
+    <div class="intake-grid">
+
+      <div class="intake-method">
+        <h3>Paste</h3>
+        <p>Use the exporter's <em>Copy to clipboard</em> button in-game, then paste here.</p>
+        <textarea id="intake-paste" rows="4" spellcheck="false"
+          placeholder='Paste exported JSON here — it starts with {"schema":"mhw-stats/1" ...}'></textarea>
+        <button id="btn-paste-load" class="mhw-btn">Load from paste</button>
+      </div>
+
+      <div class="intake-method">
+        <h3>Drop a file</h3>
+        <p>Drag <code>mhw-stats.json</code> from the exporter folder onto this zone.</p>
+        <div id="drop-zone" class="drop-zone" tabindex="0" role="button"
+             aria-label="Drop a stats file here or press to browse">
+          <span class="drop-icon">&#8681;</span>
+          <span>Drop file here or click to browse</span>
+        </div>
+        <input type="file" id="file-input" accept=".json,application/json" hidden>
+      </div>
+
+      <div class="intake-method">
+        <h3>Saved file</h3>
+        <p>Point the page at your export file once — after that, refresh your stats with one click.</p>
+        <button id="btn-saved-file" class="mhw-btn">Link export file&hellip;</button>
+        <button id="btn-saved-reload" class="mhw-btn mhw-btn--ghost" hidden>Re-read linked file</button>
+        <p id="saved-file-note" class="intake-note" hidden></p>
+      </div>
+
+    </div>
+
+    <div class="intake-footer">
+      <button id="btn-sample" class="mhw-btn mhw-btn--ghost">Explore with sample data</button>
+      <p id="intake-status" class="intake-status" role="status"></p>
+    </div>
+  </section>
+
+  <!-- ── Roster ─────────────────────────── -->
+  <section id="roster" class="mhw-card" hidden>
+    <h2 class="mhw-h2">My hunters</h2>
+    <div id="roster-list" class="roster-list"></div>
+  </section>
+
+  <!-- ── Dashboard ──────────────────────── -->
+  <div id="dashboard" hidden>
+
+    <section class="mhw-card share-bar">
+      <div class="share-id">
+        <span id="share-name" class="share-name"></span>
+        <span id="share-date" class="share-date"></span>
+      </div>
+      <div class="share-actions">
+        <button id="btn-copy-link" class="mhw-btn">Copy share link</button>
+        <button id="btn-download-json" class="mhw-btn mhw-btn--ghost">Download JSON</button>
+        <button id="btn-forget" class="mhw-btn mhw-btn--ghost">Remove from roster</button>
+      </div>
+    </section>
+
+    <section id="delta-card" class="mhw-card delta-card" hidden>
+      <h2 class="mhw-h2">Since your last upload</h2>
+      <div id="delta-content" class="delta-content"></div>
+    </section>
+
+    <section class="stat-grid">
+      <div class="stat-card"><span class="stat-value" id="stat-hr">&ndash;</span><span class="stat-label" id="stat-hr-label">Hunter Rank</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-playtime">&ndash;</span><span class="stat-label">Playtime</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-quests">&ndash;</span><span class="stat-label">Quests completed</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-hunts">&ndash;</span><span class="stat-label">Monsters hunted</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-crowns">&ndash;</span><span class="stat-label">Gold crowns</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-guild">&ndash;</span><span class="stat-label">Guild points</span></div>
+      <div class="stat-card"><span class="stat-value" id="stat-zenny">&ndash;</span><span class="stat-label">Zenny</span></div>
+    </section>
+
+    <section class="mhw-card">
+      <h2 class="mhw-h2">Quest log</h2>
+      <p class="section-sub">Quests completed by category</p>
+      <div id="quest-chart" class="weapon-chart"></div>
+    </section>
+
+    <section class="mhw-card">
+      <h2 class="mhw-h2">Weapon usage</h2>
+      <p class="section-sub">Quests per weapon — solid bar: main weapon · light bar: secondary weapon</p>
+      <div id="weapon-chart" class="weapon-chart"></div>
+    </section>
+
+    <section class="mhw-card">
+      <h2 class="mhw-h2">Hunting log</h2>
+      <p class="section-sub" id="crown-summary"></p>
+      <div class="log-controls">
+        <label class="log-control">
+          Sort by
+          <select id="sort-select">
+            <option value="hunted">Most hunted</option>
+            <option value="name">Name</option>
+            <option value="crowns">Crowns missing</option>
+            <option value="recent">Recently updated</option>
+          </select>
+        </label>
+        <label class="log-control log-control--check">
+          <input type="checkbox" id="filter-crowns">
+          Crown incomplete only
+        </label>
+      </div>
+      <div class="table-wrap">
+        <table class="monster-table">
+          <thead>
+            <tr>
+              <th>Monster</th>
+              <th class="num">Hunted</th>
+              <th class="num">Captured</th>
+              <th class="num">Slain</th>
+              <th class="crowns" title="Mini gold crown · large crown (silver or gold)">Crowns</th>
+              <th class="num">Smallest</th>
+              <th class="num">Largest</th>
+            </tr>
+          </thead>
+          <tbody id="monster-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ── Setup ──────────────────────────── -->
+  <section class="mhw-card setup-card">
+    <h2 class="mhw-h2">Getting your data out of the game</h2>
+    <ol class="setup-steps">
+      <li>Install <strong>REFramework</strong> (nightly) for Monster Hunter Wilds.</li>
+      <li>Download the exporter script:
+        <a href="{{ '/assets/mhw/mhw_stats_exporter.lua' | relative_url }}" download>mhw_stats_exporter.lua</a>
+        and place it in <code>MonsterHunterWilds/reframework/autorun/</code>.</li>
+      <li>In-game, open the REFramework overlay and use <em>Export stats</em> (writes <code>reframework/data/mhw-stats.json</code>) or <em>Copy to clipboard</em>.</li>
+      <li>Load the file or paste above. Bookmark your share link to keep the view.</li>
+    </ol>
+    <p class="setup-note">This is a fan-made, read-only tool. It is not affiliated with or endorsed by Capcom. Mods are used at your own risk.</p>
+  </section>
+
+</div>
+
+<script src="{{ '/assets/mhw/mhw-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
+<script src="{{ '/assets/mhw/sample-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
+<script src="{{ '/assets/mhw/mhw.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
