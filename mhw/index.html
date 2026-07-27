@@ -146,42 +146,27 @@ permalink: /mhw/
 
     <section class="mhw-card">
       <h2 class="mhw-h2">Hunting log</h2>
-      <div class="crown-overview">
-        <div id="crown-rings" class="crown-rings"></div>
-        <p class="section-sub crown-summary-text" id="crown-summary"></p>
-      </div>
+      <div id="log-rings" class="log-rings"></div>
       <div class="log-controls">
         <label class="log-control">
           Sort by
           <select id="sort-select">
             <option value="hunted">Most hunted</option>
-            <option value="name">Name</option>
-            <option value="crowns">Crowns missing</option>
-            <option value="recent">Recently updated</option>
+            <option value="name">Name A&ndash;Z</option>
           </select>
         </label>
-        <label class="log-control log-control--check">
-          <input type="checkbox" id="filter-crowns">
-          Crown incomplete only
-        </label>
       </div>
-      <div class="table-wrap">
-        <table class="monster-table">
-          <thead>
-            <tr>
-              <th>Monster</th>
-              <th class="num">Hunted</th>
-              <th class="num">Captured</th>
-              <th class="num">Slain</th>
-              <th class="crowns" title="Mini gold crown · large crown (silver or gold)">Crowns</th>
-              <th class="num">Smallest</th>
-              <th class="num">Largest</th>
-            </tr>
-          </thead>
-          <tbody id="monster-tbody"></tbody>
-        </table>
-      </div>
+      <div id="monster-grid" class="monster-grid"></div>
     </section>
+
+    <!-- Monster detail modal -->
+    <div id="monster-modal" class="monster-modal" hidden>
+      <div class="monster-modal-backdrop" data-modal-close></div>
+      <div class="monster-modal-card" role="dialog" aria-modal="true" aria-labelledby="mmodal-name">
+        <button type="button" class="monster-modal-close" id="modal-close" aria-label="Close details">&times;</button>
+        <div id="modal-body" class="monster-modal-body"></div>
+      </div>
+    </div>
 
   </div>
 

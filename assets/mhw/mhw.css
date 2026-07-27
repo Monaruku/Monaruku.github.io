@@ -588,15 +588,14 @@
 .quest-layout .quest-tiles { grid-template-columns: repeat(4, 1fr); }
 .quest-donut .donut-center-name { font-size: 16px; font-weight: 800; }
 
-/* ── Crown progress rings ── */
-.crown-overview {
+/* ── Hunting log: progress rings row ── */
+.log-rings {
   display: flex;
-  align-items: center;
-  gap: 1.75rem;
+  justify-content: center;
+  gap: 2.6rem;
   flex-wrap: wrap;
-  margin: -0.6rem 0 1rem;
+  margin: 0.4rem 0 1.5rem;
 }
-.crown-rings { display: flex; gap: 1.4rem; }
 .cring { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
 .cring svg { width: 82px; height: 82px; }
 .cring-track { fill: none; stroke: rgba(255, 255, 255, 0.08); stroke-width: 7; }
@@ -623,7 +622,34 @@
   line-height: 1.4;
 }
 .cring-label strong { color: #f0f0f5; font-size: 0.85rem; }
-.crown-summary-text { flex: 1; min-width: 220px; margin: 0; }
+
+/* Standalone total-hunts counter (companion to the progress rings) */
+.hunt-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.hunt-total-disc {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 209, 84, 0.06);
+  border: 2px solid rgba(247, 209, 84, 0.4);
+  box-shadow: inset 0 0 20px rgba(247, 209, 84, 0.09);
+}
+.hunt-total-val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
 /* ── Hunting log ── */
 .log-controls {
@@ -652,69 +678,247 @@
 .log-control--check { cursor: pointer; }
 .log-control input[type="checkbox"] { accent-color: #e8a13a; }
 
-.table-wrap { overflow-x: auto; }
-.monster-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
+/* ── Monster grid ── */
+.monster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 0.8rem;
 }
-.monster-table th {
-  text-align: left;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: rgba(240, 240, 245, 0.5);
-  padding: 0.45rem 0.6rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-.monster-table th.num,
-.monster-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
-.monster-table th.crowns,
-.monster-table td.crowns { text-align: center; }
-.monster-table td {
-  padding: 0.45rem 0.6rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: rgba(240, 240, 245, 0.88);
-}
-.monster-table tr:hover td { background: rgba(247, 209, 84, 0.04); }
-.monster-name { font-weight: 600; vertical-align: middle; }
-.monster-zerocount td { color: rgba(240, 240, 245, 0.35); }
 
-/* Monster portrait in the Hunting Log */
-.monster-cell { white-space: nowrap; }
-.monster-ico {
-  display: inline-block;
+.mcard {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  text-align: left;
+  font-family: inherit;
+  color: #f0f0f5;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  animation: seg-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+.mcard:hover,
+.mcard:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(247, 209, 84, 0.45);
+  box-shadow: 0 10px 26px -12px rgba(247, 209, 84, 0.28);
+  outline: none;
+}
+.mcard--zero { opacity: 0.45; }
+.mcard--zero .mcard-img { filter: grayscale(0.75); }
+
+.mcard-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  background: rgba(255, 255, 255, 0.03);
+}
+.mcard-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  padding: 0.6rem 0.7rem 0.7rem;
+}
+.mcard-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(240, 240, 245, 0.92);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mcard-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+}
+.mcard-crowns { white-space: nowrap; }
+.mcard-count {
+  color: rgba(240, 240, 245, 0.55);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mcard-count strong {
+  color: #f7d154;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+/* ── Monster detail modal ── */
+.monster-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+.monster-modal[hidden] { display: none; }
+.monster-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 4, 10, 0.72);
+  backdrop-filter: blur(4px);
+  animation: modal-fade 0.2s ease both;
+}
+.monster-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: #14111a;
+  border: 1px solid rgba(247, 209, 84, 0.28);
+  border-radius: 16px;
+  padding: 1.4rem;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
+  animation: modal-pop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+@keyframes modal-fade { from { opacity: 0; } }
+@keyframes modal-pop { from { opacity: 0; transform: translateY(14px) scale(0.97); } }
+
+.monster-modal-close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
   width: 32px;
   height: 32px;
-  border-radius: 8px;
-  overflow: hidden;
-  vertical-align: middle;
-  margin-right: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: rgba(240, 240, 245, 0.6);
+  background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.monster-modal-close:hover,
+.monster-modal-close:focus-visible {
+  color: #f7d154;
+  border-color: rgba(247, 209, 84, 0.5);
+  outline: none;
+}
+
+.mmodal-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.1rem;
+  padding-right: 2.2rem;
+}
+.mmodal-img {
+  width: 82px;
+  height: 82px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.04);
   flex-shrink: 0;
 }
-.monster-ico-img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
+.mmodal-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f7d154;
+  margin: 0 0 0.15rem;
+}
+.mmodal-type {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(240, 240, 245, 0.55);
 }
 
-/* Inline data-bar in the Hunted column */
-.td-bar { position: relative; }
-.td-bar-fill {
-  position: absolute;
-  top: 4px;
-  bottom: 4px;
-  right: 0;
-  width: var(--w, 0%);
-  background: linear-gradient(90deg, rgba(247, 209, 84, 0), rgba(247, 209, 84, 0.13));
-  border-right: 2px solid rgba(247, 209, 84, 0.45);
-  border-radius: 3px 0 0 3px;
-  pointer-events: none;
+.mmodal-stats,
+.mmodal-sizes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
 }
-.td-bar-num { position: relative; }
+.mmodal-sizes { grid-template-columns: 1fr 1fr; margin-bottom: 0; }
+.mmodal-stat {
+  background: rgba(255, 255, 255, 0.045);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 10px;
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+}
+.mmodal-stat b {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #f0f0f5;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 0.15rem;
+}
+.mmodal-stat span {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(240, 240, 245, 0.5);
+  line-height: 1.35;
+  display: block;
+}
+
+.mmodal-crowns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+.mmodal-crown {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  padding: 0.55rem 0.4rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+.mmodal-crown-glyph { font-size: 1.35rem; line-height: 1; }
+.mmodal-crown-name {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.mmodal-crown-hint {
+  font-size: 0.62rem;
+  color: rgba(240, 240, 245, 0.5);
+  text-align: center;
+  line-height: 1.3;
+}
+.mmodal-crown--gold {
+  border-color: rgba(245, 197, 66, 0.4);
+  background: rgba(245, 197, 66, 0.08);
+}
+.mmodal-crown--gold .mmodal-crown-glyph {
+  color: #f5c542;
+  text-shadow: 0 0 10px rgba(245, 197, 66, 0.5);
+}
+.mmodal-crown--gold .mmodal-crown-name { color: #f5c542; }
+.mmodal-crown--silver {
+  border-color: rgba(201, 206, 214, 0.4);
+  background: rgba(201, 206, 214, 0.07);
+}
+.mmodal-crown--silver .mmodal-crown-glyph {
+  color: #c9ced6;
+  text-shadow: 0 0 10px rgba(201, 206, 214, 0.45);
+}
+.mmodal-crown--silver .mmodal-crown-name { color: #c9ced6; }
+.mmodal-crown--missing .mmodal-crown-glyph { color: rgba(255, 255, 255, 0.16); }
+.mmodal-crown--missing .mmodal-crown-name { color: rgba(240, 240, 245, 0.4); }
 
 .crown {
   display: inline-block;
@@ -770,9 +974,12 @@
   .weapon-ico svg { width: 16px; height: 16px; }
   .weapon-ico-img { width: 20px; height: 20px; }
   .weapon-badge { display: none; }
-  .crown-overview { gap: 1.1rem; }
-  .crown-rings { gap: 1rem; }
+  .log-rings { gap: 1.3rem; }
   .cring svg { width: 72px; height: 72px; }
+  .hunt-total-disc { width: 72px; height: 72px; }
+  .hunt-total-val { font-size: 1.12rem; }
+  .monster-grid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 0.6rem; }
+  .mmodal-stats, .mmodal-crowns { gap: 0.45rem; }
   .share-bar { flex-direction: column; align-items: flex-start; }
   .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 0.6rem; }
   .stat-seg:last-child { grid-column: span 2; }
@@ -782,6 +989,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill, .weapon-toggle-btn { transition: none; }
-  .donut-slice, .cring-fill, .cring-silver, .stat-seg, .qtile { animation: none; }
+  .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill, .weapon-toggle-btn, .mcard { transition: none; }
+  .donut-slice, .cring-fill, .cring-silver, .stat-seg, .qtile, .mcard,
+  .monster-modal-backdrop, .monster-modal-card { animation: none; }
 }

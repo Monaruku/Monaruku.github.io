@@ -45,11 +45,12 @@
     questDonut:   $("quest-donut"),
     weaponChart:  $("weapon-chart"),
     weaponDonut:  $("weapon-donut"),
-    crownSummary: $("crown-summary"),
-    crownRings:   $("crown-rings"),
+    logRings:     $("log-rings"),
     sortSelect:   $("sort-select"),
-    filterCrowns: $("filter-crowns"),
-    monsterTbody: $("monster-tbody"),
+    monsterGrid:  $("monster-grid"),
+    monsterModal: $("monster-modal"),
+    modalBody:    $("modal-body"),
+    modalClose:   $("modal-close"),
     weaponSummary: $("weapon-summary"),
     btnViewMain: $("weapon-view-main"),
     btnViewSub:  $("weapon-view-sub")
@@ -311,24 +312,21 @@
     return Math.round(ref.baseSize * pct) / 100;
   }
 
-  function sizeText(slug, pct) {
-    var cm = sizeCm(slug, pct);
-    if (cm !== null) return fmtSize(cm);
-    return isNum(pct) ? pct + "%" : "–";
-  }
-
   function computeTotals(data) {
     var t = { quests: 0, hunts: 0, caps: 0, crownsSmall: 0, crownsLarge: 0, crownsSilver: 0 };
     if (data.quests && isNum(data.quests.total_completed)) t.quests = data.quests.total_completed;
     var mons = data.monsters || {};
     Object.keys(mons).forEach(function (slug) {
       var m = mons[slug] || {};
-      if (isNum(m.slain))    t.hunts += m.slain;
-      if (isNum(m.captured)) t.caps  += m.captured;
-      var c = crownsOf(slug, m);
-      if (c.mini)   t.crownsSmall++;
-      if (c.gold)   t.crownsLarge++;
-      if (c.silver) t.crownsSilver++;
+      /* A capture completes a hunt too: total hunts = slain + captured. */
+      var s = isNum(m.slain) ? m.slain : 0;
+      var c = isNum(m.captured) ? m.captured : 0;
+      t.hunts += s + c;
+      t.caps  += c;
+      var cr = crownsOf(slug, m);
+      if (cr.mini)   t.crownsSmall++;
+      if (cr.gold)   t.crownsLarge++;
+      if (cr.silver) t.crownsSilver++;
     });
     return t;
   }
@@ -781,123 +779,114 @@
     animateGrow(els.weaponChart);
   }
 
-  function crownCell(slug, m) {
-    var td = document.createElement("td");
-    td.className = "crowns";
-    var c = crownsOf(slug, m);
-    var mini = document.createElement("span");
-    mini.className = "crown" + (c.mini ? "" : " crown--missing");
-    mini.title = "Mini gold crown" + (c.mini ? " earned" : " not earned");
-    mini.textContent = "♛";
-    td.appendChild(mini);
-    td.appendChild(document.createTextNode(" "));
-    var large = document.createElement("span");
-    large.className = "crown" + (c.gold ? "" : c.silver ? " crown--silver" : " crown--missing");
-    large.title = c.gold ? "Gold large crown earned"
-      : c.silver ? "Silver large crown — gold not yet"
-      : "Large crown not earned";
-    large.textContent = "♛";
-    td.appendChild(large);
-    return td;
+  function monsterImgSrc(slug) {
+    return "../assets/mhw/monsters/" + slug.replace(/_/g, "-") + ".webp";
   }
 
-  function numTd(text, cls) {
-    var td = document.createElement("td");
-    td.className = cls || "num";
-    td.textContent = text;
-    return td;
+  function fallbackPortrait(img) {
+    if (img.src.indexOf("question-mark") === -1) {
+      img.src = "../assets/mhw/monsters/question-mark.png";
+    }
   }
 
   function renderMonsters(data) {
     var mons = data.monsters || {};
     var rows = DATA.monsters.map(function (ref) {
       var m = mons[ref.slug] || null;
-      var prevH = lastPrevSnap && lastPrevSnap.monsters[ref.slug]
-        ? lastPrevSnap.monsters[ref.slug].h : null;
       var slain = m && isNum(m.slain) ? m.slain : 0;
       var captured = m && isNum(m.captured) ? m.captured : 0;
       var hunted = slain + captured;
-      var c = crownsOf(ref.slug, m);
       return {
+        ref: ref,
         name: ref.name,
         slug: ref.slug,
         m: m,
         slain: slain,
         captured: captured,
         hunted: hunted,
-        recent: prevH !== null && m ? Math.max(hunted - prevH, 0) : 0,
-        crownsMissing: (c.mini ? 0 : 1) + (c.gold ? 0 : 1)
+        crowns: crownsOf(ref.slug, m)
       };
     });
 
-    /* Crown summary line + progress rings */
+    /* ── Top row: four progress rings + total hunts ── */
     var t = computeTotals(data);
-    els.crownSummary.textContent =
-      "Gold crowns: " + t.crownsSmall + "/" + DATA.monsters.length + " mini · " +
-      t.crownsLarge + "/" + DATA.monsters.length + " large" +
-      (t.crownsSilver > 0 ? " · " + t.crownsSilver + " silver large in progress" : "");
-    renderCrownRings(t);
+    var totalSpecies = DATA.monsters.length;
+    var discovered = rows.filter(function (r) { return !!r.m; }).length;
+    var speciesHunted = rows.filter(function (r) { return r.hunted > 0; }).length;
 
-    var maxHunted = rows.reduce(function (acc, r) { return Math.max(acc, r.hunted); }, 0);
+    els.logRings.innerHTML =
+      ringBlock("mini", "mini crowns", t.crownsSmall, totalSpecies, 0, "#f7d154", "#e8a13a") +
+      ringBlock("large", "large crowns", t.crownsLarge, totalSpecies, t.crownsSilver, "#f7d154", "#b8e356") +
+      ringBlock("disc", "discovered", discovered, totalSpecies, 0, "#60a5fa", "#45d0c0") +
+      ringBlock("hunt", "monsters hunted", speciesHunted, totalSpecies, 0, "#f0913f", "#e4645f") +
+      huntTotalBlock(t.hunts);
 
-    /* Filter */
-    if (els.filterCrowns.checked) {
-      rows = rows.filter(function (r) { return r.crownsMissing > 0; });
-    }
-
-    /* Sort */
+    /* ── Sort ── */
     var mode = els.sortSelect.value;
     rows.sort(function (a, b) {
-      if (mode === "name")   return a.name.localeCompare(b.name);
-      if (mode === "crowns") return b.crownsMissing - a.crownsMissing || b.hunted - a.hunted;
-      if (mode === "recent") return b.recent - a.recent || b.hunted - a.hunted;
+      if (mode === "name") return a.name.localeCompare(b.name);
       return b.hunted - a.hunted || a.name.localeCompare(b.name);
     });
 
-    els.monsterTbody.textContent = "";
-    rows.forEach(function (r) {
-      var tr = document.createElement("tr");
-      if (r.hunted === 0) tr.className = "monster-zerocount";
-      var name = document.createElement("td");
-      name.className = "monster-cell";
+    /* ── Monster grid ── */
+    els.monsterGrid.textContent = "";
+    rows.forEach(function (r, i) {
+      var card = document.createElement("button");
+      card.type = "button";
+      card.className = "mcard" + (r.hunted === 0 ? " mcard--zero" : "");
+      card.style.animationDelay = Math.min(i * 22, 440) + "ms";
+      card.setAttribute("aria-label", r.name + " — " + fmtInt(r.hunted) + " hunted. Open details.");
 
-      var ico = document.createElement("span");
-      ico.className = "monster-ico";
-      var icoImg = document.createElement("img");
-      icoImg.className = "monster-ico-img";
-      icoImg.src = "../assets/mhw/monsters/" + r.slug.replace(/_/g, "-") + ".webp";
-      icoImg.alt = "";
-      icoImg.loading = "lazy";
-      icoImg.decoding = "async";
-      icoImg.addEventListener("error", function () {
-        /* Portrait unavailable — collapse the icon slot */
-        ico.style.display = "none";
-      });
-      ico.appendChild(icoImg);
-      name.appendChild(ico);
+      var img = document.createElement("img");
+      img.className = "mcard-img";
+      img.src = monsterImgSrc(r.slug);
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.addEventListener("error", function () { fallbackPortrait(img); });
 
-      var span = document.createElement("span");
-      span.className = "monster-name";
-      span.textContent = r.name;
-      name.appendChild(span);
-      tr.appendChild(name);
-      var huntedTd = document.createElement("td");
-      huntedTd.className = "num td-bar";
-      var barFill = document.createElement("span");
-      barFill.className = "td-bar-fill";
-      barFill.style.setProperty("--w", maxHunted > 0 ? (r.hunted / maxHunted * 100).toFixed(1) + "%" : "0%");
-      var barNum = document.createElement("span");
-      barNum.className = "td-bar-num";
-      barNum.textContent = fmtInt(r.hunted);
-      huntedTd.appendChild(barFill);
-      huntedTd.appendChild(barNum);
-      tr.appendChild(huntedTd);
-      tr.appendChild(numTd(fmtInt(r.captured)));
-      tr.appendChild(numTd(fmtInt(r.slain)));
-      tr.appendChild(crownCell(r.slug, r.m));
-      tr.appendChild(numTd(r.m ? sizeText(r.slug, r.m.min_pct) : "–"));
-      tr.appendChild(numTd(r.m ? sizeText(r.slug, r.m.max_pct) : "–"));
-      els.monsterTbody.appendChild(tr);
+      var body = document.createElement("span");
+      body.className = "mcard-body";
+
+      var name = document.createElement("span");
+      name.className = "mcard-name";
+      name.textContent = r.name;
+
+      var meta = document.createElement("span");
+      meta.className = "mcard-meta";
+
+      var crowns = document.createElement("span");
+      crowns.className = "mcard-crowns";
+      var c = r.crowns;
+      var mini = document.createElement("span");
+      mini.className = "crown" + (c.mini ? "" : " crown--missing");
+      mini.title = "Mini crown" + (c.mini ? " earned" : " missing");
+      mini.textContent = "♛";
+      var large = document.createElement("span");
+      large.className = "crown" + (c.gold ? "" : c.silver ? " crown--silver" : " crown--missing");
+      large.title = c.gold ? "Gold large crown earned"
+        : c.silver ? "Silver large crown — gold not yet"
+        : "Large crown missing";
+      large.textContent = "♛";
+      crowns.appendChild(mini);
+      crowns.appendChild(large);
+
+      var count = document.createElement("span");
+      count.className = "mcard-count";
+      var strong = document.createElement("strong");
+      strong.textContent = fmtInt(r.hunted);
+      count.appendChild(strong);
+      count.appendChild(document.createTextNode(" hunted"));
+
+      meta.appendChild(crowns);
+      meta.appendChild(count);
+      body.appendChild(name);
+      body.appendChild(meta);
+      card.appendChild(img);
+      card.appendChild(body);
+
+      card.addEventListener("click", function () { openMonsterModal(r, card); });
+      els.monsterGrid.appendChild(card);
     });
   }
 
@@ -931,11 +920,85 @@
       "</div>";
   }
 
-  function renderCrownRings(t) {
-    var total = DATA.monsters.length;
-    els.crownRings.innerHTML =
-      ringBlock("mini", "mini crowns", t.crownsSmall, total, 0, "#f7d154", "#e8a13a") +
-      ringBlock("large", "large crowns", t.crownsLarge, total, t.crownsSilver, "#f7d154", "#b8e356");
+  /* Standalone counter that visually matches the ring row — used for the
+     grand total of hunts, which has no natural "out of" denominator. */
+  function huntTotalBlock(total) {
+    return '<div class="hunt-total">' +
+      '<span class="hunt-total-disc"><span class="hunt-total-val">' + fmtInt(total) + "</span></span>" +
+      '<span class="cring-label">total hunts</span>' +
+      "</div>";
+  }
+
+  /* ── Monster detail modal ── */
+
+  function monsterModalMarkup(r) {
+    var ref = r.ref;
+    var c = r.crowns;
+    var th = ref.crowns;
+
+    function stat(value, label) {
+      return '<div class="mmodal-stat"><b>' + value + "</b><span>" + label + "</span></div>";
+    }
+    function chip(name, state, hint) {
+      return '<div class="mmodal-crown mmodal-crown--' + state + '">' +
+        '<span class="mmodal-crown-glyph">♛</span>' +
+        '<span class="mmodal-crown-name">' + name + "</span>" +
+        '<span class="mmodal-crown-hint">' + hint + "</span></div>";
+    }
+    function sizeBlock(label, pct) {
+      var cm = sizeCm(r.slug, pct);
+      var main = isNum(pct) ? (cm !== null ? fmtSize(cm) + " cm" : pct + "%") : "–";
+      var sub = isNum(pct) ? pct + "% of base" : "no record";
+      return '<div class="mmodal-stat"><b>' + main + "</b><span>" + label + " · " + sub + "</span></div>";
+    }
+
+    var silverEarned = c.silver || c.gold;
+    return '<div class="mmodal-head">' +
+      '<img class="mmodal-img" src="' + monsterImgSrc(r.slug) + '" alt="">' +
+      '<div class="mmodal-id">' +
+        '<h3 class="mmodal-name" id="mmodal-name">' + r.name + "</h3>" +
+        '<span class="mmodal-type">' + ref.type + "</span>" +
+      "</div></div>" +
+
+      '<div class="mmodal-stats">' +
+        stat(fmtInt(r.hunted), "hunted") +
+        stat(fmtInt(r.captured), "captured") +
+        stat(fmtInt(r.slain), "slain") +
+      "</div>" +
+
+      '<div class="mmodal-crowns">' +
+        chip("Mini", c.mini ? "gold" : "missing",
+          c.mini ? "Earned · ≤ " + th.mini + "%" : "Needs ≤ " + th.mini + "% size") +
+        chip("Silver", silverEarned ? "silver" : "missing",
+          silverEarned ? "Earned · ≥ " + th.silver + "%" : "Needs ≥ " + th.silver + "% size") +
+        chip("Gold", c.gold ? "gold" : "missing",
+          c.gold ? "Earned · ≥ " + th.gold + "%" : "Needs ≥ " + th.gold + "% size") +
+      "</div>" +
+
+      '<div class="mmodal-sizes">' +
+        sizeBlock("Smallest", r.m && isNum(r.m.min_pct) ? r.m.min_pct : null) +
+        sizeBlock("Largest", r.m && isNum(r.m.max_pct) ? r.m.max_pct : null) +
+      "</div>";
+  }
+
+  var lastModalTrigger = null;
+
+  function openMonsterModal(r, triggerEl) {
+    lastModalTrigger = triggerEl || null;
+    els.modalBody.innerHTML = monsterModalMarkup(r);
+    var img = els.modalBody.querySelector(".mmodal-img");
+    if (img) img.addEventListener("error", function () { fallbackPortrait(img); });
+    els.monsterModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    els.modalClose.focus();
+  }
+
+  function closeMonsterModal() {
+    if (els.monsterModal.hidden) return;
+    els.monsterModal.hidden = true;
+    document.body.style.overflow = "";
+    if (lastModalTrigger && lastModalTrigger.focus) lastModalTrigger.focus();
+    lastModalTrigger = null;
   }
 
   function renderDelta(id, data) {
@@ -1180,7 +1243,15 @@
 
   /* ── Log controls ── */
   els.sortSelect.addEventListener("change", function () { if (current) renderMonsters(current.data); });
-  els.filterCrowns.addEventListener("change", function () { if (current) renderMonsters(current.data); });
+
+  /* ── Monster detail modal ── */
+  els.modalClose.addEventListener("click", closeMonsterModal);
+  els.monsterModal.addEventListener("click", function (e) {
+    if (e.target && e.target.hasAttribute && e.target.hasAttribute("data-modal-close")) closeMonsterModal();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") closeMonsterModal();
+  });
 
   /* ── Weapon view toggle (main / secondary) ── */
   function setWeaponView(mode) {
