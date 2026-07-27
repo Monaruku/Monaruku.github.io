@@ -128,8 +128,16 @@ permalink: /mhw/
     </section>
 
     <section class="mhw-card">
-      <h2 class="mhw-h2">Weapon usage</h2>
-      <p class="section-sub">Quests per weapon — solid bar: main weapon · light bar: secondary. Hover the chart or a row to compare.</p>
+      <div class="weapon-head">
+        <div>
+          <h2 class="mhw-h2">Weapon usage</h2>
+          <p class="section-sub" id="weapon-summary">Quests per weapon — hover the chart or a row to compare.</p>
+        </div>
+        <div class="weapon-toggle" role="group" aria-label="Weapon slot view">
+          <button type="button" id="weapon-view-main" class="weapon-toggle-btn is-active" aria-pressed="true">Main</button>
+          <button type="button" id="weapon-view-sub" class="weapon-toggle-btn" aria-pressed="false">Secondary</button>
+        </div>
+      </div>
       <div class="weapon-layout">
         <div id="weapon-donut" class="weapon-donut" role="img" aria-label="Donut chart of weapon usage share"></div>
         <div id="weapon-chart" class="weapon-chart"></div>

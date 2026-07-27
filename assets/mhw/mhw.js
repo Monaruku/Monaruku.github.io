@@ -49,7 +49,10 @@
     crownRings:   $("crown-rings"),
     sortSelect:   $("sort-select"),
     filterCrowns: $("filter-crowns"),
-    monsterTbody: $("monster-tbody")
+    monsterTbody: $("monster-tbody"),
+    weaponSummary: $("weapon-summary"),
+    btnViewMain: $("weapon-view-main"),
+    btnViewSub:  $("weapon-view-sub")
   };
 
   var LS_ROSTER = "mhw.roster.v1";
@@ -59,6 +62,7 @@
 
   var current = null;   // { id, data }
   var lastPrevSnap = null; // previous snapshot of current hunter (for "recent" sort)
+  var weaponViewMode = "main"; // "main" | "sub" — weapon usage bar view
 
   /* ════════════════════════════════════════
      Formatting helpers
@@ -627,50 +631,76 @@
       var sub  = isNum(rec.sub)  ? rec.sub  : 0;
       return { slug: w.slug, name: w.name, main: main, sub: sub, total: main + sub };
     });
-    rows.sort(function (a, b) { return b.total - a.total; });
-    var grand = rows.reduce(function (s, r) { return s + r.total; }, 0);
-    var max = rows.length ? rows[0].total : 0;
+
+    var isSub = weaponViewMode === "sub";
+    var valKey = isSub ? "sub" : "main";
+
+    rows.sort(function (a, b) {
+      if (isSub) return b.sub - a.sub || b.total - a.total;
+      return b.total - a.total;
+    });
+
+    var grand = rows.reduce(function (s, r) { return s + r[valKey]; }, 0);
+    var max = rows.length ? rows[0][valKey] : 0;
+
+    /* Summary line adapts to the active view */
+    var usedCount = rows.filter(function (r) { return r[valKey] > 0; }).length;
+    els.weaponSummary.textContent = isSub
+      ? "Secondary loadout — " + fmtInt(grand) + " quests across " + usedCount + " weapons."
+      : "Quests per weapon — hover the chart or a row to compare.";
 
     /* Donut: top 7 individually, the rest pooled as "Other". */
     var slices = [], sliceColor = {};
     rows.slice(0, 7).forEach(function (r, i) {
-      if (r.total > 0) {
-        slices.push({ key: r.slug, name: r.name, value: r.total, color: PALETTE[i] });
+      if (r[valKey] > 0) {
+        slices.push({ key: r.slug, name: r.name, value: r[valKey], color: PALETTE[i] });
         sliceColor[r.slug] = PALETTE[i];
       }
     });
-    var rest = rows.slice(7).reduce(function (s, r) { return s + r.total; }, 0);
+    var rest = rows.slice(7).reduce(function (s, r) { return s + r[valKey]; }, 0);
     if (rest > 0) slices.push({ key: "__other", name: "Other weapons", value: rest, color: OTHER_COLOR });
 
     els.weaponDonut.innerHTML = donutSvgMarkup(slices, grand);
 
     /* Rows */
     els.weaponChart.textContent = "";
-    var topSlug = rows.length && rows[0].total > 0 ? rows[0].slug : null;
+    var topSlug = rows.length && rows[0][valKey] > 0 ? rows[0].slug : null;
     var meta = {};
     rows.forEach(function (c) {
-      var pct = grand > 0 ? Math.round((c.total / grand) * 100) : 0;
-      meta[c.slug] = { name: c.name, sub: fmtInt(c.total) + " quests · " + pct + "%" };
+      var pct = grand > 0 ? Math.round((c[valKey] / grand) * 100) : 0;
+      meta[c.slug] = { name: c.name, sub: fmtInt(c[valKey]) + (isSub ? " as secondary" : " quests") + " · " + pct + "%" };
     });
-    if (rest > 0) meta.__other = { name: "Other weapons", sub: fmtInt(rest) + " quests · " + Math.round((rest / grand) * 100) + "%" };
+    if (rest > 0) meta.__other = { name: "Other weapons", sub: fmtInt(rest) + (isSub ? " as secondary" : " quests") + " · " + Math.round((rest / grand) * 100) + "%" };
 
     rows.forEach(function (c, i) {
       var color = sliceColor[c.slug] || OTHER_COLOR;
-      var pct = grand > 0 ? Math.round((c.total / grand) * 100) : 0;
+      var pct = grand > 0 ? Math.round((c[valKey] / grand) * 100) : 0;
+      var val = c[valKey];
 
       var row = document.createElement("div");
       row.className = "weapon-row" +
         (c.slug === topSlug ? " weapon-row--top" : "") +
-        (c.total === 0 ? " weapon-row--zero" : "");
+        (val === 0 ? " weapon-row--zero" : "");
       row.setAttribute("data-key", c.slug);
-      row.title = c.name + ": " + fmtInt(c.main) + " main · " + fmtInt(c.sub) + " sub";
+      row.title = c.name + ": " + fmtInt(c.main) + " main · " + fmtInt(c.sub) + " secondary";
 
       var icoSpan = document.createElement("span");
       icoSpan.className = "weapon-ico";
-      icoSpan.style.color = color;
       icoSpan.style.background = tint(color, 0.09);
       icoSpan.style.borderColor = tint(color, 0.28);
-      icoSpan.innerHTML = WEAPON_ICONS[c.slug] || "";
+
+      var img = document.createElement("img");
+      img.className = "weapon-ico-img";
+      img.src = "../assets/mhw/icons/" + c.slug.replace(/_/g, "-") + "_ic.png";
+      img.alt = "";
+      img.loading = "lazy";
+      img.decoding = "async";
+      img.addEventListener("error", function () {
+        /* Official icon unavailable — fall back to inline SVG silhouette */
+        icoSpan.style.color = color;
+        icoSpan.innerHTML = WEAPON_ICONS[c.slug] || "";
+      });
+      icoSpan.appendChild(img);
 
       var name = document.createElement("span");
       name.className = "weapon-name";
@@ -684,25 +714,38 @@
 
       var track = document.createElement("div");
       track.className = "weapon-bar-track";
-      var fillMain = document.createElement("div");
-      fillMain.className = "weapon-bar-fill";
-      fillMain.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
-      fillMain.style.width = "0%";
-      fillMain.setAttribute("data-w", max > 0 ? Math.max((c.main / max) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
-      fillMain.style.transitionDelay = (i * 28) + "ms";
-      var fillSub = document.createElement("div");
-      fillSub.className = "weapon-bar-fill weapon-bar-fill--sub";
-      fillSub.style.background = "linear-gradient(90deg," + tint(color, 0.14) + "," + tint(color, 0.36) + ")";
-      fillSub.style.width = "0%";
-      fillSub.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
-      fillSub.style.transitionDelay = (i * 28 + 60) + "ms";
-      track.appendChild(fillMain);
-      track.appendChild(fillSub);
+
+      if (isSub) {
+        /* Sub view: single full-brightness bar for secondary usage */
+        var fillS = document.createElement("div");
+        fillS.className = "weapon-bar-fill";
+        fillS.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
+        fillS.style.width = "0%";
+        fillS.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+        fillS.style.transitionDelay = (i * 28) + "ms";
+        track.appendChild(fillS);
+      } else {
+        /* Main view: bright main segment + dim secondary continuation */
+        var fillMain = document.createElement("div");
+        fillMain.className = "weapon-bar-fill";
+        fillMain.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
+        fillMain.style.width = "0%";
+        fillMain.setAttribute("data-w", max > 0 ? Math.max((c.main / max) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+        fillMain.style.transitionDelay = (i * 28) + "ms";
+        var fillSub = document.createElement("div");
+        fillSub.className = "weapon-bar-fill weapon-bar-fill--sub";
+        fillSub.style.background = "linear-gradient(90deg," + tint(color, 0.14) + "," + tint(color, 0.36) + ")";
+        fillSub.style.width = "0%";
+        fillSub.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+        fillSub.style.transitionDelay = (i * 28 + 60) + "ms";
+        track.appendChild(fillMain);
+        track.appendChild(fillSub);
+      }
 
       var num = document.createElement("span");
       num.className = "weapon-count";
       var strong = document.createElement("strong");
-      strong.textContent = fmtInt(c.total);
+      strong.textContent = fmtInt(val);
       var em = document.createElement("em");
       em.textContent = pct + "%";
       num.appendChild(strong);
@@ -712,6 +755,16 @@
       row.appendChild(name);
       row.appendChild(track);
       row.appendChild(num);
+
+      /* Sub badge — quick-glance secondary count (both views) */
+      if (c.sub > 0) {
+        var subBadge = document.createElement("span");
+        subBadge.className = "weapon-sub-badge";
+        subBadge.title = fmtInt(c.sub) + " quests as secondary";
+        subBadge.textContent = "⚡" + fmtInt(c.sub);
+        row.appendChild(subBadge);
+      }
+
       els.weaponChart.appendChild(row);
     });
 
@@ -724,7 +777,7 @@
         return slices.length ? meta[slices[0].key]
           : { name: "No quests", sub: "recorded yet" };
       },
-      "Weapon usage share: " + (wLabel || "no quests recorded"));
+      (isSub ? "Secondary weapon" : "Weapon") + " usage share: " + (wLabel || "no quests recorded"));
     animateGrow(els.weaponChart);
   }
 
@@ -806,6 +859,23 @@
       var tr = document.createElement("tr");
       if (r.hunted === 0) tr.className = "monster-zerocount";
       var name = document.createElement("td");
+      name.className = "monster-cell";
+
+      var ico = document.createElement("span");
+      ico.className = "monster-ico";
+      var icoImg = document.createElement("img");
+      icoImg.className = "monster-ico-img";
+      icoImg.src = "../assets/mhw/monsters/" + r.slug.replace(/_/g, "-") + ".webp";
+      icoImg.alt = "";
+      icoImg.loading = "lazy";
+      icoImg.decoding = "async";
+      icoImg.addEventListener("error", function () {
+        /* Portrait unavailable — collapse the icon slot */
+        ico.style.display = "none";
+      });
+      ico.appendChild(icoImg);
+      name.appendChild(ico);
+
       var span = document.createElement("span");
       span.className = "monster-name";
       span.textContent = r.name;
@@ -1111,6 +1181,19 @@
   /* ── Log controls ── */
   els.sortSelect.addEventListener("change", function () { if (current) renderMonsters(current.data); });
   els.filterCrowns.addEventListener("change", function () { if (current) renderMonsters(current.data); });
+
+  /* ── Weapon view toggle (main / secondary) ── */
+  function setWeaponView(mode) {
+    if (weaponViewMode === mode) return;
+    weaponViewMode = mode;
+    els.btnViewMain.classList.toggle("is-active", mode === "main");
+    els.btnViewSub.classList.toggle("is-active", mode === "sub");
+    els.btnViewMain.setAttribute("aria-pressed", String(mode === "main"));
+    els.btnViewSub.setAttribute("aria-pressed", String(mode === "sub"));
+    if (current) renderWeapons(current.data);
+  }
+  els.btnViewMain.addEventListener("click", function () { setWeaponView("main"); });
+  els.btnViewSub.addEventListener("click", function () { setWeaponView("sub"); });
 
   /* ── Donut ↔ list hover sync (weapons & quests) ── */
   wireDonutZone("weapon", els.weaponDonut, els.weaponChart);

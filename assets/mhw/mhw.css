@@ -324,6 +324,44 @@
 }
 
 /* ── Charts: shared row styles (quest log & weapon usage) ── */
+.weapon-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.weapon-head .section-sub { margin-bottom: 0; }
+
+/* Segmented Main / Secondary toggle */
+.weapon-toggle {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  padding: 3px;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.weapon-toggle-btn {
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(240, 240, 245, 0.6);
+  background: transparent;
+  border: none;
+  border-radius: 7px;
+  padding: 0.32rem 0.8rem;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+.weapon-toggle-btn:hover { color: #f0f0f5; }
+.weapon-toggle-btn.is-active {
+  color: #14100a;
+  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  box-shadow: 0 2px 10px rgba(247, 209, 84, 0.25);
+}
+
 .weapon-chart {
   display: flex;
   flex-direction: column;
@@ -331,7 +369,7 @@
 }
 .weapon-row {
   display: grid;
-  grid-template-columns: 32px minmax(0, 150px) 1fr 76px;
+  grid-template-columns: 32px minmax(0, 150px) 1fr 76px auto;
   align-items: center;
   gap: 0.7rem;
   font-size: 0.85rem;
@@ -354,6 +392,12 @@
   flex-shrink: 0;
 }
 .weapon-ico svg { width: 19px; height: 19px; display: block; }
+.weapon-ico-img {
+  width: 24px;
+  height: 24px;
+  display: block;
+  object-fit: contain;
+}
 
 .weapon-name {
   color: rgba(240, 240, 245, 0.85);
@@ -406,6 +450,19 @@
   font-style: normal;
   font-size: 0.68rem;
   color: rgba(240, 240, 245, 0.5);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Secondary-usage badge chip */
+.weapon-sub-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #b8e356;
+  background: rgba(184, 227, 86, 0.1);
+  border: 1px solid rgba(184, 227, 86, 0.3);
+  border-radius: 999px;
+  padding: 0.12rem 0.5rem;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
@@ -620,8 +677,29 @@
   color: rgba(240, 240, 245, 0.88);
 }
 .monster-table tr:hover td { background: rgba(247, 209, 84, 0.04); }
-.monster-name { font-weight: 600; }
+.monster-name { font-weight: 600; vertical-align: middle; }
 .monster-zerocount td { color: rgba(240, 240, 245, 0.35); }
+
+/* Monster portrait in the Hunting Log */
+.monster-cell { white-space: nowrap; }
+.monster-ico {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  vertical-align: middle;
+  margin-right: 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+.monster-ico-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
 
 /* Inline data-bar in the Hunted column */
 .td-bar { position: relative; }
@@ -687,9 +765,10 @@
 
 @media (max-width: 640px) {
   .mhw-card { padding: 1.1rem; }
-  .weapon-row { grid-template-columns: 28px minmax(0, 100px) 1fr 60px; gap: 0.5rem; }
+  .weapon-row { grid-template-columns: 28px minmax(0, 100px) 1fr 60px auto; gap: 0.5rem; }
   .weapon-ico { width: 26px; height: 26px; border-radius: 7px; }
   .weapon-ico svg { width: 16px; height: 16px; }
+  .weapon-ico-img { width: 20px; height: 20px; }
   .weapon-badge { display: none; }
   .crown-overview { gap: 1.1rem; }
   .crown-rings { gap: 1rem; }
@@ -703,6 +782,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill { transition: none; }
+  .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill, .weapon-toggle-btn { transition: none; }
   .donut-slice, .cring-fill, .cring-silver, .stat-seg, .qtile { animation: none; }
 }
