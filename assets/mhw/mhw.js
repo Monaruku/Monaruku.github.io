@@ -53,7 +53,12 @@
     modalClose:   $("modal-close"),
     weaponSummary: $("weapon-summary"),
     btnViewMain: $("weapon-view-main"),
-    btnViewSub:  $("weapon-view-sub")
+    btnViewSub:  $("weapon-view-sub"),
+    shareStatus: $("share-status"),
+    qrPanel:     $("qr-panel"),
+    qrCanvas:    $("qr-canvas"),
+    qrName:      $("qr-name"),
+    qrClose:     $("qr-close")
   };
 
   var LS_ROSTER = "mhw.roster.v1";
@@ -372,8 +377,8 @@
     light_bowgun:     ico(fp("M3 10.2h12.5v3.4H3z") + fp("M15.5 10.9H20v2h-4.5z") + fp("M6 13.6 4.6 19h3.2l1.2-5.4z") + fp("M11.5 13.6v3.2h2v-3.2z"))
   };
 
-  /* Categorical palette — gold first (theme), then distinct hues. */
-  var PALETTE = ["#f7d154", "#f0913f", "#e4645f", "#f472b6", "#a78bfa", "#60a5fa", "#45d0c0", "#b8e356"];
+  /* Categorical palette — violet first (theme), then distinct hues. */
+  var PALETTE = ["#a78bfa", "#f0913f", "#e4645f", "#f472b6", "#f7d154", "#60a5fa", "#45d0c0", "#b8e356"];
   var OTHER_COLOR = "rgba(240,240,245,0.3)";
 
   var QUEST_ICONS = {
@@ -412,6 +417,15 @@
   function setStatus(msg, ok) {
     els.status.textContent = msg || "";
     els.status.classList.toggle("intake-status--ok", !!ok);
+  }
+
+  /* Feedback for share-bar actions lives with the share card itself. */
+  /* state: true = success, false = error, "warn" = caution */
+  function setShareStatus(msg, state) {
+    els.shareStatus.textContent = msg || "";
+    els.shareStatus.classList.toggle("share-status--ok", state === true);
+    els.shareStatus.classList.toggle("share-status--warn", state === "warn" && !!msg);
+    els.shareStatus.classList.toggle("share-status--err", state === false && !!msg);
   }
 
   function renderRoster() {
@@ -639,7 +653,6 @@
     });
 
     var grand = rows.reduce(function (s, r) { return s + r[valKey]; }, 0);
-    var max = rows.length ? rows[0][valKey] : 0;
 
     /* Summary line adapts to the active view */
     var usedCount = rows.filter(function (r) { return r[valKey] > 0; }).length;
@@ -719,25 +732,18 @@
         fillS.className = "weapon-bar-fill";
         fillS.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
         fillS.style.width = "0%";
-        fillS.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+        fillS.setAttribute("data-w", grand > 0 ? Math.max((c.sub / grand) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
         fillS.style.transitionDelay = (i * 28) + "ms";
         track.appendChild(fillS);
       } else {
-        /* Main view: bright main segment + dim secondary continuation */
+        /* Main view: main usage only */
         var fillMain = document.createElement("div");
         fillMain.className = "weapon-bar-fill";
         fillMain.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
         fillMain.style.width = "0%";
-        fillMain.setAttribute("data-w", max > 0 ? Math.max((c.main / max) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
+        fillMain.setAttribute("data-w", grand > 0 ? Math.max((c.main / grand) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
         fillMain.style.transitionDelay = (i * 28) + "ms";
-        var fillSub = document.createElement("div");
-        fillSub.className = "weapon-bar-fill weapon-bar-fill--sub";
-        fillSub.style.background = "linear-gradient(90deg," + tint(color, 0.14) + "," + tint(color, 0.36) + ")";
-        fillSub.style.width = "0%";
-        fillSub.setAttribute("data-w", max > 0 ? Math.max((c.sub / max) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
-        fillSub.style.transitionDelay = (i * 28 + 60) + "ms";
         track.appendChild(fillMain);
-        track.appendChild(fillSub);
       }
 
       var num = document.createElement("span");
@@ -1056,6 +1062,8 @@
   function hideDashboard() {
     els.dashboard.hidden = true;
     current = null;
+    hideQrPanel();
+    setShareStatus("", true);
     if (location.hash.indexOf("#d=") === 0) {
       history.replaceState(null, "", location.pathname + location.search);
     }
@@ -1078,6 +1086,7 @@
     }
     var id = hunterId(data);
     current = { id: id, data: data };
+    hideQrPanel(); /* stale QR would point at the previous hunter */
     rosterUpsert(id, data);
     renderDelta(id, data);
     renderAll(data);
@@ -1205,19 +1214,74 @@
   });
 
   /* ── Share bar ── */
+
+  /* ── QR code for the share link (generated locally via qrious) ── */
+  function hideQrPanel() { els.qrPanel.hidden = true; }
+
+  /* Best-effort: renders the QR panel; returns false when the save is
+     too large for QR capacity (the copied link still works either way). */
+  var QR_CAPACITY = 2953; /* byte-mode capacity of the largest QR (v40) at level L */
+  function tryRenderQr(url) {
+    /* Explicit gate: the share URL is pure ASCII, so its length is its
+       byte size. Anything past capacity can't become a QR at all. */
+    if (typeof QRious === "undefined" || url.length > QR_CAPACITY) return false;
+    try {
+      /* Pass 1: probe render just to learn this QR's module grid. */
+      var tmp = document.createElement("canvas");
+      new QRious({
+        element: tmp, value: url, size: 800, level: "L", padding: 0,
+        background: "#ffffff", foreground: "#000000"
+      });
+      var row = tmp.getContext("2d").getImageData(0, 1, tmp.width, 1).data;
+      var extent = tmp.width;
+      while (extent > 1 && row[(extent - 1) * 4] > 128) extent--;
+      var run = 0;
+      while (run < extent && row[run * 4] < 128) run++;
+      var moduleSize = Math.max(1, Math.round(run / 7)); /* finder is 7 modules wide */
+      var cols = Math.max(21, Math.round(extent / moduleSize));
+
+      /* Pass 2: real render at an exact multiple of the grid, so every
+         module is a whole number of device pixels — crisp and scannable,
+         with no leftover margin inside the canvas. */
+      var dpr = Math.max(window.devicePixelRatio || 1, 1);
+      var modulePx = Math.max(1, Math.floor((240 * dpr) / cols));
+      var size = cols * modulePx;
+      new QRious({
+        element: els.qrCanvas, value: url, size: size, level: "L", padding: 0,
+        background: "#f0f0f5", foreground: "#14100a"
+      });
+      var cssSize = Math.round(size / dpr);
+      els.qrCanvas.style.width = cssSize + "px"; /* height stays auto — square via intrinsic ratio */
+      els.qrName.textContent = current.data.hunter.name;
+      els.qrPanel.hidden = false;
+      return true;
+    } catch (e) {
+      hideQrPanel();
+      return false;
+    }
+  }
+
+  /* Copy the share link AND show its QR code in one action. */
   els.btnCopyLink.addEventListener("click", function () {
     if (!current) return;
     encodeShare(current.data).then(function (url) {
+      var qrOk = tryRenderQr(url);
+      var msg = qrOk
+        ? "Share link copied — anyone opening it sees this hunter."
+        : "Share link copied, but this save is too large for a QR code (~2.9 KB limit) — share the link directly instead.";
+      var state = qrOk ? true : "warn";
       if (navigator.clipboard && navigator.clipboard.writeText) {
         return navigator.clipboard.writeText(url).then(function () {
-          setStatus("Share link copied — anyone opening it sees this hunter.", true);
+          setShareStatus(msg, state);
         });
       }
       window.prompt("Copy your share link:", url);
+      setShareStatus(msg, state);
     }).catch(function () {
-      setStatus("Couldn't build a share link.", false);
+      setShareStatus("Couldn't build a share link.", false);
     });
   });
+  els.qrClose.addEventListener("click", hideQrPanel);
 
   els.btnDownload.addEventListener("click", function () {
     if (!current) return;

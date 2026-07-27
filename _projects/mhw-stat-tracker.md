@@ -3,9 +3,10 @@ title: MH Wilds Stat Tracker
 year: 2026
 role: Design & Development
 stack: [Jekyll, Vanilla JS, SVG, REFramework]
-cover: /assets/mhw/thumb.png
-thumb: /assets/mhw/thumb.png
+cover: /assets/mhw/cover.jpg
+thumb: /assets/mhw/cover.jpg
 summary: A privacy-first Monster Hunter Wilds hunter-profile dashboard — quest breakdowns, weapon usage, and crown progress — rendered entirely in the browser from an in-game export.
+cta: Open the stat tracker
 links:
   live: /mhw/
   source: https://github.com/monaruku/monaruku.github.io

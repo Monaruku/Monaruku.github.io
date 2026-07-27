@@ -6,16 +6,46 @@ layout: default
   <a href="{{ '/work/' | relative_url }}" class="back-link">← Back to work</a>
 
   <article class="project-article">
+    {% assign launch_url = nil %}
+    {% assign launch_external = false %}
+    {% if page.links.live %}
+      {% assign launch_url = page.links.live | relative_url %}
+    {% elsif page.links.itch %}
+      {% assign launch_url = page.links.itch %}
+      {% assign launch_external = true %}
+    {% endif %}
+
     {% if page.cover %}
+    {% if launch_url %}
+    <a href="{{ launch_url }}" class="project-cover project-cover--link" {% if launch_external %}rel="noopener"{% endif %}>
+      <img src="{{ page.cover | relative_url }}" alt="{{ page.title }}">
+      <span class="cover-live-badge"><span class="live-dot" aria-hidden="true"></span>{% if launch_external %}Playable{% else %}Live{% endif %} — click to open</span>
+    </a>
+    {% else %}
     <div class="project-cover">
       <img src="{{ page.cover | relative_url }}" alt="{{ page.title }}">
     </div>
+    {% endif %}
     {% endif %}
 
     <header class="project-header">
       <h1 class="project-title">{{ page.title }}</h1>
       {% if page.summary %}
       <p class="project-summary">{{ page.summary }}</p>
+      {% endif %}
+      {% if launch_url %}
+      <div class="project-cta">
+        <a href="{{ launch_url }}" class="btn-launch" {% if launch_external %}rel="noopener"{% endif %}>
+          <span>{{ page.cta | default: "Try it live" }}</span>
+          <span class="btn-launch-arrow" aria-hidden="true">→</span>
+        </a>
+        {% if page.links.source %}
+        <a href="{{ page.links.source }}" class="btn-launch-ghost" rel="noopener">View source ↗</a>
+        {% endif %}
+        {% unless launch_external %}
+        <span class="project-cta-note">Free to use — runs right in your browser.</span>
+        {% endunless %}
+      </div>
       {% endif %}
     </header>
 

@@ -4,7 +4,7 @@ title: MH Wilds Stats
 permalink: /mhw/
 ---
 
-<link rel="stylesheet" href="{{ '/assets/mhw/mhw.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/mhw/mhw.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
 
 <div class="page">
   <a href="{{ '/' | relative_url }}" class="back-link">&larr; Back to portal</a>
@@ -63,15 +63,26 @@ permalink: /mhw/
   <!-- ── Dashboard ──────────────────────── -->
   <div id="dashboard" hidden>
 
-    <section class="mhw-card share-bar">
-      <div class="share-id">
-        <span id="share-name" class="share-name"></span>
-        <span id="share-date" class="share-date"></span>
+    <section class="mhw-card share-card">
+      <div class="share-bar">
+        <div class="share-id">
+          <span id="share-name" class="share-name"></span>
+          <span id="share-date" class="share-date"></span>
+        </div>
+        <div class="share-actions">
+          <button id="btn-copy-link" class="mhw-btn">Copy share link</button>
+          <button id="btn-download-json" class="mhw-btn mhw-btn--ghost">Download JSON</button>
+          <button id="btn-forget" class="mhw-btn mhw-btn--ghost">Remove from roster</button>
+        </div>
       </div>
-      <div class="share-actions">
-        <button id="btn-copy-link" class="mhw-btn">Copy share link</button>
-        <button id="btn-download-json" class="mhw-btn mhw-btn--ghost">Download JSON</button>
-        <button id="btn-forget" class="mhw-btn mhw-btn--ghost">Remove from roster</button>
+      <p id="share-status" class="share-status" role="status"></p>
+      <div id="qr-panel" class="qr-panel" hidden>
+        <div class="qr-box"><canvas id="qr-canvas"></canvas></div>
+        <div class="qr-info">
+          <p class="qr-note">Scan to open <strong id="qr-name"></strong>&rsquo;s stats on your phone.</p>
+          <p class="qr-hint">The whole export is encoded in the link — no account needed. If a save is too large to fit in a QR, the copied link still works.</p>
+        </div>
+        <button type="button" id="qr-close" class="qr-close" aria-label="Close QR code">&times;</button>
       </div>
     </section>
 
@@ -188,4 +199,5 @@ permalink: /mhw/
 
 <script src="{{ '/assets/mhw/mhw-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
 <script src="{{ '/assets/mhw/sample-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
+<script src="{{ '/assets/mhw/vendor/qrious.min.js' | relative_url }}"></script>
 <script src="{{ '/assets/mhw/mhw.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>

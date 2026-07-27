@@ -4,6 +4,7 @@ year: 2024
 role: Team member — Pixel Pioneers
 stack: [Unity, C#, HTML5, Game Jam]
 summary: A browser-playable top-down shooter built during Global Game Jam 2024. Play a crazy clown blasting through waves of zombies in comedic mayhem.
+cta: Play on itch.io
 thumb: https://img.itch.zone/aW1nLzE0ODI2NjUxLnBuZw==/315x250%23c/MO9eta.png
 links:
   itch: https://monaruku.itch.io/ggj-2024-mmcq

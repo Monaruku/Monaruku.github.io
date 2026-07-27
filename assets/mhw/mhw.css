@@ -4,7 +4,7 @@
    ────────────────────────────────────────── */
 
 .gradient-mhw {
-  background: linear-gradient(120deg, #f7d154 0%, #e8a13a 45%, #b8e356 100%);
+  background: linear-gradient(120deg, #c4b5fd 0%, #a78bfa 45%, #f472b6 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -41,7 +41,7 @@
 /* ── Cards ── */
 .mhw-card {
   background: rgba(255, 255, 255, 0.035);
-  border: 1px solid rgba(247, 209, 84, 0.14);
+  border: 1px solid rgba(167, 139, 250, 0.14);
   border-radius: 14px;
   padding: 1.5rem;
   backdrop-filter: blur(6px);
@@ -52,7 +52,7 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   margin-bottom: 0.9rem;
-  color: #f7d154;
+  color: #a78bfa;
 }
 
 .section-sub {
@@ -67,7 +67,7 @@
   font-size: 0.88rem;
   font-weight: 600;
   color: #14100a;
-  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  background: linear-gradient(120deg, #c4b5fd, #8b5cf6);
   border: none;
   border-radius: 9px;
   padding: 0.55rem 1.1rem;
@@ -76,16 +76,16 @@
 }
 .mhw-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(247, 209, 84, 0.28);
+  box-shadow: 0 4px 18px rgba(167, 139, 250, 0.28);
 }
 .mhw-btn:active { transform: translateY(0); }
 
 .mhw-btn--ghost {
   background: transparent;
-  color: #f7d154;
-  border: 1px solid rgba(247, 209, 84, 0.4);
+  color: #a78bfa;
+  border: 1px solid rgba(167, 139, 250, 0.4);
 }
-.mhw-btn--ghost:hover { box-shadow: 0 4px 14px rgba(247, 209, 84, 0.12); }
+.mhw-btn--ghost:hover { box-shadow: 0 4px 14px rgba(167, 139, 250, 0.12); }
 
 /* ── Intake ── */
 .intake-grid {
@@ -111,6 +111,7 @@
   padding: 0.05em 0.35em;
   font-size: 0.78rem;
 }
+.intake-method .mhw-btn { margin: 0 0.6rem 0.5rem 0; }
 
 #intake-paste {
   width: 100%;
@@ -126,7 +127,7 @@
 }
 #intake-paste:focus {
   outline: none;
-  border-color: rgba(247, 209, 84, 0.55);
+  border-color: rgba(167, 139, 250, 0.55);
 }
 
 .drop-zone {
@@ -136,7 +137,7 @@
   justify-content: center;
   gap: 0.4rem;
   min-height: 118px;
-  border: 2px dashed rgba(247, 209, 84, 0.35);
+  border: 2px dashed rgba(167, 139, 250, 0.35);
   border-radius: 12px;
   color: rgba(240, 240, 245, 0.6);
   font-size: 0.85rem;
@@ -148,12 +149,12 @@
 .drop-zone:hover,
 .drop-zone:focus-visible,
 .drop-zone--over {
-  border-color: #f7d154;
-  background: rgba(247, 209, 84, 0.06);
+  border-color: #a78bfa;
+  background: rgba(167, 139, 250, 0.06);
   color: #f0f0f5;
   outline: none;
 }
-.drop-icon { font-size: 1.5rem; color: #f7d154; }
+.drop-icon { font-size: 1.5rem; color: #a78bfa; }
 
 .intake-note {
   font-size: 0.78rem;
@@ -193,10 +194,10 @@
   color: #f0f0f5;
   transition: border-color 0.15s ease, background 0.15s ease;
 }
-.roster-chip:hover { border-color: rgba(247, 209, 84, 0.5); }
+.roster-chip:hover { border-color: rgba(167, 139, 250, 0.5); }
 .roster-chip--active {
-  border-color: #f7d154;
-  background: rgba(247, 209, 84, 0.1);
+  border-color: #a78bfa;
+  background: rgba(167, 139, 250, 0.1);
 }
 .roster-chip .chip-hr {
   color: rgba(240, 240, 245, 0.5);
@@ -228,6 +229,67 @@
   color: rgba(240, 240, 245, 0.55);
 }
 .share-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+/* Share feedback lives with the share card */
+.share-status {
+  margin: 0.65rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(240, 240, 245, 0.6);
+}
+.share-status:empty { display: none; }
+.share-status--ok { color: #b8e356; }
+.share-status--warn { color: #f7d154; } /* amber = caution, deliberately not theme violet */
+.share-status--err { color: #ff9d6e; }
+
+/* QR panel */
+.qr-panel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1rem;
+  padding: 1rem 2.4rem 1rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(167, 139, 250, 0.16);
+  border-radius: 12px;
+  animation: seg-pop 0.35s cubic-bezier(0.2, 0.9, 0.3, 1) both;
+}
+/* display:flex above would defeat the hidden attribute without this */
+.qr-panel[hidden] { display: none; }
+.qr-box {
+  flex-shrink: 0;
+  background: #f0f0f5;
+  border-radius: 10px;
+  padding: 12px; /* doubles as the QR quiet zone */
+  line-height: 0;
+  box-shadow: 0 6px 22px -8px rgba(0, 0, 0, 0.55);
+}
+.qr-box canvas {
+  display: block;
+  max-width: 100%; /* JS sets the ideal width; never overflow small screens */
+  height: auto;
+}
+.qr-note { margin: 0 0 0.35rem; font-size: 0.9rem; color: #f0f0f5; }
+.qr-note strong { color: #a78bfa; }
+.qr-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(240, 240, 245, 0.55);
+}
+.qr-close {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.7rem;
+  background: none;
+  border: none;
+  color: rgba(240, 240, 245, 0.5);
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.15rem;
+}
+.qr-close:hover { color: #f0f0f5; }
 
 /* ── Delta card ── */
 .delta-card { border-color: rgba(184, 227, 86, 0.3); }
@@ -271,7 +333,7 @@
 .stat-seg:nth-child(6) { animation-delay: 0.20s; }
 .stat-seg:nth-child(7) { animation-delay: 0.24s; }
 @keyframes seg-pop { from { opacity: 0; transform: translateY(10px); } }
-.stat-seg:hover { background: rgba(247, 209, 84, 0.05); }
+.stat-seg:hover { background: rgba(167, 139, 250, 0.05); }
 
 .stat-ico {
   width: 27px;
@@ -280,9 +342,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f7d154;
-  background: rgba(247, 209, 84, 0.09);
-  border: 1px solid rgba(247, 209, 84, 0.22);
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.09);
+  border: 1px solid rgba(167, 139, 250, 0.22);
   margin-bottom: 0.15rem;
 }
 .stat-ico svg { width: 16px; height: 16px; display: block; }
@@ -290,7 +352,7 @@
 .stat-value {
   font-size: 1.45rem;
   font-weight: 800;
-  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  background: linear-gradient(120deg, #c4b5fd, #8b5cf6);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -313,7 +375,7 @@
     top: 22%;
     bottom: 22%;
     width: 1px;
-    background: linear-gradient(to bottom, transparent, rgba(247, 209, 84, 0.16), transparent);
+    background: linear-gradient(to bottom, transparent, rgba(167, 139, 250, 0.16), transparent);
   }
 }
 
@@ -358,8 +420,8 @@
 .weapon-toggle-btn:hover { color: #f0f0f5; }
 .weapon-toggle-btn.is-active {
   color: #14100a;
-  background: linear-gradient(120deg, #f7d154, #e8a13a);
-  box-shadow: 0 2px 10px rgba(247, 209, 84, 0.25);
+  background: linear-gradient(120deg, #c4b5fd, #8b5cf6);
+  box-shadow: 0 2px 10px rgba(167, 139, 250, 0.25);
 }
 
 .weapon-chart {
@@ -369,7 +431,7 @@
 }
 .weapon-row {
   display: grid;
-  grid-template-columns: 32px minmax(0, 150px) 1fr 76px auto;
+  grid-template-columns: 32px 128px 1fr 76px 56px;
   align-items: center;
   gap: 0.7rem;
   font-size: 0.85rem;
@@ -408,14 +470,14 @@
   align-items: center;
   gap: 0.45rem;
 }
-.weapon-row--top .weapon-name { color: #f7d154; font-weight: 700; }
+.weapon-row--top .weapon-name { color: #a78bfa; font-weight: 700; }
 .weapon-badge {
   font-size: 0.58rem;
   font-weight: 800;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: #14100a;
-  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  background: linear-gradient(120deg, #c4b5fd, #8b5cf6);
   border-radius: 4px;
   padding: 0.1rem 0.38rem;
   flex-shrink: 0;
@@ -464,6 +526,7 @@
   padding: 0.12rem 0.5rem;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  justify-self: end;
 }
 
 /* ── Weapon donut ── */
@@ -637,15 +700,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(247, 209, 84, 0.06);
-  border: 2px solid rgba(247, 209, 84, 0.4);
-  box-shadow: inset 0 0 20px rgba(247, 209, 84, 0.09);
+  background: rgba(167, 139, 250, 0.06);
+  border: 2px solid rgba(167, 139, 250, 0.4);
+  box-shadow: inset 0 0 20px rgba(167, 139, 250, 0.09);
 }
 .hunt-total-val {
   font-size: 1.3rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  background: linear-gradient(120deg, #f7d154, #e8a13a);
+  background: linear-gradient(120deg, #c4b5fd, #8b5cf6);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -676,7 +739,7 @@
   padding: 0.3rem 0.5rem;
 }
 .log-control--check { cursor: pointer; }
-.log-control input[type="checkbox"] { accent-color: #e8a13a; }
+.log-control input[type="checkbox"] { accent-color: #8b5cf6; }
 
 /* ── Monster grid ── */
 .monster-grid {
@@ -703,8 +766,8 @@
 .mcard:hover,
 .mcard:focus-visible {
   transform: translateY(-3px);
-  border-color: rgba(247, 209, 84, 0.45);
-  box-shadow: 0 10px 26px -12px rgba(247, 209, 84, 0.28);
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 0 10px 26px -12px rgba(167, 139, 250, 0.28);
   outline: none;
 }
 .mcard--zero { opacity: 0.45; }
@@ -745,7 +808,7 @@
   white-space: nowrap;
 }
 .mcard-count strong {
-  color: #f7d154;
+  color: #a78bfa;
   font-size: 0.85rem;
   font-weight: 800;
 }
@@ -775,7 +838,7 @@
   max-height: 88vh;
   overflow-y: auto;
   background: #14111a;
-  border: 1px solid rgba(247, 209, 84, 0.28);
+  border: 1px solid rgba(167, 139, 250, 0.28);
   border-radius: 16px;
   padding: 1.4rem;
   box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.8);
@@ -804,8 +867,8 @@
 }
 .monster-modal-close:hover,
 .monster-modal-close:focus-visible {
-  color: #f7d154;
-  border-color: rgba(247, 209, 84, 0.5);
+  color: #a78bfa;
+  border-color: rgba(167, 139, 250, 0.5);
   outline: none;
 }
 
@@ -828,7 +891,7 @@
 .mmodal-name {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #f7d154;
+  color: #a78bfa;
   margin: 0 0 0.15rem;
 }
 .mmodal-type {
@@ -944,7 +1007,7 @@
   color: rgba(240, 240, 245, 0.8);
 }
 .setup-steps a {
-  color: #f7d154;
+  color: #a78bfa;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
@@ -961,19 +1024,23 @@
 }
 
 /* ── Responsive & motion ── */
-@media (max-width: 720px) {
+@media (max-width: 840px) {
   .weapon-layout { grid-template-columns: 1fr; gap: 1.25rem; }
   .weapon-donut { max-width: 195px; }
+}
+
+@media (max-width: 720px) {
   .quest-layout { grid-template-columns: 1fr; gap: 1.25rem; }
 }
 
 @media (max-width: 640px) {
   .mhw-card { padding: 1.1rem; }
-  .weapon-row { grid-template-columns: 28px minmax(0, 100px) 1fr 60px auto; gap: 0.5rem; }
+  .weapon-row { grid-template-columns: 28px 88px 1fr 56px; gap: 0.5rem; }
   .weapon-ico { width: 26px; height: 26px; border-radius: 7px; }
   .weapon-ico svg { width: 16px; height: 16px; }
   .weapon-ico-img { width: 20px; height: 20px; }
   .weapon-badge { display: none; }
+  .weapon-sub-badge { display: none; }
   .log-rings { gap: 1.3rem; }
   .cring svg { width: 72px; height: 72px; }
   .hunt-total-disc { width: 72px; height: 72px; }
@@ -981,6 +1048,7 @@
   .monster-grid { grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 0.6rem; }
   .mmodal-stats, .mmodal-crowns { gap: 0.45rem; }
   .share-bar { flex-direction: column; align-items: flex-start; }
+  .qr-panel { flex-direction: column; align-items: flex-start; gap: 0.9rem; }
   .stats-strip { grid-template-columns: repeat(2, 1fr); padding: 0.6rem; }
   .stat-seg:last-child { grid-column: span 2; }
   .stat-value { font-size: 1.25rem; }
@@ -991,5 +1059,5 @@
 @media (prefers-reduced-motion: reduce) {
   .mhw-btn, .weapon-bar-fill, .drop-zone, .qtile-fill, .weapon-toggle-btn, .mcard { transition: none; }
   .donut-slice, .cring-fill, .cring-silver, .stat-seg, .qtile, .mcard,
-  .monster-modal-backdrop, .monster-modal-card { animation: none; }
+  .monster-modal-backdrop, .monster-modal-card, .qr-panel { animation: none; }
 }

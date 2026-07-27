@@ -6,6 +6,7 @@ stack: [Jekyll, Vanilla JS, CSS]
 cover: /assets/tarot/card-back.png
 thumb: /assets/tarot/card-back.png
 summary: A personalized single-page tarot reading experience with a hand-crafted card system and static-site delivery.
+cta: Draw your cards
 links:
   live: /tarot/
   source: https://github.com/monaruku/monaruku.github.io
