@@ -2,7 +2,8 @@
 
 import {
   state, saveSettings, setOnboarded, saveCategory, archiveCategory,
-  addTemplate, removeTemplate, addRecurring, updateRecurring, removeRecurring, catchUpRecurring,
+  addTemplate, removeTemplate, addNoteTemplate, updateNoteTemplate, removeNoteTemplate,
+  addRecurring, updateRecurring, removeRecurring, catchUpRecurring,
   buildExport, buildCSV, importData, validateImport, markExported, daysSinceExport,
   categoryById, BUDGET_PRESETS, computeBudgetPlan, applyBudgetPlan,
 } from './store.js';
@@ -221,6 +222,19 @@ export function renderSettings(root, params, ctx) {
           <span class="muted">${fmtMoney(t.amountCents, cur)} · ${esc(categoryById(t.categoryId).name)}</span>
           <button class="icon-btn" data-tpl-del="${esc(t.id)}" type="button" aria-label="Delete template">&#10005;</button>
         </div>`).join('') : '<p class="muted">None yet — tick "Save as quick-add template" when adding a transaction.</p>'}
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Note templates</h2>
+      ${state.templates_notes.length ? state.templates_notes.map(t => `
+        <div class="cat-row">
+          <input type="text" class="cat-name" value="${esc(t.label)}" data-nt-label="${esc(t.id)}" maxlength="40" aria-label="Note template label">
+          <button class="icon-btn" data-nt-del="${esc(t.id)}" type="button" aria-label="Delete note template">&#10005;</button>
+        </div>`).join('') : '<p class="muted">No note templates yet — create one below.</p>'}
+      <div class="add-row">
+        <input type="text" id="new-nt" placeholder="e.g. Lunch, Groceries" maxlength="40">
+        <button class="btn ghost" id="add-nt" type="button">Add</button>
+      </div>
     </section>
 
     <section class="card">
@@ -475,6 +489,22 @@ function bindSettings(root, ctx) {
       ctx.refresh();
       return;
     }
+    const ntLabel = e.target.closest('[data-nt-label]');
+    if (ntLabel) {
+      const t = state.templates_notes.find(x => x.id === ntLabel.dataset.ntLabel);
+      if (!t) return;
+      const clean = ntLabel.value.trim().replace(/\s+/g, ' ');
+      if (clean === t.label) return;
+      const ok = await updateNoteTemplate(t.id, clean);
+      if (!ok) {
+        toast(clean ? `"${clean}" already exists` : 'Label cannot be empty');
+        ntLabel.value = t.label; // revert
+        return;
+      }
+      toast('Note template updated');
+      ctx.refresh();
+      return;
+    }
     const recToggle = e.target.closest('[data-rec-toggle]');
     if (recToggle) {
       await updateRecurring(recToggle.dataset.recToggle, { active: recToggle.checked });
@@ -496,6 +526,22 @@ function bindSettings(root, ctx) {
 
     const tplDel = e.target.closest('[data-tpl-del]');
     if (tplDel) { await removeTemplate(tplDel.dataset.tplDel); ctx.refresh(); return; }
+
+    const ntDel = e.target.closest('[data-nt-del]');
+    if (ntDel) { await removeNoteTemplate(ntDel.dataset.ntDel); ctx.refresh(); return; }
+
+    if (e.target.closest('#add-nt')) {
+      const input = $('#new-nt', root);
+      const t = await addNoteTemplate(input.value);
+      if (!t) {
+        const clean = input.value.trim();
+        toast(clean ? `"${clean}" already exists` : 'Enter a label first');
+        return;
+      }
+      toast(`Note template "${t.label}" added`);
+      ctx.refresh();
+      return;
+    }
 
     const recDel = e.target.closest('[data-rec-del]');
     if (recDel) { await removeRecurring(recDel.dataset.recDel); ctx.refresh(); return; }

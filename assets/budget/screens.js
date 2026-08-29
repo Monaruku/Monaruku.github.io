@@ -139,7 +139,7 @@ export function renderDashboard(root, params, ctx) {
           <circle class="ring-fill" cx="60" cy="60" r="${R}" stroke-dasharray="${C}" stroke-dashoffset="${offset}"></circle>
         </svg>
         <div class="ring-center">
-          <strong>${fmtMoney(remaining, cur)}</strong>
+          <strong class="${fmtMoney(remaining, cur).length > 9 ? 'sm' : ''}">${fmtMoney(remaining, cur)}</strong>
           <span>${remaining >= 0 ? 'left' : 'over'}</span>
         </div>
       </div>
@@ -244,8 +244,9 @@ export function renderDashboard(root, params, ctx) {
 // --- Add transaction #/add ----------------------------------------------------
 
 // Single-expression calculator keypad: + − × ÷ build one arithmetic
-// expression (shown verbatim, live result preview), and '=' evaluates it and
-// saves exactly one transaction. No line items, no multi-submit.
+// expression (shown verbatim, live result preview). '=' evaluates in place —
+// the expression collapses to its result and stays editable. The separate
+// Save button commits exactly one transaction.
 export function renderAdd(root, params, ctx) {
   const cur = state.settings.currency;
   const fromLink = ['amount', 'category', 'note', 'type', 'date'].some(k => params.get(k));
@@ -302,7 +303,7 @@ export function renderAdd(root, params, ctx) {
       <button type="button" class="key" data-key="3">3</button>
       <button type="button" class="key" data-key=".">.</button>
       <button type="button" class="key key-zero" data-key="0">0</button>
-      <button type="button" class="key key-eq" data-key="=" aria-label="Equals — save transaction">=</button>
+      <button type="button" class="key key-eq" data-key="=" aria-label="Equals">=</button>
     </div>
 
     <section class="card">
@@ -323,15 +324,23 @@ export function renderAdd(root, params, ctx) {
           <input type="text" id="f-note" maxlength="80" placeholder="e.g. lunch with Ali" value="${esc(form.note)}" autocomplete="off">
         </label>
       </div>
+      ${state.templates_notes.length ? `
+        <div class="chips scroll nt-chips" id="nt-chips" aria-label="Note templates">
+          ${state.templates_notes.map(t => `
+            <button class="chip" type="button" data-nt="${esc(t.id)}">${esc(t.label)}</button>`).join('')}
+        </div>` : ''}
       <label class="check">
         <input type="checkbox" id="f-tpl">
         <span>Save as quick-add template</span>
       </label>
-    </section>`;
+    </section>
+
+    <button class="btn primary block" id="btn-save" type="button" disabled>Save</button>`;
 
   const exprEl = $('#calc-expr', root);
   const evalEl = $('#calc-eval', root);
   const tplCheck = $('#f-tpl', root);
+  const saveBtn = $('#btn-save', root);
   const displayWrap = $('.calc-display', root);
 
   function saveDraft() {
@@ -349,6 +358,7 @@ export function renderAdd(root, params, ctx) {
     evalEl.textContent = hasOps && cents != null ? `= ${fmtMoney(cents, cur)}` : '';
     displayWrap.classList.toggle('income', form.type === 'income');
     displayWrap.classList.toggle('expense', form.type !== 'income');
+    saveBtn.disabled = !(cents != null && cents > 0);
     saveDraft();
   }
 
@@ -401,8 +411,12 @@ export function renderAdd(root, params, ctx) {
     } else if (key === 'del') {
       form.current = form.current.slice(0, -1);
     } else if (key === '=') {
-      submit();
-      return; // navigates away; no re-render needed
+      // Evaluate in place, calculator-style: the expression collapses to its
+      // result and stays editable for chained math. Saving is Save's job.
+      const result = evalLine(form.current);
+      if (result == null) { toast('Complete the expression first'); return; }
+      if (result <= 0) { toast('Result must be above zero'); return; }
+      form.current = (result / 100).toFixed(2).replace(/\.?0+$/u, ''); // 1000→"10", 1050→"10.5"
     } else { // + − × ÷
       if (form.current === '') return;
       if (/[+×÷−]$/.test(form.current)) form.current = form.current.slice(0, -1) + key;
@@ -410,6 +424,8 @@ export function renderAdd(root, params, ctx) {
     }
     renderCalc();
   });
+
+  saveBtn.addEventListener('click', submit);
 
   $$('.seg [data-type]', root).forEach(b => b.addEventListener('click', () => {
     form.type = b.dataset.type;
@@ -427,6 +443,18 @@ export function renderAdd(root, params, ctx) {
 
   $('#f-date', root).addEventListener('change', e => { form.date = e.target.value || todayISO(); saveDraft(); });
   $('#f-note', root).addEventListener('input', e => { form.note = e.target.value; saveDraft(); });
+
+  // Note-template bubbles: tap writes the label into the note field (still editable).
+  $('#nt-chips', root)?.addEventListener('click', e => {
+    const btn = e.target.closest('[data-nt]');
+    const t = btn && state.templates_notes.find(x => x.id === btn.dataset.nt);
+    if (!t) return;
+    form.note = t.label;
+    const noteInput = $('#f-note', root);
+    noteInput.value = t.label;
+    noteInput.focus();
+    saveDraft(); // draft already covers the note field — keep it in sync
+  });
 
   bindNav(root);
   renderCalc();

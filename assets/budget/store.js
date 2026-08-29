@@ -16,7 +16,7 @@ const DEFAULT_CATEGORIES = [
 
 const DEFAULT_SETTINGS = { currency: 'MYR', monthStartDay: 1, theme: 'dark', badgeMode: 'off', dailyScope: 'all' };
 const DEFAULT_META = { schemaVersion: SCHEMA_VERSION, lastExportAt: null, processedUids: [], onboarded: false };
-const COLLECTIONS = ['transactions', 'categories', 'settings', 'templates', 'recurring', 'meta'];
+const COLLECTIONS = ['transactions', 'categories', 'settings', 'templates', 'recurring', 'meta', 'templates_notes'];
 
 export const state = {
   transactions: [],
@@ -25,10 +25,11 @@ export const state = {
   templates: [],
   recurring: [],
   meta: { ...DEFAULT_META },
+  templates_notes: [],
 };
 
 export async function initStore() {
-  const [tx, cats, settings, templates, recurring, meta] = await Promise.all(COLLECTIONS.map(k => kv.get(k)));
+  const [tx, cats, settings, templates, recurring, meta, notes] = await Promise.all(COLLECTIONS.map(k => kv.get(k)));
   state.transactions = Array.isArray(tx) ? tx : [];
   if (Array.isArray(cats) && cats.length) state.categories = cats;
   if (!Array.isArray(cats)) await kv.set('categories', state.categories);
@@ -36,6 +37,7 @@ export async function initStore() {
   state.templates = Array.isArray(templates) ? templates : [];
   state.recurring = Array.isArray(recurring) ? recurring : [];
   state.meta = { ...DEFAULT_META, ...(meta || {}) };
+  state.templates_notes = Array.isArray(notes) ? notes : [];
 }
 
 const persist = key => kv.set(key, state[key]);
@@ -230,6 +232,38 @@ export async function removeTemplate(id) {
   await persist('templates');
 }
 
+// --- Note templates (quick-fill bubbles for the Add screen note field) ---------
+
+const cleanNoteLabel = s => String(s || '').trim().replace(/\s+/g, ' ');
+const noteLabelTaken = (label, exceptId = null) =>
+  state.templates_notes.some(t => t.id !== exceptId && t.label.toLowerCase() === label.toLowerCase());
+
+export async function addNoteTemplate(label) {
+  const clean = cleanNoteLabel(label);
+  if (!clean || noteLabelTaken(clean)) return null;
+  const t = { id: uid(), label: clean };
+  state.templates_notes.push(t);
+  await persist('templates_notes');
+  notify();
+  return t;
+}
+
+export async function updateNoteTemplate(id, label) {
+  const t = state.templates_notes.find(x => x.id === id);
+  const clean = cleanNoteLabel(label);
+  if (!t || !clean || noteLabelTaken(clean, id)) return null;
+  t.label = clean;
+  await persist('templates_notes');
+  notify();
+  return t;
+}
+
+export async function removeNoteTemplate(id) {
+  state.templates_notes = state.templates_notes.filter(t => t.id !== id);
+  await persist('templates_notes');
+  notify();
+}
+
 export async function addRecurring(rule) {
   state.recurring.push({ id: uid(), active: true, note: '', lastGeneratedMonth: null, ...rule });
   await persist('recurring');
@@ -342,6 +376,7 @@ export function buildExport() {
     categories: state.categories,
     transactions: state.transactions,
     templates: state.templates,
+    templates_notes: state.templates_notes,
     recurring: state.recurring,
   };
 }
@@ -386,14 +421,16 @@ export async function importData(json, mode) {
     state.categories = json.categories;
     state.settings = { ...DEFAULT_SETTINGS, ...(json.settings || {}) };
     state.templates = json.templates || [];
+    state.templates_notes = json.templates_notes || [];
     state.recurring = json.recurring || [];
   } else {
     // Merge: id-keyed, updatedAt wins. Local settings are kept.
     state.transactions = mergeById(state.transactions, json.transactions);
     state.categories = mergeById(state.categories, json.categories);
     state.templates = mergeById(state.templates, json.templates);
+    state.templates_notes = mergeById(state.templates_notes, json.templates_notes || []);
     state.recurring = mergeById(state.recurring, json.recurring);
   }
-  await Promise.all(['transactions', 'categories', 'settings', 'templates', 'recurring'].map(persist));
+  await Promise.all(['transactions', 'categories', 'settings', 'templates', 'templates_notes', 'recurring'].map(persist));
   notify();
 }

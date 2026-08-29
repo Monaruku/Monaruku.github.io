@@ -149,8 +149,10 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   position: absolute; inset: 0;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   text-align: center;
+  padding: 0 0.4rem;
 }
-.ring-center strong { font-size: 1.02rem; }
+.ring-center strong { font-size: 1.02rem; white-space: nowrap; }
+.ring-center strong.sm { font-size: 0.78rem; } /* long amounts like RM 2,016.90 must clear the ring arc */
 .ring-center span { font-size: 0.72rem; color: var(--muted); }
 .ring-stats { display: flex; flex-direction: column; gap: 0.15rem; }
 .pace { font-size: 0.85rem; margin: 0.25rem 0 0; }
@@ -267,6 +269,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
 .chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; /* keep the chip carousel swipeable under body pan-y */ }
 .chips.scroll::-webkit-scrollbar { display: none; }
+.nt-chips { margin-top: 0.6rem; } /* note-template bubbles under the Note field */
 .chip {
   background: var(--card);
   border: 1px solid var(--line);
@@ -337,7 +340,9 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .field > span { font-size: 0.8rem; color: var(--muted); }
 .field.grow { flex: 1; }
 .field-row { display: flex; gap: 0.75rem; }
-.field-row .field { margin: 0.6rem 0 0; }
+.field-row .field { margin: 0.6rem 0 0; min-width: 0; }
+/* iOS date inputs won't shrink below their intrinsic width — never squeeze them */
+.field-row .field:first-child { flex: none; }
 input[type="text"], input[type="date"], input[type="number"], input[type="search"], select, textarea {
   background: rgba(255,255,255,0.06);
   border: 1px solid var(--line);
