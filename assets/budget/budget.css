@@ -15,7 +15,7 @@
   --grad: linear-gradient(135deg, #34d399, #22d3ee);
 }
 
-html { font-size: 16px; }
+html { font-size: 16px; -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -28,6 +28,7 @@ body {
   min-height: 100vh;
   line-height: 1.5;
   overscroll-behavior-y: none;
+  touch-action: manipulation; /* no double-tap zoom */
 }
 
 .app {

@@ -264,6 +264,9 @@ function registerSW() {
     return;
   }
   try { await navigator.storage?.persist?.(); } catch { /* optional */ }
+  // Belt-and-braces pinch-zoom lock for the installed web app (legacy iOS gesture events).
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(ev =>
+    document.addEventListener(ev, e => e.preventDefault()));
   registerSW();
   window.addEventListener('hashchange', route);
   await route();
