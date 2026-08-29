@@ -181,6 +181,7 @@ document.addEventListener('budget:data', refreshBadge);
 
 let pendingWorker = null;
 let updateToastShown = false;
+let swRegistration = null;
 
 // Apply a waiting update the moment no half-entered transaction draft exists.
 function applyPendingUpdate() {
@@ -191,26 +192,46 @@ function applyPendingUpdate() {
   }
 }
 
+function offer(worker) {
+  pendingWorker = worker;
+  if (localStorage.getItem('budget.draft')) {
+    // Defer while drafting — but the prompt must not silently disappear.
+    if (updateToastShown) return;
+    updateToastShown = true;
+    toast('A new version is ready', {
+      actionLabel: 'Update now',
+      dismissLabel: 'Later',
+      sticky: true,
+      onAction: () => { const w = pendingWorker; pendingWorker = null; w && w.postMessage('SKIP_WAITING'); },
+    });
+  } else {
+    applyPendingUpdate();
+  }
+}
+
+// Manual update check from Settings (dispatched as an event to avoid a
+// settings.js ↔ budget.js import cycle).
+async function manualUpdateCheck() {
+  if (!('serviceWorker' in navigator)) { toast('Service workers are not supported here.'); return; }
+  try {
+    const reg = swRegistration || await navigator.serviceWorker.getRegistration();
+    if (!reg) { toast('No service worker yet — reload once, then retry.'); return; }
+    await reg.update();
+    if (reg.waiting) { offer(reg.waiting); return; }
+    if (reg.installing) return; // updatefound/statechange will offer it when ready
+    const build = document.querySelector('meta[name="budget-version"]')?.content || 'unknown';
+    toast(`Latest version already installed (build ${build}).`);
+  } catch {
+    toast('Update check failed — try again when online.');
+  }
+}
+document.addEventListener('budget:check-updates', manualUpdateCheck);
+
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
 
   navigator.serviceWorker.register('/budget/sw.js').then(reg => {
-    const offer = worker => {
-      pendingWorker = worker;
-      if (localStorage.getItem('budget.draft')) {
-        // Defer while drafting — but the prompt must not silently disappear.
-        if (updateToastShown) return;
-        updateToastShown = true;
-        toast('A new version is ready', {
-          actionLabel: 'Update now',
-          dismissLabel: 'Later',
-          sticky: true,
-          onAction: () => { const w = pendingWorker; pendingWorker = null; w && w.postMessage('SKIP_WAITING'); },
-        });
-      } else {
-        applyPendingUpdate();
-      }
-    };
+    swRegistration = reg;
     if (reg.waiting) offer(reg.waiting);
     reg.addEventListener('updatefound', () => {
       const w = reg.installing;
@@ -238,6 +259,7 @@ function registerSW() {
     await catchUpRecurring();
   } catch (err) {
     root.innerHTML = '<p class="muted" style="padding:2rem">Could not open local storage. Please reload.</p>';
+    window.__BUDGET_BOOTED__ = true; // own error UI shown; keep the boot guard out of it
     console.error(err);
     return;
   }
@@ -245,5 +267,6 @@ function registerSW() {
   registerSW();
   window.addEventListener('hashchange', route);
   await route();
+  window.__BUDGET_BOOTED__ = true; // heartbeat for the boot guard in index.html
   refreshBadge();
 })();

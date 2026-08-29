@@ -97,9 +97,9 @@ Currency (pre-selected **MYR / RM**) → month start day → per-category budget
 
 ### 5.1 Dashboard `#/`
 - This month's spend vs. total budget as a ring, with **pace indicator**: "On track / 120 ahead / 340 behind" computed from `monthStartDay`-aware days elapsed vs. budget consumed.
-- Today card (for the "Show today's spend" Shortcut target) plus a **daily allowance** stat: budget remaining ÷ days left in the period (incl. today), so "how much can I spend per day?" is answered at a glance; today's spend turns red when it exceeds the daily allowance.
+- Today card (for the "Show today's spend" Shortcut target) plus a **daily allowance** stat: budget remaining ÷ days left in the period (incl. today). The stat card cycles scope via ‹ › arrows — **All budgets** (default) or any single category — persisted in `settings.dailyScope`; sub-line shows amount left/over and days remaining; today's spend turns red when it exceeds the overall daily allowance.
 - **Quick-add chips** row from `templates` (one tap → saved with toast + Undo).
-- Top 3 categories with mini progress bars; recent 5 transactions.
+- **Budgets card**: every active category with spend-vs-cap progress bars (red when over), an Edit shortcut to Settings, and a "Calculate from salary" CTA when no caps exist; recent 5 transactions.
 - Backup nudge banner when `lastExportAt` > 7 days ago (dismissible per session).
 
 ### 5.2 Add Transaction `#/add`
@@ -212,6 +212,8 @@ README documents the iOS 15.4+ "Run Immediately" toggle (first-run confirmation 
   - **Cache-first** for all same-origin GET under scope; **nothing** goes to network-first — the app is fully offline.
   - Activate: delete old versioned caches; deferred `skipWaiting` per §3.3.
 - Data lives in IndexedDB, untouched by SW cache swaps — deploys never lose data (test in §10).
+- **Boot guard**: a non-module inline script in `index.html` watches for the app's `__BUDGET_BOOTED__` heartbeat (6 s) plus module/script errors; on failure it shows a fallback card ("data is safe") and drives SW recovery itself (`update()` → `SKIP_WAITING` → reload). Rationale: if the updater lives inside the module graph, one syntax error strands users on a blank, un-updatable build — the guard keeps the recovery path alive independently.
+- **Manual update check**: Settings → About → "Check for updates" runs `registration.update()` and routes any found worker through the standard offer flow (draft-aware); reports the current build stamp when already latest.
 
 ---
 

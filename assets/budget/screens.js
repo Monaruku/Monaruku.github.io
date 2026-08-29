@@ -3,7 +3,7 @@
 import {
   state, summarize, totalBudget, daysSinceExport, periodTransactions,
   addTransaction, softDeleteTransaction, restoreTransaction,
-  addTemplate, categoryById, categoryBySlug,
+  addTemplate, categoryById, categoryBySlug, saveSettings,
 } from './store.js';
 import {
   $, $$, esc, fmtMoney, parseAmount, todayISO, toISODate,
@@ -89,8 +89,25 @@ export function renderDashboard(root, params, ctx) {
   const daysLeft = Math.max(1, prog.total - prog.elapsed + 1); // includes today
   const dailyAllowance = budget > 0 && remaining > 0 ? Math.round(remaining / daysLeft) : 0;
   const todayOver = budget > 0 && remaining > 0 && todaySpend > dailyAllowance;
+
+  // "Left per day" scope: overall budget or a single category (persisted).
+  const scopes = [{ id: 'all', name: 'All budgets' }]
+    .concat(state.categories.filter(c => !c.archived)
+      .map(c => ({ id: c.id, name: `${c.icon} ${c.name}`, cap: c.monthlyBudgetCents || 0, spent: s.byCat[c.id] || 0 })));
+  let scopeId = state.settings.dailyScope || 'all';
+  if (!scopes.some(sc => sc.id === scopeId)) scopeId = 'all';
+  const scopeIdx = scopes.findIndex(sc => sc.id === scopeId);
+  const scope = scopes[scopeIdx];
+  const scopeCap = scopeId === 'all' ? budget : scope.cap;
+  const scopeSpent = scopeId === 'all' ? s.expense : scope.spent;
+  const scopeRemaining = scopeCap - scopeSpent;
+  const scopeDaily = scopeCap > 0 && scopeRemaining > 0 ? Math.round(scopeRemaining / daysLeft) : 0;
   const dse = daysSinceExport();
-  const top = Object.entries(s.byCat).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const budgetRows = state.categories
+    .filter(c => !c.archived)
+    .map(c => ({ cat: c, spent: s.byCat[c.id] || 0 }))
+    .sort((a, b) => (b.cat.monthlyBudgetCents || 0) - (a.cat.monthlyBudgetCents || 0));
+  const anyBudget = budgetRows.some(r => r.cat.monthlyBudgetCents > 0);
   const recent = s.tx.slice()
     .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
     .slice(0, 5);
@@ -139,9 +156,15 @@ export function renderDashboard(root, params, ctx) {
         <strong class="${todayOver ? 'bad' : ''}">${fmtMoney(todaySpend, cur)}</strong>
       </div>
       <div class="card stat">
-        <span class="muted">Left per day</span>
-        <strong>${budget > 0 ? fmtMoney(dailyAllowance, cur) : '—'}</strong>
-        <span class="muted tiny">${budget > 0 ? `${daysLeft} day${daysLeft === 1 ? '' : 's'} left` : 'set budgets in Settings'}</span>
+        <div class="scope-nav">
+          <button class="scope-btn" id="scope-prev" type="button" aria-label="Previous category">&#8249;</button>
+          <span class="muted scope-label">${esc(scope.name)} / day</span>
+          <button class="scope-btn" id="scope-next" type="button" aria-label="Next category">&#8250;</button>
+        </div>
+        <strong class="${scopeCap > 0 && scopeSpent > scopeCap ? 'bad' : ''}">${scopeCap > 0 ? fmtMoney(scopeDaily, cur) : '—'}</strong>
+        <span class="muted tiny">${scopeCap > 0
+          ? (scopeRemaining > 0 ? `${fmtMoney(scopeRemaining, cur)} left · ${daysLeft}d` : `${fmtMoney(-scopeRemaining, cur)} over cap`)
+          : 'no cap set'}</span>
       </div>
     </section>
 
@@ -157,17 +180,27 @@ export function renderDashboard(root, params, ctx) {
       </section>` : ''}
 
     <section class="card">
-      <h2 class="card-title">Top categories</h2>
-      ${top.length ? top.map(([catId, cents]) => {
-        const c = categoryById(catId);
-        const w = s.expense ? (cents / s.expense * 100).toFixed(1) : 0;
+      <div class="card-head">
+        <h2 class="card-title">Budgets</h2>
+        <button class="link" data-go="#/settings" type="button">Edit</button>
+      </div>
+      ${anyBudget ? budgetRows.map(({ cat, spent }) => {
+        const cap = cat.monthlyBudgetCents;
+        const pct = cap > 0 ? spent / cap : 0;
+        const over = cap > 0 && spent > cap;
         return `
-          <div class="bar-row">
-            <span class="bar-label">${c.icon} ${esc(c.name)}</span>
-            <span class="bar-track"><span class="bar-fill" style="width:${w}%;background:${esc(c.color)}"></span></span>
-            <span class="bar-value">${fmtMoney(cents, cur)}</span>
+          <div class="budget-row">
+            <div class="budget-row-head">
+              <span>${cat.icon} ${esc(cat.name)}</span>
+              <span class="${over ? 'bad' : 'muted'}">${cap > 0 ? `${fmtMoney(spent, cur)} of ${fmtMoney(cap, cur)}` : spent ? `${fmtMoney(spent, cur)} · no cap` : 'No cap'}</span>
+            </div>
+            ${cap > 0 ? `<span class="bar-track"><span class="bar-fill ${over ? 'over' : ''}" style="width:${Math.min(100, pct * 100).toFixed(1)}%;${over ? '' : `background:${esc(cat.color)};`}"></span></span>` : ''}
           </div>`;
-      }).join('') : '<p class="muted">No spending yet this period.</p>'}
+      }).join('') : `
+        <div class="empty">
+          <p>No budgets set yet.</p>
+          <button class="btn ghost" data-go="#/settings" type="button">Calculate from salary</button>
+        </div>`}
     </section>
 
     <section class="card">
@@ -185,6 +218,14 @@ export function renderDashboard(root, params, ctx) {
 
   bindNav(root);
   bindTxRows(root, ctx);
+
+  const cycleScope = async dir => {
+    const next = (scopeIdx + dir + scopes.length) % scopes.length;
+    await saveSettings({ dailyScope: scopes[next].id });
+    ctx.refresh();
+  };
+  $('#scope-prev', root).addEventListener('click', () => cycleScope(-1));
+  $('#scope-next', root).addEventListener('click', () => cycleScope(1));
   $$('[data-tpl]', root).forEach(chip => chip.addEventListener('click', async () => {
     const tpl = state.templates.find(t => t.id === chip.dataset.tpl);
     if (!tpl) return;

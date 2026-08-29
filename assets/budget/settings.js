@@ -282,6 +282,7 @@ export function renderSettings(root, params, ctx) {
     <section class="card">
       <h2 class="card-title">About</h2>
       <p class="muted">Build ${esc(version)} · All data stays on this device (IndexedDB). No account, no server, no tracking.</p>
+      <button class="btn ghost block" id="check-updates" type="button">Check for updates</button>
       ${isIOS() && !isStandalone() ? '<p class="muted">Tip: Share → Add to Home Screen for full-screen offline use.</p>' : ''}
       <a class="link" href="/">← Back to portal</a>
     </section>`;
@@ -464,6 +465,11 @@ function bindSettings(root, ctx) {
   };
 
   root.onclick = async e => {
+    if (e.target.closest('#check-updates')) {
+      document.dispatchEvent(new CustomEvent('budget:check-updates'));
+      return;
+    }
+
     if (e.target.closest('#open-calc')) { openSalaryCalc(ctx); return; }
 
     const archive = e.target.closest('[data-cat-archive]');

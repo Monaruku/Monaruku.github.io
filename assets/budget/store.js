@@ -14,7 +14,7 @@ const DEFAULT_CATEGORIES = [
   { id: 'other',         name: 'Other',         monthlyBudgetCents: 10000, color: '#94a3b8', icon: '📦', archived: false },
 ];
 
-const DEFAULT_SETTINGS = { currency: 'MYR', monthStartDay: 1, theme: 'dark', badgeMode: 'off' };
+const DEFAULT_SETTINGS = { currency: 'MYR', monthStartDay: 1, theme: 'dark', badgeMode: 'off', dailyScope: 'all' };
 const DEFAULT_META = { schemaVersion: SCHEMA_VERSION, lastExportAt: null, processedUids: [], onboarded: false };
 const COLLECTIONS = ['transactions', 'categories', 'settings', 'templates', 'recurring', 'meta'];
 

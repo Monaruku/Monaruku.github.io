@@ -60,6 +60,60 @@ permalink: /budget/
     <p style="padding:2rem;text-align:center">Budget needs JavaScript — it runs entirely on your device.</p>
   </noscript>
 
-  <script type="module" src="{{ '/assets/budget/budget.js' | relative_url }}"></script>
+  <script type="module" src="{{ '/assets/budget/budget.js' | relative_url }}" data-app-entry></script>
+
+  <script>
+    // Recovery guard — deliberately NOT a module, so it runs even when the app
+    // bundle fails to parse (a syntax error in any module blanks the graph and
+    // would otherwise disable the in-app update flow too). If the app hasn't
+    // booted within 6s, show a fallback and ask the service worker for a fix.
+    (function () {
+      function showFallback(msg) {
+        var app = document.getElementById('app');
+        if (!app || app.dataset.recovered) return;
+        app.dataset.recovered = '1';
+        app.innerHTML =
+          '<div class="card" style="margin-top:18vh;text-align:center">' +
+          '<h1 style="font-size:1.2rem;margin-top:0">Something went wrong</h1>' +
+          '<p class="muted">' + msg + ' Checking for a fixed version — your data is safe, it lives outside the app code.</p>' +
+          '<button class="btn primary" onclick="location.reload()">Reload</button>' +
+          '</div>';
+      }
+      function tryUpdate() {
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.getRegistration().then(function (reg) {
+          if (!reg) return;
+          var reloaded = false;
+          navigator.serviceWorker.addEventListener('controllerchange', function () {
+            if (!reloaded) { reloaded = true; location.reload(); }
+          });
+          if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+          reg.addEventListener('updatefound', function () {
+            var w = reg.installing;
+            if (!w) return;
+            w.addEventListener('statechange', function () {
+              if (w.state === 'installed' && navigator.serviceWorker.controller) {
+                w.postMessage('SKIP_WAITING');
+              }
+            });
+          });
+          reg.update().catch(function () {});
+        }).catch(function () {});
+      }
+      function fail(msg) {
+        if (window.__BUDGET_BOOTED__) return;
+        showFallback(msg);
+        tryUpdate();
+      }
+      var entry = document.querySelector('script[data-app-entry]');
+      if (entry) entry.addEventListener('error', function () { fail('The app files could not be loaded.'); });
+      window.addEventListener('error', function () {
+        if (!window.__BUDGET_BOOTED__) fail('The app failed to start.');
+      });
+      setTimeout(function () {
+        if (!window.__BUDGET_BOOTED__) fail('The app took too long to start.');
+      }, 6000);
+    })();
+  </script>
 </body>
 </html>
