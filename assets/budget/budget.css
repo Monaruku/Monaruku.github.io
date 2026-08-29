@@ -339,9 +339,11 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .field { display: flex; flex-direction: column; gap: 0.3rem; margin: 0.5rem 0; }
 .field > span { font-size: 0.8rem; color: var(--muted); }
 .field.grow { flex: 1; }
-.field-row { display: flex; gap: 0.75rem; }
+.field-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
 .field-row .field { margin: 0.6rem 0 0; min-width: 0; }
-/* iOS date inputs won't shrink below their intrinsic width — never squeeze them */
+/* iOS date controls render at their intrinsic text width regardless of the
+   computed box when the width is percentage-based inside a flex row — give the
+   date input a definite width and never let the field squeeze. */
 .field-row .field:first-child { flex: none; }
 input[type="text"], input[type="date"], input[type="number"], input[type="search"], select, textarea {
   background: rgba(255,255,255,0.06);
@@ -356,6 +358,8 @@ input[type="text"], input[type="date"], input[type="number"], input[type="search
 input:focus, select:focus, textarea:focus { outline: 1px solid var(--accent); }
 select { max-width: 100%; } /* option text must never push the page wide */
 .field input, .field select, .field textarea { width: 100%; min-width: 0; }
+/* Definite width beats the 100% above for date inputs (iOS intrinsic-width bug) */
+.field input[type="date"] { width: 10.5rem; }
 
 /* iOS-style toggle switch (pure CSS, accessible checkbox semantics kept) */
 .check { display: flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; margin: 0.7rem 0 0.2rem; cursor: pointer; }
