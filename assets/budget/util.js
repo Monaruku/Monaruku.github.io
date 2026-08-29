@@ -144,6 +144,6 @@ export function toast(message, { actionLabel, onAction, duration = 4500, sticky 
   function dismiss() {
     clearTimeout(timer);
     el.classList.remove('show');
-    setTimeout(() => el.remove(), 250);
+    setTimeout(() => el.remove(), 340); // match the spring exit transition
   }
 }

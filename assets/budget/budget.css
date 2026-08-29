@@ -13,6 +13,11 @@
   --accent-2: #22d3ee;
   --danger: #f87171;
   --grad: linear-gradient(135deg, #34d399, #22d3ee);
+  /* Motion tokens (iOS HIG): deceleration for entrances, gentle overshoot for settles */
+  --ease-out: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-spring: cubic-bezier(0.34, 1.35, 0.5, 1);
+  --dur-fast: 0.15s;
+  --dur-med: 0.28s;
 }
 
 html {
@@ -44,6 +49,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.9rem;
+}
+/* Hash-route entry: fast fade + gentle rise (iOS push feels) */
+.app.screen-in { animation: screen-in var(--dur-med) var(--ease-out); }
+@keyframes screen-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 h1 { font-size: 1.45rem; margin: 0; letter-spacing: -0.01em; }
@@ -80,7 +91,9 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   display: flex; flex-direction: column; align-items: center; gap: 0.15rem;
   color: var(--muted); text-decoration: none; font-size: 0.66rem;
   padding: 0.25rem 0.6rem; border-radius: 0.6rem;
+  transition: color 0.2s var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
+#tabbar a:active { transform: scale(0.9); }
 #tabbar a svg { width: 1.45rem; height: 1.45rem; }
 #tabbar a.active { color: var(--accent); }
 #tabbar a.tab-add {
@@ -129,7 +142,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   stroke: url(#ring-grad);
   stroke: var(--accent);
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.6s ease;
+  transition: stroke-dashoffset 0.6s var(--ease-out);
 }
 .ring.over .ring-fill { stroke: var(--danger); }
 .ring-center {
@@ -146,13 +159,13 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .stat .tiny { font-size: 0.68rem; }
 .tiny { font-size: 0.72rem; }
 .scope-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.2rem; margin-bottom: 0.15rem; }
-.scope-btn { background: none; border: 0; color: var(--muted); font-size: 1.05rem; line-height: 1; padding: 0.15rem 0.4rem; cursor: pointer; border-radius: 0.4rem; }
-.scope-btn:active { color: var(--accent); }
+.scope-btn { background: none; border: 0; color: var(--muted); font-size: 1.05rem; line-height: 1; padding: 0.15rem 0.4rem; cursor: pointer; border-radius: 0.4rem; transition: color 0.15s var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+.scope-btn:active { color: var(--accent); transform: scale(0.85); }
 .scope-label { font-size: 0.72rem; text-align: center; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* --- Salary calculator modal --------------------------------------------------- */
 
-.calc-rows { margin: 0.8rem 0 0.3rem; display: flex; flex-direction: column; gap: 0.4rem; max-height: 36vh; overflow-y: auto; }
+.calc-rows { margin: 0.8rem 0 0.3rem; display: flex; flex-direction: column; gap: 0.4rem; max-height: 36vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .calc-row { display: grid; grid-template-columns: 1fr 3.4rem 5.2rem; align-items: center; gap: 0.45rem; font-size: 0.88rem; }
 .calc-row input { text-align: right; padding: 0.4rem 0.5rem; font-size: 0.88rem; }
 .calc-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -183,7 +196,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .bar-fill.over { background: var(--danger); }
 .bar-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .bar-track { background: rgba(255,255,255,0.07); border-radius: 99px; height: 0.55rem; overflow: hidden; }
-.bar-fill { display: block; height: 100%; border-radius: 99px; transition: width 0.5s ease; }
+.bar-fill { display: block; height: 100%; border-radius: 99px; transition: width 0.5s var(--ease-out); }
 .bar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
 
 .line-chart { width: 100%; height: 9rem; display: block; }
@@ -195,7 +208,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .compare { display: flex; gap: 0.7rem; align-items: flex-end; height: 8.5rem; padding-top: 0.5rem; }
 .compare-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.35rem; height: 100%; }
 .compare-bars { display: flex; align-items: flex-end; gap: 0.25rem; flex: 1; width: 100%; justify-content: center; }
-.cb { width: 0.85rem; border-radius: 0.25rem 0.25rem 0 0; min-height: 2px; transition: height 0.5s ease; }
+.cb { width: 0.85rem; border-radius: 0.25rem 0.25rem 0 0; min-height: 2px; transition: height 0.5s var(--ease-out); }
 .cb.expense { background: var(--danger); opacity: 0.85; }
 .cb.income { background: var(--accent); }
 .compare-label { font-size: 0.72rem; color: var(--muted); }
@@ -214,7 +227,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   padding: 0.7rem 0.85rem;
   background: var(--card-solid);
   touch-action: pan-y;
-  transition: transform 0.22s ease;
+  transition: transform 0.22s var(--ease-out);
   position: relative; z-index: 1;
 }
 .tx-icon {
@@ -252,7 +265,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 /* --- Chips -------------------------------------------------------------------- */
 
 .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; touch-action: pan-x; /* keep the chip carousel swipeable under body pan-y */ }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; -webkit-overflow-scrolling: touch; touch-action: pan-x; /* keep the chip carousel swipeable under body pan-y */ }
 .chips.scroll::-webkit-scrollbar { display: none; }
 .chip {
   background: var(--card);
@@ -263,9 +276,13 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   font: inherit; font-size: 0.85rem;
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition: border-color 0.15s var(--ease-out), background 0.15s var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
 .chip.active, .chip:active { border-color: var(--accent); background: rgba(52, 211, 153, 0.12); }
+.chip:active { transform: scale(0.94); }
+/* Selection pulse: brief pop when a chip becomes active */
+@keyframes chip-pop { 0% { transform: scale(0.9); } 55% { transform: scale(1.05); } 100% { transform: scale(1); } }
+.chip.active { animation: chip-pop var(--dur-med) var(--ease-out); }
 
 /* --- Add form ------------------------------------------------------------------ */
 
@@ -274,7 +291,9 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   flex: 1; border: 0; border-radius: 0.55rem; padding: 0.55rem;
   background: transparent; color: var(--muted); font: inherit; font-weight: 600;
   cursor: pointer;
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
+.seg button:active { transform: scale(0.97); }
 .seg button.active { background: var(--grad); color: #06251b; }
 
 .calc-display { text-align: center; padding: 0.6rem 0 0.2rem; }
@@ -310,7 +329,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
   font-weight: 600;
   padding: 0.85rem 0;
   cursor: pointer;
-  transition: background 0.12s ease, transform 0.06s ease;
+  transition: background 0.1s var(--ease-out), transform 0.08s var(--ease-out);
 }
 .key:active { background: rgba(255,255,255,0.12); transform: scale(0.97); }
 
@@ -333,8 +352,30 @@ input:focus, select:focus, textarea:focus { outline: 1px solid var(--accent); }
 select { max-width: 100%; } /* option text must never push the page wide */
 .field input, .field select, .field textarea { width: 100%; min-width: 0; }
 
+/* iOS-style toggle switch (pure CSS, accessible checkbox semantics kept) */
 .check { display: flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; margin: 0.7rem 0 0.2rem; cursor: pointer; }
-.check input { width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }
+.check input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 2.7rem; height: 1.6rem; flex: none; margin: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--line);
+  position: relative; cursor: pointer;
+  transition: background 0.22s var(--ease-out), border-color 0.22s var(--ease-out);
+}
+.check input[type="checkbox"]::after {
+  content: '';
+  position: absolute; top: 50%; left: 0.14rem;
+  width: 1.24rem; height: 1.24rem; border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+  transition: transform 0.24s var(--ease-spring);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+}
+.check input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+.check input[type="checkbox"]:checked::after { transform: translate(1.1rem, -50%); }
+.check input[type="checkbox"]:disabled { opacity: 0.4; }
 
 /* --- Buttons ------------------------------------------------------------------- */
 
@@ -349,7 +390,9 @@ select { max-width: 100%; } /* option text must never push the page wide */
   text-align: center;
   text-decoration: none;
   display: inline-block;
+  transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
 }
+.btn:not(:disabled):active { transform: scale(0.97); filter: brightness(1.1); }
 .btn.primary { background: var(--grad); border: 0; color: #06251b; }
 .btn.primary:disabled { opacity: 0.35; cursor: default; }
 .btn.ghost { background: transparent; }
@@ -365,8 +408,9 @@ select { max-width: 100%; } /* option text must never push the page wide */
 .icon-btn {
   background: none; border: 0; color: var(--muted);
   font-size: 1rem; cursor: pointer; padding: 0.3rem 0.5rem;
+  transition: color 0.15s var(--ease-out), transform var(--dur-fast) var(--ease-out);
 }
-.icon-btn:active { color: var(--danger); }
+.icon-btn:active { color: var(--danger); transform: scale(0.88); }
 
 /* --- Settings rows --------------------------------------------------------------- */
 
@@ -410,12 +454,14 @@ select { max-width: 100%; } /* option text must never push the page wide */
 
 .modal-overlay {
   position: fixed; inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   display: flex; align-items: flex-end; justify-content: center;
   z-index: 60;
   padding: 1rem;
   padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  animation: overlay-in 0.2s var(--ease-out);
 }
 .modal {
   background: var(--card-solid);
@@ -423,7 +469,10 @@ select { max-width: 100%; } /* option text must never push the page wide */
   border-radius: 1.1rem;
   padding: 1.3rem;
   width: 100%; max-width: 26rem;
+  animation: sheet-in 0.36s var(--ease-spring); /* rises like a native sheet */
 }
+@keyframes overlay-in { from { opacity: 0; } }
+@keyframes sheet-in { from { opacity: 0.6; transform: translateY(2rem) scale(0.97); } }
 .modal h2 { margin: 0 0 0.4rem; font-size: 1.15rem; }
 
 /* --- Toasts ------------------------------------------------------------------------- */
@@ -445,8 +494,8 @@ select { max-width: 100%; } /* option text must never push the page wide */
   padding: 0.75rem 1rem;
   font-size: 0.9rem;
   opacity: 0;
-  transform: translateY(0.6rem);
-  transition: opacity 0.22s ease, transform 0.22s ease;
+  transform: translateY(0.8rem) scale(0.98);
+  transition: opacity 0.2s var(--ease-out), transform 0.34s var(--ease-spring);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
   pointer-events: auto;
 }

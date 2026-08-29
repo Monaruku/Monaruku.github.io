@@ -46,6 +46,11 @@ async function route() {
   root.onclick = null;
   root.onchange = null;
 
+  // Replay the screen entry transition on every navigation.
+  root.classList.remove('screen-in');
+  void root.offsetWidth; // one forced reflow to restart the animation
+  root.classList.add('screen-in');
+
   // Autosave deep links run before anything else (even before onboarding).
   if (path === 'add' && params.get('autosave') === '1') {
     await handleAutosave(params);
@@ -255,8 +260,7 @@ function registerSW() {
 (async function boot() {
   try {
     await initStore();
-    await purgeDeleted();
-    await catchUpRecurring();
+    await Promise.all([purgeDeleted(), catchUpRecurring()]);
   } catch (err) {
     root.innerHTML = '<p class="muted" style="padding:2rem">Could not open local storage. Please reload.</p>';
     window.__BUDGET_BOOTED__ = true; // own error UI shown; keep the boot guard out of it
