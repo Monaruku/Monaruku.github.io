@@ -24,6 +24,7 @@ exclude:
   - README.md
   - .gitignore
   - MysticTarot-Spec.md
+  - BudgetTracker-Spec.md
   - preview.html
   - vibe_images
   - vendor
