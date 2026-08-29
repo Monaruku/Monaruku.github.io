@@ -15,7 +15,18 @@ const ctx = { refresh: () => route() };
 function parseHash() {
   const raw = (location.hash || '#/').slice(1);
   const [pathPart, queryPart] = raw.split('?');
-  return { path: (pathPart || '/').replace(/^\/+|\/+$/g, ''), params: new URLSearchParams(queryPart || '') };
+  const params = new URLSearchParams(queryPart || '');
+  let path = (pathPart || '/').replace(/^\/+|\/+$/g, '');
+  // webapp:// handoffs may deliver params as a real query string with the
+  // fragment stripped — treat that as an Add deep link.
+  if (!path && location.search) {
+    const sp = new URLSearchParams(location.search);
+    if (sp.has('amount') || sp.has('category') || sp.has('autosave')) {
+      sp.forEach((v, k) => { if (!params.has(k)) params.set(k, v); });
+      path = 'add';
+    }
+  }
+  return { path, params };
 }
 
 function setActiveTab(path) {
@@ -30,6 +41,10 @@ function setActiveTab(path) {
 
 async function route() {
   const { path, params } = parseHash();
+
+  // Clear any delegated handlers the previous screen assigned to #app.
+  root.onclick = null;
+  root.onchange = null;
 
   // Autosave deep links run before anything else (even before onboarding).
   if (path === 'add' && params.get('autosave') === '1') {
@@ -64,12 +79,14 @@ const LAST_AUTO_KEY = 'budget.lastAuto';
 async function handleAutosave(params) {
   const cur = state.settings.currency;
   const done = () => {
+    if (location.search) history.replaceState(null, '', location.pathname); // consume query-style deep links
     const xs = params.get('x-success');
     if (xs) setTimeout(() => { location.href = xs; }, 900);
     else location.hash = '#/?saved=1';
   };
   // Duplicate replays skip the "saved" toast but still honor x-success chaining.
   const doneSilent = () => {
+    if (location.search) history.replaceState(null, '', location.pathname);
     const xs = params.get('x-success');
     if (xs) setTimeout(() => { location.href = xs; }, 900);
     else location.hash = '#/';
@@ -78,6 +95,7 @@ async function handleAutosave(params) {
     const xe = params.get('x-error');
     if (xe) { location.href = xe; return; }
     params.delete('autosave');
+    if (location.search) history.replaceState(null, '', location.pathname);
     location.hash = '#/add?' + params.toString(); // open prefilled editor instead
   };
 
@@ -115,6 +133,14 @@ async function handleAutosave(params) {
 
   if (uidParam) await recordUid(uidParam);
   else localStorage.setItem(LAST_AUTO_KEY, JSON.stringify({ payload, at: Date.now() }));
+
+  // One-time hint when an autosave lands in a plain browser tab: browser storage
+  // is separate from an installed Home Screen app, and the split is silent.
+  const standalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+  if (!standalone && !localStorage.getItem('budget.browserHintShown')) {
+    localStorage.setItem('budget.browserHintShown', '1');
+    setTimeout(() => toast('Saved in the browser — your Home Screen app keeps data separately.', { duration: 6000 }), 600);
+  }
 
   toast(`Saved ${fmtMoney(amountCents, cur)} to ${cat.name}`, {
     actionLabel: 'Undo',

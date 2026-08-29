@@ -159,12 +159,17 @@ Currency (pre-selected **MYR / RM**) → month start day → per-category budget
 | iOS ≤ 16, or app not installed | Safari browser tab | Safari container ⚠️ **separate from the installed app's storage** |
 
 Consequences baked into the design:
+- Scope routing only engages when **Safari is the default browser**. With Chrome (or any third-party browser) set as default, iOS sends the link there instead — same storage-separation trap. Fix: Settings → (Apps →) Safari → Default Browser App → Safari. **Field-tested caveat (iOS ≤ 17 era):** in practice link capture proved flaky — Shortcuts' "Open URL" still opened a Safari tab. The reliable mechanism is `webapp://` (iOS 26+), which bypasses browser routing entirely.
+- Safari tabs and the installed app **never** share storage, by Apple's design — switching the default browser to Safari enables *routing* (Shortcuts bypass Safari entirely); it does not merge containers.
+- Link capture only fires for links opened **from other apps** (Shortcuts, Notes, Messages). A URL typed or pasted into Safari's address bar always stays in Safari — so routing must be tested by running a real Shortcut, never by pasting into Safari.
 - README and Onboarding say: **install first, then build Shortcuts** — otherwise Shortcut-logged expenses land in Safari's container, invisible in the installed app.
 - Export/Import is the documented migration path if a user accumulated data in the wrong container.
 - `manifest.json` gets explicit `"id": "/budget/"`, `"scope": "/budget/"`, `"start_url": "/budget/"` so scope routing matches the whole app.
+- An autosave landing in a non-standalone context shows a one-time toast ("Saved in the browser…") so the split is never silent.
 
 ### 6.3 Deep-link API v2
-Base: `https://monaruku.github.io/budget/`
+Base (https): `https://monaruku.github.io/budget/`
+Base (direct-to-app): `webapp://monaruku.github.io/budget/` — iOS 26+ scheme that opens the installed Home Screen app regardless of default browser; preferred for Shortcuts. The app must tolerate the hash fragment being stripped (fall back to real query params if observed).
 
 | URL | Effect |
 |---|---|

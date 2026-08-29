@@ -203,6 +203,10 @@ export async function saveCategory(cat) {
     const existing = state.categories.find(c => c.id === cat.id);
     if (existing) Object.assign(existing, cat);
   } else {
+    // Never create a second active category with the same name.
+    const nameKey = String(cat.name || '').trim().toLowerCase();
+    const dupe = state.categories.find(c => !c.archived && c.name.trim().toLowerCase() === nameKey);
+    if (dupe) return dupe;
     let id = slugify(cat.name);
     while (state.categories.some(c => c.id === id)) id += '-' + uid().slice(0, 4);
     state.categories.push({ color: '#34d399', icon: '💸', archived: false, monthlyBudgetCents: 0, ...cat, id });

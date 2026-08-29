@@ -247,6 +247,13 @@ export function renderSettings(root, params, ctx) {
         <input type="text" inputmode="decimal" id="sb-amount" placeholder="Amount (blank = ask)">
         <input type="text" id="sb-note" placeholder="Note (optional)" maxlength="40">
       </div>
+      <label class="field">
+        <span>Link type</span>
+        <select id="sb-format">
+          <option value="webapp">Direct to installed app (webapp:// — iOS 26+, recommended)</option>
+          <option value="https">Universal (https:// — any browser, needs Safari as default for app routing)</option>
+        </select>
+      </label>
       <label class="check"><input type="checkbox" id="sb-autosave" checked>
         <span>Autosave (no tap needed; adds <code>uid</code> for duplicate protection)</span></label>
       <textarea class="url-out" id="sb-out" readonly rows="3">${esc(builderUrl)}</textarea>
@@ -413,12 +420,18 @@ function buildShortcutUrl() {
   const amount = document.getElementById('sb-amount')?.value.trim();
   const note = document.getElementById('sb-note')?.value.trim();
   const autosave = document.getElementById('sb-autosave')?.checked ?? true;
+  const format = document.getElementById('sb-format')?.value || 'webapp';
   const p = new URLSearchParams();
   p.set('category', cat);
   if (amount) p.set('amount', amount);
   if (note) p.set('note', note);
   if (autosave) { p.set('autosave', '1'); p.set('uid', 'UUID'); }
-  return `https://monaruku.github.io/budget/#/add?${p.toString()}`;
+  // webapp:// (iOS 26+) opens the installed Home Screen app directly;
+  // https:// relies on Safari-default-browser link capture.
+  const base = format === 'webapp'
+    ? 'webapp://monaruku.github.io/budget/'
+    : 'https://monaruku.github.io/budget/';
+  return `${base}#/add?${p.toString()}`;
 }
 
 function bindSettings(root, ctx) {
@@ -426,7 +439,10 @@ function bindSettings(root, ctx) {
   $('#s-day', root).addEventListener('change', e => saveSettings({ monthStartDay: parseInt(e.target.value, 10) }).then(ctx.refresh));
   $('#s-badge', root).addEventListener('change', e => saveSettings({ badgeMode: e.target.value }).then(ctx.refresh));
 
-  root.addEventListener('change', async e => {
+  // Property assignment (not addEventListener): #app is persistent, so listeners
+  // attached with addEventListener would accumulate on every re-render and
+  // multi-fire every action (this caused quadruple category creation).
+  root.onchange = async e => {
     const budgetInput = e.target.closest('[data-cat-budget]');
     if (budgetInput) {
       const cents = parseAmount(budgetInput.value) || 0;
@@ -447,7 +463,7 @@ function bindSettings(root, ctx) {
     }
   });
 
-  root.addEventListener('click', async e => {
+  root.onclick = async e => {
     if (e.target.closest('#open-calc')) { openSalaryCalc(ctx); return; }
 
     const archive = e.target.closest('[data-cat-archive]');
@@ -511,7 +527,7 @@ function bindSettings(root, ctx) {
   });
 
   // Shortcut Builder live URL updates.
-  ['sb-cat', 'sb-amount', 'sb-note', 'sb-autosave'].forEach(id => {
+  ['sb-cat', 'sb-amount', 'sb-note', 'sb-autosave', 'sb-format'].forEach(id => {
     const el = $('#' + id, root);
     if (el) {
       el.addEventListener('input', () => { $('#sb-out', root).value = buildShortcutUrl(); });
