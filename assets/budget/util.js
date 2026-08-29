@@ -29,6 +29,30 @@ export function parseAmount(input) {
   return Math.round(parseFloat(clean) * 100);
 }
 
+// Evaluate one keypad line like "45÷2" or "100−15" into integer cents.
+// '×' and '÷' bind tighter than '−'; trailing operators/dots are tolerated.
+// Returns null for anything non-numeric (and for division by zero).
+export function evalLine(str) {
+  if (!str) return null;
+  const cleaned = String(str).replace(/[×÷−.\s]+$/u, '');
+  if (!cleaned) return null;
+  const terms = cleaned.split('−'); // '+' never appears inside a line (it commits)
+  let total = null;
+  for (const term of terms) {
+    const pieces = term.split(/([×÷])/u);
+    let v = parseFloat(pieces[0]);
+    if (isNaN(v)) return null;
+    for (let i = 1; i + 1 < pieces.length; i += 2) {
+      const n = parseFloat(pieces[i + 1]);
+      if (isNaN(n)) return null;
+      if (pieces[i] === '×') v *= n;
+      else { if (n === 0) return null; v /= n; }
+    }
+    total = total === null ? v : total - v;
+  }
+  return Math.round(total * 100);
+}
+
 export function uid() {
   return (crypto.randomUUID && crypto.randomUUID()) ||
     'id-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);

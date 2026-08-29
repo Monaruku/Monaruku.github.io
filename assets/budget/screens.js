@@ -6,7 +6,7 @@ import {
   addTemplate, categoryById, categoryBySlug, saveSettings,
 } from './store.js';
 import {
-  $, $$, esc, fmtMoney, parseAmount, todayISO, toISODate,
+  $, $$, esc, fmtMoney, parseAmount, evalLine, todayISO, toISODate,
   periodFor, shiftPeriod, periodLabel, periodProgress, fmtDay, toast,
 } from './util.js';
 import * as charts from './charts.js';
@@ -243,6 +243,8 @@ export function renderDashboard(root, params, ctx) {
 
 // --- Add transaction #/add ----------------------------------------------------
 
+// Calculator keypad: '+' commits the current line as its own transaction,
+// '−' '×' '÷' do in-line math (× ÷ bind tighter). Submit saves every line.
 export function renderAdd(root, params, ctx) {
   const cur = state.settings.currency;
   const fromLink = ['amount', 'category', 'note', 'type', 'date'].some(k => params.get(k));
@@ -253,7 +255,8 @@ export function renderAdd(root, params, ctx) {
 
   const amountParam = parseAmount(params.get('amount'));
   const form = {
-    amountStr: fromLink ? (amountParam != null ? (amountParam / 100).toString() : '') : (draft?.amountStr || ''),
+    lines: !fromLink && Array.isArray(draft?.lines) ? draft.lines : [],
+    current: fromLink ? (amountParam != null ? (amountParam / 100).toString() : '') : (draft?.current || ''),
     type: params.get('type') === 'income' ? 'income' : (draft?.type || 'expense'),
     categoryId: fromLink
       ? categoryBySlug(params.get('category')).id
@@ -276,11 +279,35 @@ export function renderAdd(root, params, ctx) {
       <button type="button" data-type="income" class="${form.type === 'income' ? 'active' : ''}">Income</button>
     </div>
 
-    <div class="amount-display ${form.type}" id="amount-display" aria-live="polite">RM 0</div>
+    <div class="calc-display ${form.type}">
+      <div class="calc-expr" id="calc-expr" aria-live="polite">RM 0</div>
+      <div class="calc-eval muted" id="calc-eval"></div>
+    </div>
 
-    <div class="keypad" id="keypad">
-      ${['1','2','3','4','5','6','7','8','9','.','0','del'].map(k =>
-        `<button type="button" class="key" data-key="${k}">${k === 'del' ? '&#9003;' : k}</button>`).join('')}
+    <div class="calc-lines" id="calc-lines" hidden></div>
+    <div class="calc-total-row" id="calc-total-row" hidden>
+      <span class="muted" id="calc-count"></span>
+      <strong id="calc-total"></strong>
+    </div>
+
+    <div class="keypad calc" id="keypad">
+      <button type="button" class="key key-util" data-key="C">C</button>
+      <button type="button" class="key key-util" data-key="del" aria-label="Backspace">&#9003;</button>
+      <button type="button" class="key key-op" data-key="×">×</button>
+      <button type="button" class="key key-op" data-key="÷">÷</button>
+      <button type="button" class="key" data-key="7">7</button>
+      <button type="button" class="key" data-key="8">8</button>
+      <button type="button" class="key" data-key="9">9</button>
+      <button type="button" class="key key-op" data-key="−">−</button>
+      <button type="button" class="key" data-key="4">4</button>
+      <button type="button" class="key" data-key="5">5</button>
+      <button type="button" class="key" data-key="6">6</button>
+      <button type="button" class="key key-op key-add" data-key="+" aria-label="Add line">+</button>
+      <button type="button" class="key" data-key="1">1</button>
+      <button type="button" class="key" data-key="2">2</button>
+      <button type="button" class="key" data-key="3">3</button>
+      <button type="button" class="key" data-key=".">.</button>
+      <button type="button" class="key key-zero" data-key="0">0</button>
     </div>
 
     <section class="card">
@@ -309,42 +336,99 @@ export function renderAdd(root, params, ctx) {
 
     <button class="btn primary block" id="btn-save" type="button" disabled>Save</button>`;
 
-  const display = $('#amount-display', root);
+  const exprEl = $('#calc-expr', root);
+  const evalEl = $('#calc-eval', root);
+  const linesEl = $('#calc-lines', root);
+  const totalRow = $('#calc-total-row', root);
+  const countEl = $('#calc-count', root);
+  const totalEl = $('#calc-total', root);
   const saveBtn = $('#btn-save', root);
+  const tplCheck = $('#f-tpl', root);
+  const displayWrap = $('.calc-display', root);
 
   function saveDraft() {
-    if (form.amountStr || form.note) localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    if (form.current || form.note || form.lines.length) localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     else localStorage.removeItem(DRAFT_KEY);
   }
 
-  function update() {
-    const cents = parseAmount(form.amountStr);
-    display.textContent = cents != null ? fmtMoney(cents, cur) : 'RM 0';
-    display.classList.toggle('income', form.type === 'income');
-    display.classList.toggle('expense', form.type !== 'income');
-    saveBtn.disabled = !(cents && cents > 0);
+  // Raw-string display: "5." stays "RM 5." (fixes the dot flash — the old code
+  // re-parsed the partial input as a number and flashed RM 0).
+  function renderCalc() {
+    const cents = evalLine(form.current);
+    const hasOps = /[×÷−]/.test(form.current);
+    exprEl.textContent = form.current === '' ? 'RM 0' : hasOps ? form.current : `RM ${form.current}`;
+    evalEl.textContent = hasOps && cents != null ? `= ${fmtMoney(cents, cur)}` : '';
+    displayWrap.classList.toggle('income', form.type === 'income');
+    displayWrap.classList.toggle('expense', form.type !== 'income');
+
+    linesEl.hidden = form.lines.length === 0;
+    linesEl.innerHTML = form.lines.map((l, i) => `
+      <div class="calc-line">
+        <span class="calc-line-expr">${esc(l.expr)}</span>
+        <span class="calc-line-val">${fmtMoney(l.cents, cur)}</span>
+        <button class="icon-btn" type="button" data-rm-line="${i}" aria-label="Remove line">&#10005;</button>
+      </div>`).join('');
+
+    const currentValid = cents != null && cents > 0;
+    const count = form.lines.length + (currentValid ? 1 : 0);
+    const total = form.lines.reduce((s2, l) => s2 + l.cents, 0) + (currentValid ? cents : 0);
+    totalRow.hidden = count < 2;
+    countEl.textContent = `${count} items`;
+    totalEl.textContent = fmtMoney(total, cur);
+
+    saveBtn.textContent = count > 1 ? `Submit ${count} items` : 'Save';
+    saveBtn.disabled = count === 0;
+    tplCheck.disabled = form.lines.length > 0; // templates are single-amount only
+    if (form.lines.length > 0) tplCheck.checked = false;
+    saveDraft();
   }
+
+  const lastSeg = () => form.current.split(/[×÷−]/).pop();
 
   $('#keypad', root).addEventListener('click', e => {
     const key = e.target.closest('.key')?.dataset.key;
     if (!key) return;
-    if (key === 'del') {
-      form.amountStr = form.amountStr.slice(0, -1);
+
+    if (/^\d$/.test(key)) {
+      const seg = lastSeg();
+      if (seg.includes('.')) { if (seg.split('.')[1].length >= 2) return; }
+      else if (seg.length >= 7) return;
+      if (seg === '0') form.current = form.current.slice(0, -1) + key;
+      else form.current += key;
     } else if (key === '.') {
-      if (!form.amountStr.includes('.')) form.amountStr = form.amountStr ? form.amountStr + '.' : '0.';
-    } else {
-      if (form.amountStr.includes('.')) {
-        if (form.amountStr.split('.')[1].length >= 2) return;
-      } else if (form.amountStr.replace('.', '').length >= 7) return;
-      form.amountStr = form.amountStr === '0' ? key : form.amountStr + key;
+      const seg = lastSeg();
+      if (seg.includes('.')) return;
+      form.current += seg === '' ? '0.' : '.';
+    } else if (key === 'C') {
+      form.lines = [];
+      form.current = '';
+    } else if (key === 'del') {
+      if (form.current) form.current = form.current.slice(0, -1);
+      else if (form.lines.length) form.current = form.lines.pop().expr; // pull last line back for editing
+    } else if (key === '+') {
+      const cents = evalLine(form.current);
+      if (!cents || cents <= 0) { toast('Finish the amount first'); return; }
+      form.lines.push({ expr: form.current, cents });
+      form.current = '';
+    } else { // × ÷ −
+      if (form.current === '') return;
+      if (/[×÷−]$/.test(form.current)) form.current = form.current.slice(0, -1) + key;
+      else form.current += key;
     }
-    saveDraft(); update();
+    renderCalc();
+  });
+
+  linesEl.addEventListener('click', e => {
+    const btn = e.target.closest('[data-rm-line]');
+    if (!btn) return;
+    form.lines.splice(parseInt(btn.dataset.rmLine, 10), 1);
+    renderCalc();
   });
 
   $$('.seg [data-type]', root).forEach(b => b.addEventListener('click', () => {
     form.type = b.dataset.type;
     $$('.seg [data-type]', root).forEach(x => x.classList.toggle('active', x === b));
-    saveDraft(); update();
+    renderCalc();
   }));
 
   $('#cat-chips', root).addEventListener('click', e => {
@@ -359,22 +443,34 @@ export function renderAdd(root, params, ctx) {
   $('#f-note', root).addEventListener('input', e => { form.note = e.target.value; saveDraft(); });
 
   saveBtn.addEventListener('click', async () => {
-    const cents = parseAmount(form.amountStr);
-    if (!cents || cents <= 0) return;
-    const rec = await addTransaction({
-      type: form.type, amountCents: cents, categoryId: form.categoryId,
-      note: form.note, date: form.date, source: form.source || 'manual',
-    });
-    if ($('#f-tpl', root).checked) {
+    const items = form.lines.map(l => l.cents);
+    if (form.current !== '') {
+      const c = evalLine(form.current);
+      if (!c || c <= 0) { toast('Finish or clear the current amount'); return; }
+      items.push(c);
+    }
+    if (!items.length) { toast('Enter an amount first'); return; }
+    const cat = categoryById(form.categoryId);
+    const recs = [];
+    for (const cents of items) {
+      recs.push(await addTransaction({
+        type: form.type, amountCents: cents, categoryId: cat.id,
+        note: form.note, date: form.date, source: form.source || 'manual',
+      }));
+    }
+    if (items.length === 1 && tplCheck.checked) {
       await addTemplate({
-        label: form.note.trim() || categoryById(form.categoryId).name,
-        type: form.type, amountCents: cents, categoryId: form.categoryId, note: form.note,
+        label: form.note.trim() || cat.name,
+        type: form.type, amountCents: items[0], categoryId: cat.id, note: form.note,
       });
     }
     localStorage.removeItem(DRAFT_KEY);
-    toast(`Saved ${fmtMoney(cents, cur)} to ${categoryById(rec.categoryId).name}`, {
+    const totalCents = items.reduce((a, b) => a + b, 0);
+    toast(items.length > 1
+      ? `Saved ${items.length} transactions totaling ${fmtMoney(totalCents, cur)}`
+      : `Saved ${fmtMoney(totalCents, cur)} to ${cat.name}`, {
       actionLabel: 'Undo',
-      onAction: async () => { await softDeleteTransaction(rec.id); ctx.refresh(); },
+      onAction: async () => { for (const r of recs) await softDeleteTransaction(r.id); ctx.refresh(); },
     });
     const xs = params.get('x-success');
     if (xs) setTimeout(() => { location.href = xs; }, 900);
@@ -382,7 +478,7 @@ export function renderAdd(root, params, ctx) {
   });
 
   bindNav(root);
-  update();
+  renderCalc();
 }
 
 // --- Transactions #/list --------------------------------------------------------
