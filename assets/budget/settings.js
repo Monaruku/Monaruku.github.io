@@ -461,7 +461,7 @@ function bindSettings(root, ctx) {
       await catchUpRecurring();
       ctx.refresh();
     }
-  });
+  };
 
   root.onclick = async e => {
     if (e.target.closest('#open-calc')) { openSalaryCalc(ctx); return; }
@@ -524,7 +524,7 @@ function bindSettings(root, ctx) {
       // CSV is transactions-only, so it does not count as a full backup.
       return;
     }
-  });
+  };
 
   // Shortcut Builder live URL updates.
   ['sb-cat', 'sb-amount', 'sb-note', 'sb-autosave', 'sb-format'].forEach(id => {
