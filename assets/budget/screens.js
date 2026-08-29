@@ -243,8 +243,9 @@ export function renderDashboard(root, params, ctx) {
 
 // --- Add transaction #/add ----------------------------------------------------
 
-// Calculator keypad: '+' commits the current line as its own transaction,
-// '−' '×' '÷' do in-line math (× ÷ bind tighter). Submit saves every line.
+// Single-expression calculator keypad: + − × ÷ build one arithmetic
+// expression (shown verbatim, live result preview), and '=' evaluates it and
+// saves exactly one transaction. No line items, no multi-submit.
 export function renderAdd(root, params, ctx) {
   const cur = state.settings.currency;
   const fromLink = ['amount', 'category', 'note', 'type', 'date'].some(k => params.get(k));
@@ -255,7 +256,6 @@ export function renderAdd(root, params, ctx) {
 
   const amountParam = parseAmount(params.get('amount'));
   const form = {
-    lines: !fromLink && Array.isArray(draft?.lines) ? draft.lines : [],
     current: fromLink ? (amountParam != null ? (amountParam / 100).toString() : '') : (draft?.current || ''),
     type: params.get('type') === 'income' ? 'income' : (draft?.type || 'expense'),
     categoryId: fromLink
@@ -284,12 +284,6 @@ export function renderAdd(root, params, ctx) {
       <div class="calc-eval muted" id="calc-eval"></div>
     </div>
 
-    <div class="calc-lines" id="calc-lines" hidden></div>
-    <div class="calc-total-row" id="calc-total-row" hidden>
-      <span class="muted" id="calc-count"></span>
-      <strong id="calc-total"></strong>
-    </div>
-
     <div class="keypad calc" id="keypad">
       <button type="button" class="key key-util" data-key="C">C</button>
       <button type="button" class="key key-util" data-key="del" aria-label="Backspace">&#9003;</button>
@@ -302,12 +296,13 @@ export function renderAdd(root, params, ctx) {
       <button type="button" class="key" data-key="4">4</button>
       <button type="button" class="key" data-key="5">5</button>
       <button type="button" class="key" data-key="6">6</button>
-      <button type="button" class="key key-op key-add" data-key="+" aria-label="Add line">+</button>
+      <button type="button" class="key key-op key-plus" data-key="+">+</button>
       <button type="button" class="key" data-key="1">1</button>
       <button type="button" class="key" data-key="2">2</button>
       <button type="button" class="key" data-key="3">3</button>
       <button type="button" class="key" data-key=".">.</button>
       <button type="button" class="key key-zero" data-key="0">0</button>
+      <button type="button" class="key key-eq" data-key="=" aria-label="Equals — save transaction">=</button>
     </div>
 
     <section class="card">
@@ -332,58 +327,60 @@ export function renderAdd(root, params, ctx) {
         <input type="checkbox" id="f-tpl">
         <span>Save as quick-add template</span>
       </label>
-    </section>
-
-    <button class="btn primary block" id="btn-save" type="button" disabled>Save</button>`;
+    </section>`;
 
   const exprEl = $('#calc-expr', root);
   const evalEl = $('#calc-eval', root);
-  const linesEl = $('#calc-lines', root);
-  const totalRow = $('#calc-total-row', root);
-  const countEl = $('#calc-count', root);
-  const totalEl = $('#calc-total', root);
-  const saveBtn = $('#btn-save', root);
   const tplCheck = $('#f-tpl', root);
   const displayWrap = $('.calc-display', root);
 
   function saveDraft() {
-    if (form.current || form.note || form.lines.length) localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
+    if (form.current || form.note) localStorage.setItem(DRAFT_KEY, JSON.stringify(form));
     else localStorage.removeItem(DRAFT_KEY);
   }
 
-  // Raw-string display: "5." stays "RM 5." (fixes the dot flash — the old code
-  // re-parsed the partial input as a number and flashed RM 0).
+  // Raw-expression display: "5+5" shows as "RM 5 + 5" with a live result below.
+  // Partial input is never re-parsed for display, so "5." can't flash to RM 0.
   function renderCalc() {
     const cents = evalLine(form.current);
-    const hasOps = /[×÷−]/.test(form.current);
-    exprEl.textContent = form.current === '' ? 'RM 0' : hasOps ? form.current : `RM ${form.current}`;
+    const hasOps = /[+×÷−]/.test(form.current);
+    const pretty = form.current.replace(/([+×÷−])/g, ' $1 ');
+    exprEl.textContent = form.current === '' ? 'RM 0' : `RM ${pretty}`;
     evalEl.textContent = hasOps && cents != null ? `= ${fmtMoney(cents, cur)}` : '';
     displayWrap.classList.toggle('income', form.type === 'income');
     displayWrap.classList.toggle('expense', form.type !== 'income');
-
-    linesEl.hidden = form.lines.length === 0;
-    linesEl.innerHTML = form.lines.map((l, i) => `
-      <div class="calc-line">
-        <span class="calc-line-expr">${esc(l.expr)}</span>
-        <span class="calc-line-val">${fmtMoney(l.cents, cur)}</span>
-        <button class="icon-btn" type="button" data-rm-line="${i}" aria-label="Remove line">&#10005;</button>
-      </div>`).join('');
-
-    const currentValid = cents != null && cents > 0;
-    const count = form.lines.length + (currentValid ? 1 : 0);
-    const total = form.lines.reduce((s2, l) => s2 + l.cents, 0) + (currentValid ? cents : 0);
-    totalRow.hidden = count < 2;
-    countEl.textContent = `${count} items`;
-    totalEl.textContent = fmtMoney(total, cur);
-
-    saveBtn.textContent = count > 1 ? `Submit ${count} items` : 'Save';
-    saveBtn.disabled = count === 0;
-    tplCheck.disabled = form.lines.length > 0; // templates are single-amount only
-    if (form.lines.length > 0) tplCheck.checked = false;
     saveDraft();
   }
 
-  const lastSeg = () => form.current.split(/[×÷−]/).pop();
+  const lastSeg = () => form.current.split(/[+×÷−]/).pop();
+
+  async function submit() {
+    const cents = evalLine(form.current);
+    if (!cents || cents <= 0) { toast('Enter a valid amount first'); return; }
+    try {
+      const rec = await addTransaction({
+        type: form.type, amountCents: cents, categoryId: form.categoryId,
+        note: form.note, date: form.date, source: form.source || 'manual',
+      });
+      if (tplCheck.checked) {
+        await addTemplate({
+          label: form.note.trim() || categoryById(form.categoryId).name,
+          type: form.type, amountCents: cents, categoryId: form.categoryId, note: form.note,
+        });
+      }
+    } catch {
+      toast('Could not save — please try again');
+      return;
+    }
+    localStorage.removeItem(DRAFT_KEY);
+    toast(`Saved ${fmtMoney(cents, cur)} to ${categoryById(form.categoryId).name}`, {
+      actionLabel: 'Undo',
+      onAction: async () => { await softDeleteTransaction(rec.id); ctx.refresh(); },
+    });
+    const xs = params.get('x-success');
+    if (xs) setTimeout(() => { location.href = xs; }, 900);
+    else location.hash = '#/';
+  }
 
   $('#keypad', root).addEventListener('click', e => {
     const key = e.target.closest('.key')?.dataset.key;
@@ -400,28 +397,17 @@ export function renderAdd(root, params, ctx) {
       if (seg.includes('.')) return;
       form.current += seg === '' ? '0.' : '.';
     } else if (key === 'C') {
-      form.lines = [];
       form.current = '';
     } else if (key === 'del') {
-      if (form.current) form.current = form.current.slice(0, -1);
-      else if (form.lines.length) form.current = form.lines.pop().expr; // pull last line back for editing
-    } else if (key === '+') {
-      const cents = evalLine(form.current);
-      if (!cents || cents <= 0) { toast('Finish the amount first'); return; }
-      form.lines.push({ expr: form.current, cents });
-      form.current = '';
-    } else { // × ÷ −
+      form.current = form.current.slice(0, -1);
+    } else if (key === '=') {
+      submit();
+      return; // navigates away; no re-render needed
+    } else { // + − × ÷
       if (form.current === '') return;
-      if (/[×÷−]$/.test(form.current)) form.current = form.current.slice(0, -1) + key;
+      if (/[+×÷−]$/.test(form.current)) form.current = form.current.slice(0, -1) + key;
       else form.current += key;
     }
-    renderCalc();
-  });
-
-  linesEl.addEventListener('click', e => {
-    const btn = e.target.closest('[data-rm-line]');
-    if (!btn) return;
-    form.lines.splice(parseInt(btn.dataset.rmLine, 10), 1);
     renderCalc();
   });
 
@@ -441,41 +427,6 @@ export function renderAdd(root, params, ctx) {
 
   $('#f-date', root).addEventListener('change', e => { form.date = e.target.value || todayISO(); saveDraft(); });
   $('#f-note', root).addEventListener('input', e => { form.note = e.target.value; saveDraft(); });
-
-  saveBtn.addEventListener('click', async () => {
-    const items = form.lines.map(l => l.cents);
-    if (form.current !== '') {
-      const c = evalLine(form.current);
-      if (!c || c <= 0) { toast('Finish or clear the current amount'); return; }
-      items.push(c);
-    }
-    if (!items.length) { toast('Enter an amount first'); return; }
-    const cat = categoryById(form.categoryId);
-    const recs = [];
-    for (const cents of items) {
-      recs.push(await addTransaction({
-        type: form.type, amountCents: cents, categoryId: cat.id,
-        note: form.note, date: form.date, source: form.source || 'manual',
-      }));
-    }
-    if (items.length === 1 && tplCheck.checked) {
-      await addTemplate({
-        label: form.note.trim() || cat.name,
-        type: form.type, amountCents: items[0], categoryId: cat.id, note: form.note,
-      });
-    }
-    localStorage.removeItem(DRAFT_KEY);
-    const totalCents = items.reduce((a, b) => a + b, 0);
-    toast(items.length > 1
-      ? `Saved ${items.length} transactions totaling ${fmtMoney(totalCents, cur)}`
-      : `Saved ${fmtMoney(totalCents, cur)} to ${cat.name}`, {
-      actionLabel: 'Undo',
-      onAction: async () => { for (const r of recs) await softDeleteTransaction(r.id); ctx.refresh(); },
-    });
-    const xs = params.get('x-success');
-    if (xs) setTimeout(() => { location.href = xs; }, 900);
-    else location.hash = '#/';
-  });
 
   bindNav(root);
   renderCalc();

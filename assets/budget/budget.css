@@ -15,7 +15,12 @@
   --grad: linear-gradient(135deg, #34d399, #22d3ee);
 }
 
-html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;          /* clip any sub-pixel spill (3× display rounding) */
+  overscroll-behavior-x: none; /* no horizontal rubber-band */
+}
 
 body {
   margin: 0;
@@ -27,8 +32,9 @@ body {
   color: var(--text);
   min-height: 100vh;
   line-height: 1.5;
-  overscroll-behavior-y: none;
-  touch-action: manipulation; /* no double-tap zoom */
+  overscroll-behavior: none;   /* no rubber-band in any direction */
+  overflow-x: hidden;
+  touch-action: pan-y;         /* vertical pan only — kills horizontal page drag */
 }
 
 .app {
@@ -246,7 +252,7 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 /* --- Chips -------------------------------------------------------------------- */
 
 .chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
-.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; }
+.chips.scroll { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 0.2rem; scrollbar-width: none; touch-action: pan-x; /* keep the chip carousel swipeable under body pan-y */ }
 .chips.scroll::-webkit-scrollbar { display: none; }
 .chip {
   background: var(--card);
@@ -282,20 +288,6 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 }
 .calc-display.income .calc-expr { color: var(--accent); }
 .calc-eval { min-height: 1.2rem; font-size: 0.9rem; }
-.calc-lines { display: flex; flex-direction: column; gap: 0.35rem; }
-.calc-line {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 0.7rem;
-  padding: 0.45rem 0.7rem;
-  font-size: 0.88rem;
-}
-.calc-line-expr { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.calc-line-val { font-variant-numeric: tabular-nums; font-weight: 600; }
-.calc-total-row { display: flex; justify-content: space-between; align-items: center; padding: 0.2rem 0.4rem; }
 
 .keypad {
   display: grid;
@@ -305,8 +297,9 @@ code { background: rgba(255,255,255,0.08); padding: 0.1em 0.35em; border-radius:
 .keypad.calc { grid-template-columns: repeat(4, 1fr); }
 .key-op { color: var(--accent-2); font-weight: 700; }
 .key-util { color: var(--muted); }
-.key-add { grid-row: span 3; background: var(--grad); color: #06251b; font-size: 1.7rem; }
+.key-plus { grid-row: span 2; }
 .key-zero { grid-column: span 2; }
+.key-eq { background: var(--grad); color: #06251b; font-size: 1.5rem; font-weight: 700; }
 .key {
   border: 1px solid var(--line);
   background: var(--card);
@@ -337,6 +330,8 @@ input[type="text"], input[type="date"], input[type="number"], input[type="search
   color-scheme: dark;
 }
 input:focus, select:focus, textarea:focus { outline: 1px solid var(--accent); }
+select { max-width: 100%; } /* option text must never push the page wide */
+.field input, .field select, .field textarea { width: 100%; min-width: 0; }
 
 .check { display: flex; align-items: center; gap: 0.55rem; font-size: 0.9rem; margin: 0.7rem 0 0.2rem; cursor: pointer; }
 .check input { width: 1.1rem; height: 1.1rem; accent-color: var(--accent); }

@@ -29,26 +29,32 @@ export function parseAmount(input) {
   return Math.round(parseFloat(clean) * 100);
 }
 
-// Evaluate one keypad line like "45÷2" or "100−15" into integer cents.
-// '×' and '÷' bind tighter than '−'; trailing operators/dots are tolerated.
-// Returns null for anything non-numeric (and for division by zero).
+// Evaluate a keypad expression like "5+5", "10−3", "45÷2" or "3×5.50" into
+// integer cents. '×' '÷' bind tighter than '+' '−'; trailing operators/dots
+// are tolerated. Returns null for anything non-numeric (and ÷ by zero).
 export function evalLine(str) {
   if (!str) return null;
-  const cleaned = String(str).replace(/[×÷−.\s]+$/u, '');
+  const cleaned = String(str).replace(/\s+/g, '').replace(/[+×÷−.]+$/u, '');
   if (!cleaned) return null;
-  const terms = cleaned.split('−'); // '+' never appears inside a line (it commits)
-  let total = null;
-  for (const term of terms) {
-    const pieces = term.split(/([×÷])/u);
-    let v = parseFloat(pieces[0]);
-    if (isNaN(v)) return null;
-    for (let i = 1; i + 1 < pieces.length; i += 2) {
-      const n = parseFloat(pieces[i + 1]);
-      if (isNaN(n)) return null;
-      if (pieces[i] === '×') v *= n;
-      else { if (n === 0) return null; v /= n; }
-    }
-    total = total === null ? v : total - v;
+  const tokens = cleaned.match(/\d+(?:\.\d{0,2})?|[+×÷−]/gu);
+  if (!tokens || tokens.length % 2 === 0 || !/^\d/.test(tokens[0])) return null;
+
+  // Pass 1: fold × ÷ into their terms.
+  const terms = [parseFloat(tokens[0])];
+  const addOps = [];
+  for (let i = 1; i + 1 < tokens.length; i += 2) {
+    const op = tokens[i];
+    const n = parseFloat(tokens[i + 1]);
+    if (isNaN(n)) return null;
+    if (op === '×') terms[terms.length - 1] *= n;
+    else if (op === '÷') { if (n === 0) return null; terms[terms.length - 1] /= n; }
+    else { addOps.push(op); terms.push(n); }
+  }
+
+  // Pass 2: fold + − left to right.
+  let total = terms[0];
+  for (let i = 0; i < addOps.length; i++) {
+    total = addOps[i] === '+' ? total + terms[i + 1] : total - terms[i + 1];
   }
   return Math.round(total * 100);
 }

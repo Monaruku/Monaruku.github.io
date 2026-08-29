@@ -250,8 +250,8 @@ export function renderSettings(root, params, ctx) {
       <label class="field">
         <span>Link type</span>
         <select id="sb-format">
-          <option value="webapp">Direct to installed app (webapp:// — iOS 26+, recommended)</option>
-          <option value="https">Universal (https:// — any browser, needs Safari as default for app routing)</option>
+          <option value="webapp">Direct to app (webapp:// · iOS 26+)</option>
+          <option value="https">Universal (https://)</option>
         </select>
       </label>
       <label class="check"><input type="checkbox" id="sb-autosave" checked>
