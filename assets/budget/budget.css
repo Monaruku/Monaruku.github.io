@@ -417,7 +417,8 @@ select { max-width: 100%; } /* option text must never push the page wide */
 .cat-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .cat-row:last-of-type { border-bottom: 0; }
 .cat-color { width: 1.9rem; height: 1.9rem; border: 0; background: none; padding: 0; cursor: pointer; border-radius: 0.4rem; }
-.cat-name { flex: 1; font-size: 0.92rem; min-width: 0; }
+.cat-icon { flex: none; font-size: 1rem; }
+.cat-name { flex: 1; font-size: 0.92rem; min-width: 0; padding: 0.4rem 0.55rem; }
 .cat-budget { width: 6rem; text-align: right; }
 .add-row { display: flex; gap: 0.5rem; margin-top: 0.7rem; }
 .add-row.wrap { flex-wrap: wrap; }

@@ -6,7 +6,7 @@ import {
   buildExport, buildCSV, importData, validateImport, markExported, daysSinceExport,
   categoryById, BUDGET_PRESETS, computeBudgetPlan, applyBudgetPlan,
 } from './store.js';
-import { $, $$, esc, fmtMoney, parseAmount, toast } from './util.js';
+import { $, $$, esc, fmtMoney, parseAmount, slugify, toast } from './util.js';
 
 const CURRENCIES = ['MYR', 'SGD', 'USD', 'EUR', 'GBP', 'JPY', 'IDR', 'THB', 'PHP'];
 
@@ -201,7 +201,8 @@ export function renderSettings(root, params, ctx) {
       ${cats.map(c => `
         <div class="cat-row" data-cat-row="${esc(c.id)}">
           <input type="color" class="cat-color" value="${esc(c.color)}" data-cat-color="${esc(c.id)}" aria-label="${esc(c.name)} color">
-          <span class="cat-name">${c.icon} ${esc(c.name)}</span>
+          <span class="cat-icon" aria-hidden="true">${c.icon}</span>
+          <input type="text" class="cat-name" value="${esc(c.name)}" data-cat-name="${esc(c.id)}" maxlength="24" aria-label="Category name">
           <input type="text" inputmode="decimal" class="cat-budget" value="${(c.monthlyBudgetCents / 100).toFixed(0)}"
                  data-cat-budget="${esc(c.id)}" aria-label="${esc(c.name)} monthly budget">
           <button class="icon-btn" data-cat-archive="${esc(c.id)}" type="button" aria-label="Archive ${esc(c.name)}">&#10005;</button>
@@ -454,6 +455,24 @@ function bindSettings(root, ctx) {
     const colorInput = e.target.closest('[data-cat-color]');
     if (colorInput) {
       await saveCategory({ id: colorInput.dataset.catColor, color: colorInput.value });
+      return;
+    }
+    const nameInput = e.target.closest('[data-cat-name]');
+    if (nameInput) {
+      const cat = categoryById(nameInput.dataset.catName);
+      const name = nameInput.value.trim().replace(/\s+/g, ' ');
+      const dupe = state.categories.some(c =>
+        !c.archived && c.id !== cat.id && c.name.trim().toLowerCase() === name.toLowerCase());
+      if (!name || dupe) {
+        toast(dupe ? `"${name}" already exists` : 'Name cannot be empty');
+        nameInput.value = cat.name; // revert
+        return;
+      }
+      if (name === cat.name) return;
+      const renamed = slugify(name) !== slugify(cat.name); // deep links use the slug
+      await saveCategory({ id: cat.id, name });
+      toast(renamed ? `Renamed to ${name} — update Shortcuts that used the old name` : `Renamed to ${name}`);
+      ctx.refresh();
       return;
     }
     const recToggle = e.target.closest('[data-rec-toggle]');
