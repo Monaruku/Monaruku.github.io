@@ -444,15 +444,14 @@ export function renderAdd(root, params, ctx) {
   $('#f-date', root).addEventListener('change', e => { form.date = e.target.value || todayISO(); saveDraft(); });
   $('#f-note', root).addEventListener('input', e => { form.note = e.target.value; saveDraft(); });
 
-  // Note-template bubbles: tap writes the label into the note field (still editable).
+  // Note-template bubbles: tap writes the label into the note field without
+  // focusing it (focusing would raise the iOS keyboard over the keypad).
   $('#nt-chips', root)?.addEventListener('click', e => {
     const btn = e.target.closest('[data-nt]');
     const t = btn && state.templates_notes.find(x => x.id === btn.dataset.nt);
     if (!t) return;
     form.note = t.label;
-    const noteInput = $('#f-note', root);
-    noteInput.value = t.label;
-    noteInput.focus();
+    $('#f-note', root).value = t.label;
     saveDraft(); // draft already covers the note field — keep it in sync
   });
 
