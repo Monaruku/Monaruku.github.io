@@ -76,6 +76,7 @@ All money is **integer minor units** (`amountCents`; for MYR that's **sen** — 
 | `categories` | `{ id, name, monthlyBudgetCents, color, icon, archived }` — seeded: Food, Transport, Bills, Entertainment, Other |
 | `settings` | `{ currency: "MYR" (default), monthStartDay, theme, badgeMode: "off"\|"backup"\|"overspend" }` |
 | `templates` | Quick-add chips: `{ id, label, type, amountCents, categoryId, note }` |
+| `templates_notes` | Note templates (quick-fill bubbles for the note field): `{ id, label }` — no seed defaults |
 | `recurring` | `{ id, type, amountCents, categoryId, note, dayOfMonth, active, lastGeneratedMonth }` |
 | `meta` | `{ schemaVersion, lastExportAt, processedUids: [{ uid, at }] }` |
 
@@ -104,8 +105,9 @@ Currency (pre-selected **MYR / RM**) → month start day → per-category budget
 
 ### 5.2 Add Transaction `#/add`
 - Expense/Income segmented control (defaults to expense; `type` param overrides).
-- Calculator-style keypad; the underlying field uses `inputmode="decimal"` so iOS shows a decimal separator (numeric keypad without one is a known iOS trap).
+- **Calculator keypad, single-expression mode**: digits + `.` build one arithmetic expression shown verbatim (`RM 5 + 5`, so `5.` never flashes to `0`); `+` `−` `×` `÷` all work in-line with standard precedence (×÷ > +−), with a live `= RM X` preview under the expression while typing. The **= key** evaluates in place, calculator-style: the expression collapses to its result (`5+5` → `10`) and stays editable for chained math; it never saves. A separate **Save** button (disabled until the expression evaluates above zero) commits exactly one transaction for the current value. `C` clears, `⌫` backspaces. Templates work for any single evaluated amount.
 - Category picker (color chips), date (defaults today), note, "Save as template" toggle.
+- **Note template bubbles**: a horizontally scrolling pill row below the Note field (one bubble per note template; hidden entirely when none exist). Tapping a bubble replaces the note's text with the template label without raising the keyboard (no focus shift) — it stays fully editable before Save. Draft persistence covers the note, so bubble-filled text survives navigation.
 - Deep-link prefill applies to every field; missing fields stay editable.
 - `autosave=1`: validate → dedupe → insert → toast "Saved RM12.50 to Food" → honor `x-success` (§6.3) or redirect `#/?saved=1`.
 
@@ -118,15 +120,22 @@ Currency (pre-selected **MYR / RM**) → month start day → per-category budget
 
 ### 5.5 Reports `#/reports`
 - Chart.js (vendored UMD, `assets/budget/vendor/`) is **lazy-loaded only on this route** — the app shell stays light.
-- Bar by category, daily-spend line with pace overlay, month-over-month comparison, income vs. expense summary.
+- **Insights card**: 3–4 auto-generated one-liners computed from the selected period (top category with share, spending up/down % vs last period, biggest day, no-spend day count); hidden when the period has no spending.
+- Bar by category; **daily spending bars with switchable granularity** — a compact Day | Week | Month segmented control in the card header re-buckets the same period data in place (chart-only re-render via `requestAnimationFrame`, no route refresh): daily = one bar per day, weekly = 7-day buckets, monthly = calendar months touched by the period. Each view gets its own dashed pace line (budget ÷ days/weeks/months in period), over-pace red highlighting, tooltips, aria-label, and caption ("Avg RM X/week · pace RM Y/week"); the card title follows the granularity; month-over-month comparison; income vs. expense summary.
+- **Spending calendar**: GitHub-style Monday-first heatmap of the period — cell intensity tracks the period's max day, over-daily-pace days render red; per-cell tooltips, Less→More legend. Current period shows elapsed days only.
+- **Category trends** card: per-category current vs previous period spend with delta pills (↑ red / ↓ green / "new"), sorted by current spend.
 
 ### 5.6 Settings `#/settings`
-- Currency, month start day, theme; category/budget editor; templates & recurring manager.
+- Currency, month start day, theme; category/budget editor — per-category **rename** (inline text field; duplicate/empty names rejected with revert), color, monthly cap, archive. Renaming warns when the slug changes, since Shortcut deep links reference `category=<slug>` (transactions are keyed by stable `categoryId`, so history is unaffected). Templates & recurring manager. **Note templates** manager: add / inline-edit / delete quick-fill note labels (empty or whitespace-only and duplicate labels are rejected with revert; case-insensitive uniqueness); stored under `templates_notes`.
 - **Calculate from salary**: modal that splits net salary into category caps via bucket presets (Balanced 50/30/20, Essentials 60/20/20, Saver 40/30/30 — needs/wants/savings) or Custom per-category percentages; two-way % ↔ RM editing with live totals; warns when allocations exceed salary, shows the unallocated remainder otherwise (zero-based); applies atomically and creates a Savings category when funded. EPF note included for salaried Malaysian users.
 - **Shortcut Builder** (§6.4), Export/Import (§8), install instructions, storage-persist status, "Back to portal" link, privacy note ("all data stays on this device").
 
 ### 5.7 Cross-cutting UX
+- UI scale locked (`maximum-scale=1, user-scalable=no` + `touch-action: pan-y` + gesture-event prevention): the installed app never pinch- or double-tap-zooms. Honored in the installed Home Screen app; Safari *browser* ignores the lock per iOS a11y rules. Dynamic Type (`rem` text) remains the accessibility path.
+- No horizontal overscroll: `overflow-x: hidden` on `html`/`body` (clips sub-pixel grid rounding at 3× scale), `overscroll-behavior: none` both axes, `touch-action: pan-y` on body with `pan-x` re-enabled only on the horizontal chip carousel.
 - Safe-area padding via `env(safe-area-inset-*)` on header/footer; bottom nav sits above the home indicator.
+- **Motion standards (iOS HIG-aligned)**: shared easing tokens `--ease-out: cubic-bezier(0.32, 0.72, 0, 1)` (deceleration) and `--ease-spring: cubic-bezier(0.34, 1.35, 0.5, 1)` (gentle overshoot) with duration tokens `--dur-fast/--dur-med`. Press feedback: `scale(0.94–0.97) + brightness` on buttons, chips, keys, tab bar. Screen entry: 10px fade-rise replayed per hash route via a `screen-in` class (one forced reflow). Chip selection pulse (`chip-pop`). Toasts spring up from the bottom (above the tab bar) with a slight scale settle. Modals are bottom sheets: backdrop blur 10px + fade, card rises with spring. All checkboxes render as iOS toggle switches (pure CSS, native semantics kept). Ring/bar/chart transitions use `--ease-out`. Everything is disabled under `prefers-reduced-motion`.
+- **Performance budget**: boot reads are fully parallel (`initStore` Promise.all over 6 IDB keys; `purgeDeleted` + `catchUpRecurring` run concurrently); one `innerHTML` write per route, targeted node updates per keypress in the calculator; charts are string-built SVG with zero layout reads; draft persistence is a sub-millisecond `localStorage` write per keypress; one forced reflow per navigation (animation restart) is the only intentional layout flush.
 - No haptics on iOS web — all confirmations are visual (toasts, button state flips).
 - `prefers-reduced-motion` disables ring/bar animations; VoiceOver labels on all icon buttons; text in `rem` for Dynamic Type.
 - Empty states with one-tap actions ("No transactions yet — add your first" / "or set up a Shortcut").
