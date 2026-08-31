@@ -16,7 +16,7 @@ order: 4
 
 ## The problem
 
-I wanted expense tracking that is instant (log from the lock screen via Siri or a bank-SMS automation), private (no account, no server, nothing leaves the phone), and free to run. Existing apps trade privacy or subscriptions for those properties — a static site can have all three.
+Good budget tracking apps cost money to use, spending money before tracking my spending. Cheap ones comes with ads sometimes. So why not just vibe-code out of this one. So this is a static site that can acts as a PWA for your budget tracking needs. And it's free and customizable (for me at least)
 
 ## Approach
 

@@ -530,7 +530,7 @@ export function renderList(root, params, ctx) {
 
 // --- Reports #/reports ----------------------------------------------------------
 
-const repState = { offset: 0 };
+const repState = { offset: 0, granularity: 'daily' };
 
 export function renderReports(root, params, ctx) {
   const cur = state.settings.currency;
@@ -542,14 +542,88 @@ export function renderReports(root, params, ctx) {
   const net = s.income - s.expense;
   const now = new Date();
 
-  // Cumulative daily expense points up to today (or period end).
-  const points = [];
-  let cum = 0, dayIdx = 0;
+  // Per-day expense buckets up to today (or period end).
+  const days = [];
+  let dayIdx = 0;
   for (let d = new Date(start); d < end && d <= now; d.setDate(d.getDate() + 1)) {
     dayIdx++;
-    cum += s.daily[toISODate(new Date(d))] || 0;
-    points.push({ x: dayIdx, y: cum });
+    days.push({ x: dayIdx, y: s.daily[toISODate(new Date(d))] || 0, date: new Date(d) });
   }
+  const budgetTotal = totalBudget();
+  const periodDays = Math.max(1, Math.round((end - start) / 86400000));
+  const lastDay = new Date(end); lastDay.setDate(lastDay.getDate() - 1);
+  const monthsInPeriod = Math.max(1,
+    (lastDay.getFullYear() - start.getFullYear()) * 12 + (lastDay.getMonth() - start.getMonth()) + 1);
+
+  const GRAN = {
+    daily:   { unit: 'day',   adj: 'Daily',   bucketsInPeriod: periodDays },
+    weekly:  { unit: 'week',  adj: 'Weekly',  bucketsInPeriod: Math.ceil(periodDays / 7) },
+    monthly: { unit: 'month', adj: 'Monthly', bucketsInPeriod: monthsInPeriod },
+  };
+
+  // Re-bucket the same period data at the requested granularity.
+  function bucketize(mode) {
+    if (mode === 'weekly') {
+      const weeks = [];
+      for (const d of days) {
+        const wi = Math.floor((d.x - 1) / 7);
+        if (!weeks[wi]) weeks[wi] = { label: `Week ${wi + 1}`, y: 0 };
+        weeks[wi].y += d.y;
+      }
+      return weeks;
+    }
+    if (mode === 'monthly') {
+      const monthsB = [];
+      const seen = new Map();
+      for (const d of days) {
+        const key = d.date.toLocaleDateString('en-MY', { month: 'short' });
+        if (!seen.has(key)) { const b = { label: key, y: 0 }; seen.set(key, b); monthsB.push(b); }
+        seen.get(key).y += d.y;
+      }
+      return monthsB;
+    }
+    return days.map(d => ({ label: `Day ${d.x}`, y: d.y }));
+  }
+
+  // Chart-only re-render (no route refresh) when granularity changes.
+  function renderBucketChart() {
+    const g = GRAN[repState.granularity] || GRAN.daily;
+    const buckets = bucketize(repState.granularity);
+    const pace = budgetTotal > 0 ? Math.round(budgetTotal / g.bucketsInPeriod) : 0;
+    const avg = buckets.length ? Math.round(s.expense / buckets.length) : 0;
+    $('#daily-title', root).textContent = `${g.adj} spending`;
+    $('#daily-caption', root).textContent = pace
+      ? `Avg ${fmtMoney(avg, cur)}/${g.unit} · pace ${fmtMoney(pace, cur)}/${g.unit}`
+      : `Avg ${fmtMoney(avg, cur)}/${g.unit} · no budget set`;
+    charts.dailyBars($('#chart-daily', root), { buckets, pacePerBucket: pace, unit: g.unit, currency: cur });
+  }
+
+  // --- Auto-insights + category trends (current period vs previous) ------------
+  const prevS = summarize(shiftPeriod(start, startDay, -1), start);
+  const paceDay = budgetTotal > 0 ? Math.round(budgetTotal / periodDays) : 0;
+
+  const insights = [];
+  if (s.expense > 0) {
+    const topEntry = Object.entries(s.byCat).sort((a, b) => b[1] - a[1])[0];
+    if (topEntry) {
+      const tc = categoryById(topEntry[0]);
+      insights.push({ icon: tc.icon, text: `${esc(tc.name)} leads spending — ${fmtMoney(topEntry[1], cur)} (${Math.round((topEntry[1] / s.expense) * 100)}%)` });
+    }
+    if (prevS.expense > 0) {
+      const pct = Math.round(((s.expense - prevS.expense) / prevS.expense) * 100);
+      if (pct !== 0) insights.push({ icon: pct > 0 ? '📈' : '📉', text: `Spending is ${pct > 0 ? 'up' : 'down'} ${Math.abs(pct)}% vs last period` });
+    }
+    const bigDay = days.reduce((m, d) => (d.y > m.y ? d : m), { y: 0, date: null });
+    if (bigDay.y > 0) insights.push({ icon: '📅', text: `Biggest day: ${fmtDay(toISODate(bigDay.date))} — ${fmtMoney(bigDay.y, cur)}` });
+    const noSpend = days.filter(d => d.y === 0).length;
+    if (noSpend > 0) insights.push({ icon: '🌱', text: `${noSpend} no-spend day${noSpend === 1 ? '' : 's'}${repState.offset === 0 ? ' so far' : ''}` });
+  }
+
+  const trendRows = state.categories
+    .filter(c => !c.archived)
+    .map(c => ({ c, curV: s.byCat[c.id] || 0, prevV: prevS.byCat[c.id] || 0 }))
+    .filter(r => r.curV > 0 || r.prevV > 0)
+    .sort((a, b) => b.curV - a.curV);
 
   const catData = Object.entries(s.byCat)
     .map(([id, value]) => ({ label: `${categoryById(id).icon} ${categoryById(id).name}`, value, color: categoryById(id).color }))
@@ -582,15 +656,50 @@ export function renderReports(root, params, ctx) {
       <div class="card stat"><span class="muted">Net</span><strong class="${net >= 0 ? 'ok' : 'bad'}">${net >= 0 ? '+' : ''}${fmtMoney(net, cur)}</strong></div>
     </section>
 
+    ${insights.length ? `
     <section class="card">
-      <h2 class="card-title">Spending pace</h2>
-      <div id="chart-pace"></div>
+      <h2 class="card-title">Insights</h2>
+      ${insights.map(i => `<p class="insight-line"><span aria-hidden="true">${i.icon}</span><span>${i.text}</span></p>`).join('')}
+    </section>` : ''}
+
+    <section class="card">
+      <div class="card-head">
+        <h2 class="card-title" id="daily-title">Daily spending</h2>
+        <div class="seg mini" role="group" aria-label="Chart granularity">
+          <button type="button" data-gran="daily" class="${repState.granularity === 'daily' ? 'active' : ''}">Day</button>
+          <button type="button" data-gran="weekly" class="${repState.granularity === 'weekly' ? 'active' : ''}">Week</button>
+          <button type="button" data-gran="monthly" class="${repState.granularity === 'monthly' ? 'active' : ''}">Month</button>
+        </div>
+      </div>
+      <div id="chart-daily"></div>
+      <p class="muted tiny" id="daily-caption"></p>
+    </section>
+
+    <section class="card">
+      <h2 class="card-title">Spending calendar</h2>
+      <div id="chart-cal"></div>
     </section>
 
     <section class="card">
       <h2 class="card-title">By category</h2>
       <div id="chart-cats"></div>
     </section>
+
+    ${trendRows.length ? `
+    <section class="card">
+      <h2 class="card-title">Category trends <span class="muted tiny">vs last period</span></h2>
+      ${trendRows.map(r => {
+        const cls = r.prevV === 0 ? 'new' : r.curV > r.prevV ? 'up' : r.curV < r.prevV ? 'down' : 'flat';
+        const txt = r.prevV === 0 ? 'new'
+          : `${r.curV > r.prevV ? '↑' : r.curV < r.prevV ? '↓' : '→'} ${Math.abs(Math.round(((r.curV - r.prevV) / r.prevV) * 100))}%`;
+        return `
+        <div class="trend-row">
+          <span class="trend-name">${r.c.icon} ${esc(r.c.name)}</span>
+          <strong>${fmtMoney(r.curV, cur)}</strong>
+          <span class="trend-delta ${cls}">${txt}</span>
+        </div>`;
+      }).join('')}
+    </section>` : ''}
 
     <section class="card">
       <h2 class="card-title">Last 6 periods</h2>
@@ -600,7 +709,16 @@ export function renderReports(root, params, ctx) {
   $('#prev', root).addEventListener('click', () => { repState.offset--; ctx.refresh(); });
   $('#next', root).addEventListener('click', () => { if (repState.offset < 0) { repState.offset++; ctx.refresh(); } });
 
-  charts.paceLine($('#chart-pace', root), { points, paceTo: repState.offset === 0 ? totalBudget() : 0, currency: cur });
+  const granBtns = $$('.seg.mini [data-gran]', root);
+  granBtns.forEach(b => b.addEventListener('click', () => {
+    if (repState.granularity === b.dataset.gran) return;
+    repState.granularity = b.dataset.gran;
+    granBtns.forEach(x => x.classList.toggle('active', x === b));
+    requestAnimationFrame(renderBucketChart); // chart-only swap, no route refresh
+  }));
+
+  renderBucketChart();
+  charts.heatmap($('#chart-cal', root), { days, pacePerDay: paceDay, currency: cur });
   charts.bars($('#chart-cats', root), catData, { currency: cur });
   charts.compareBars($('#chart-months', root), months, { currency: cur });
 }

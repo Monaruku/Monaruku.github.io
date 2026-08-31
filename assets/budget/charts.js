@@ -18,32 +18,55 @@ export function bars(container, data, { currency = 'MYR', empty = 'No data for t
     </div>`).join('');
 }
 
-// Cumulative daily spend against an optional straight-line pace reference.
-export function paceLine(container, { points, paceTo = 0, currency = 'MYR' }) {
-  if (!points.length) {
+// Vertical spend bars over generic time buckets (day/week/month) with a
+// dashed pace reference line. Over-pace buckets render in danger color.
+export function dailyBars(container, { buckets, pacePerBucket = 0, unit = 'day', currency = 'MYR' }) {
+  if (!buckets.length) {
     container.innerHTML = `<p class="muted">Nothing spent in this period yet.</p>`;
     return;
   }
-  const W = 100, H = 42, pad = 3;
-  const maxY = Math.max(1, ...points.map(p => p.y), paceTo);
-  const maxX = Math.max(1, points[points.length - 1].x);
-  const px = p => (pad + (p.x / maxX) * (W - 2 * pad)).toFixed(2);
-  const py = y => (H - pad - (y / maxY) * (H - 2 * pad)).toFixed(2);
-  const line = points.map((p, i) => `${i ? 'L' : 'M'}${px(p)},${py(p.y)}`).join(' ');
-  const last = points[points.length - 1];
-  const area = `${line} L${px(last)},${H - pad} L${pad},${H - pad} Z`;
-  const guide = paceTo ? `M${pad},${H - pad} L${W - pad},${py(paceTo)}` : '';
+  const max = Math.max(1, pacePerBucket, ...buckets.map(b => b.y));
+  const pacePct = pacePerBucket > 0 ? (pacePerBucket / max) * 100 : 0;
   container.innerHTML = `
-    <svg class="line-chart" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"
-         role="img" aria-label="Cumulative spend ${esc(fmtMoney(last.y, currency))}">
-      ${guide ? `<path d="${guide}" class="pace-guide"/>` : ''}
-      <path d="${area}" class="area"/>
-      <path d="${line}" class="line"/>
-    </svg>
+    <div class="daily-chart" role="img" aria-label="Spending by ${unit}, ${buckets.length} ${unit}s">
+      ${pacePct ? `<div class="daily-pace" style="bottom:${pacePct.toFixed(1)}%"></div>` : ''}
+      ${buckets.map(b => `
+        <div class="daily-col">
+          <span class="daily-bar ${pacePerBucket && b.y > pacePerBucket ? 'over' : ''}"
+                style="height:${((b.y / max) * 100).toFixed(1)}%"
+                title="${esc(b.label)}: ${esc(fmtMoney(b.y, currency))}"></span>
+        </div>`).join('')}
+    </div>
     <div class="chart-foot">
-      <span>Day 1</span>
-      <span class="muted">dashed = budget pace</span>
-      <span>Day ${maxX}</span>
+      <span>${esc(buckets[0].label)}</span>
+      ${pacePerBucket ? '<span class="muted">dashed = pace</span>' : ''}
+      <span>${esc(buckets[buckets.length - 1].label)}</span>
+    </div>`;
+}
+
+// GitHub-style calendar heatmap of daily spend (Monday-first).
+// Intensity tracks the period's max day; over-pace days render in danger color.
+export function heatmap(container, { days, pacePerDay = 0, currency = 'MYR' }) {
+  if (!days.length) {
+    container.innerHTML = `<p class="muted">Nothing spent in this period yet.</p>`;
+    return;
+  }
+  const max = Math.max(1, ...days.map(d => d.y));
+  const lead = (days[0].date.getDay() + 6) % 7; // Monday-first offset
+  const cells = Array(lead).fill(null).concat(days);
+  container.innerHTML = `
+    <div class="cal-weekdays" aria-hidden="true">${['M', 'T', 'W', 'T', 'F', 'S', 'S'].map(d => `<span>${d}</span>`).join('')}</div>
+    <div class="cal-grid" role="img" aria-label="Spending calendar, ${days.length} days">
+      ${cells.map(d => d === null ? '<span class="cal-cell blank"></span>' : `
+        <span class="cal-cell ${d.y === 0 ? 'zero' : ''} ${pacePerDay && d.y > pacePerDay ? 'over' : ''}"
+              style="--int:${(d.y / max).toFixed(2)}"
+              title="${esc(d.date.toLocaleDateString('en-MY', { day: 'numeric', month: 'short' }))}: ${esc(fmtMoney(d.y, currency))}">
+          <span class="cal-day">${d.date.getDate()}</span>
+        </span>`).join('')}
+    </div>
+    <div class="cal-legend muted tiny">
+      <span>Less</span><span class="cal-scale" aria-hidden="true"></span><span>More</span>
+      ${pacePerDay ? '<span class="cal-over-key"><span class="cal-swatch" aria-hidden="true"></span>over pace</span>' : ''}
     </div>`;
 }
 
