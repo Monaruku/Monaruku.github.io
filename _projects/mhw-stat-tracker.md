@@ -24,11 +24,11 @@ The tracker is two halves: a tiny REFramework Lua exporter that runs inside the 
 
 ### In-game data extraction
 
-[mhw_stats_exporter.lua](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/mhw_stats_exporter.lua) reads the game's managed singletons through REFramework: character basics (name, zenny, guild points, playtime), the quest-clear counters per category and per weapon, and per-monster slay/capture counts with size records. It maps internal enums to stable slugs defined in [mhw-data.js](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/mhw/mhw-data.js), which also carries crown thresholds and base sizes so the page can derive gold/silver/mini crowns and real centimeter sizes.
+[mhw_stats_exporter.lua](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/mhw/mhw_stats_exporter.lua) reads the game's managed singletons through REFramework: character basics (name, zenny, guild points, playtime), the quest-clear counters per category and per weapon, and per-monster slay/capture counts with size records. It maps internal enums to stable slugs defined in [mhw-data.js](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/mhw/mhw-data.js), which also carries crown thresholds and base sizes so the page can derive gold/silver/mini crowns and real centimeter sizes.
 
 ### Dependency-free charts
 
-Every visualization in [mhw.js](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/mhw/mhw.js) is hand-rolled SVG and CSS — no chart library. A shared donut engine drives the weapon-usage and quest-category rings with two-way hover sync between slices and rows; quest categories get column-chart tiles; crown completion shows as animated progress rings; and the hunting log mixes a sortable table with inline data bars.
+Every visualization in [mhw.js](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/mhw/mhw.js) is hand-rolled SVG and CSS — no chart library. A shared donut engine drives the weapon-usage and quest-category rings with two-way hover sync between slices and rows; quest categories get column-chart tiles; crown completion shows as animated progress rings; and the hunting log mixes a sortable table with inline data bars.
 
 ### Share links without a server
 

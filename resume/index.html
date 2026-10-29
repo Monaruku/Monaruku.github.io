@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wong Yik Xiang — QA Engineer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 9.5pt;
+    color: #333;
+    line-height: 1.22;
+    padding: 0.6in 0.7in;
+    max-width: 8.5in;
+    margin: 0 auto;
+    background: #fff;
+  }
+
+  /* --- Contact header --- */
+  .contact-header { text-align: center; margin-bottom: 14px; }
+  .contact-header h1 {
+    font-size: 20pt;
+    font-weight: bold;
+    color: #1a1a1a;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+  }
+  .contact-info {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    font-size: 10pt;
+    color: #555;
+  }
+  .contact-info a { color: #555; text-decoration: none; }
+
+  /* --- Sections --- */
+  .section { margin-bottom: 4px; }
+  .section h2 {
+    font-size: 12.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #999;
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    color: #1a1a1a;
+  }
+
+  /* --- Summary --- */
+  .summary p { font-size: 10.5pt; color: #444; }
+
+  /* --- Skills --- */
+  .skill-category { margin-bottom: 3px; font-size: 10.5pt; }
+  .skill-category strong { color: #1a1a1a; }
+
+  /* --- Experience / Projects --- */
+  .job, .project { margin-bottom: 3px; }
+  .job-header, .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .job-title, .project-name { font-weight: bold; font-size: 11pt; color: #1a1a1a; }
+  .job-dates, .project-tech { font-size: 10pt; color: #666; white-space: nowrap; margin-left: 12px; }
+  .job-company, .project-desc { font-size: 10.5pt; font-style: italic; color: #555; margin-bottom: 4px; }
+  .job ul, .project ul { list-style-type: disc; margin-left: 18px; font-size: 10.5pt; }
+  .job li, .project li { margin-bottom: 1px; }
+
+  /* --- Education / Languages --- */
+  .edu-entry { display: flex; justify-content: space-between; align-items: baseline; }
+  .edu-degree { font-weight: bold; font-size: 10.5pt; }
+  .edu-year { font-size: 10pt; color: #666; }
+  .edu-school { font-size: 10.5pt; font-style: italic; color: #555; }
+  .lang-list { font-size: 10.5pt; }
+  .lang-list li { margin-bottom: 2px; }
+  .lang-list ul, ul.lang-list { list-style-type: disc; margin-left: 18px; }
+
+  @media print {
+    body { padding: 0.5in 0.65in; }
+  }
+
+  .cv-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; padding-bottom: 16px; margin-bottom: 18px; border-bottom: 1px solid #ddd; font-size: 11pt; }
+  .cv-actions a { color: #4c1d95; text-underline-offset: 3px; }
+  .cv-actions button { font: inherit; color: #fff; background: #4c1d95; border: 0; border-radius: 6px; padding: 10px 14px; cursor: pointer; }
+  .contact-info a { text-decoration: underline; text-underline-offset: 2px; }
+  @media screen and (max-width: 640px) {
+    body { padding: 24px 18px; }
+    .job-header, .project-header, .edu-entry { flex-direction: column; gap: 3px; align-items: flex-start; }
+    .job-dates, .project-tech { white-space: normal; margin-left: 0; }
+    .section { margin-bottom: 16px; }
+    .job, .project { margin-bottom: 12px; }
+  }
+  @page { size: A4; margin: 13mm; }
+  @media print {
+    body { padding: 0; max-width: none; }
+    .cv-actions { display: none; }
+    h2, .job-header, .project-header, .edu-entry { break-after: avoid; }
+    li { break-inside: avoid; }
+    .contact-info a { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+  <nav class="cv-actions" aria-label="CV actions">
+    <a href="../about/">← Back to About</a>
+    <button type="button" onclick="window.print()">Print / Save as PDF</button>
+  </nav>
+  <main>
+
+  <!-- CONTACT -->
+  <div class="contact-header">
+    <h1>Wong Yik Xiang</h1>
+    <div class="contact-info">
+      <a href="mailto:yikxiangwong@gmail.com">yikxiangwong@gmail.com</a>
+      <a href="tel:+60126223962">+6012-6223962</a>
+      <span>Kuala Lumpur, Malaysia</span>
+      <a href="https://monaruku.github.io/">Portfolio</a>
+      <a href="https://github.com/monaruku">GitHub</a>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="section summary">
+    <h2>Summary</h2>
+    <p>QA Engineer at Ant International owning frontend quality for fintech products across Asia. Builds quality infrastructure, not just test cases: productized UI Automation One Framework for iOS real-device testing (public open-source release in progress), authored AI testing skills that cut test-case creation time by ≥70%, and designed MAGI-QA, a multi-agent LLM test-analysis system. Pairs business-line test ownership (80-160 cases per project, ~15 pre-release defects per project) with hands-on engineering in Python, Java, and JavaScript. Seeking Specialist QA Engineer scope.</p>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="section">
+    <h2>Skills</h2>
+    <div class="skills-list">
+      <div class="skill-category"><strong>Testing &amp; QA:</strong> Test strategy &amp; planning, E2E/UI automation on real devices (iOS/Android), BDD/Gherkin, API testing, regression/smoke/UAT, multi-locale (i18n) testing, defect triage</div>
+      <div class="skill-category"><strong>Automation &amp; Tools:</strong> WebDriverAgent, ADB/UIAutomator, Playwright, Selenium, Proxyman, Charles, Postman, Jenkins CI, Docker, Git</div>
+      <div class="skill-category"><strong>AI Engineering:</strong> LLM-agent system &amp; skill design, Model Context Protocol (MCP) servers, AI-driven test generation, vision-based UI detection (SoM/OCR, UI-TARS, OmniParser)</div>
+      <div class="skill-category"><strong>Languages:</strong> Python, Java, JavaScript/TypeScript, HTML/CSS, SQL (MySQL); C#, C++, C (academic)</div>
+    </div>
+  </div>
+
+<!-- EXPERIENCE -->
+  <div class="section">
+    <h2>Experience</h2>
+
+    <div class="job">
+      <div class="job-header">
+        <span class="job-title">QA Engineer</span>
+        <span class="job-dates">Aug 2025 – Present</span>
+      </div>
+      <div class="job-company">Ant International — Kuala Lumpur, Malaysia · Scope: A+ Marketing &amp; Voyager → A+ Marketing &amp; AlipayHK Wallet (Oct 2026)</div>
+      <ul>
+        <li>Own end-to-end frontend quality for Marketing and travel events, designing 80-160 test cases per project and surfacing ~15 pre-release defects per project</li>
+        <li>Migrated regression testing for the Alipay business line fully to automation across merchant-facing and consumer-facing suites, integrated with the team's AI-driven test harness; maintain a versioned regression set</li>
+        <li>Built and productized UI Automation One Framework, an iOS real-device UI automation stack (WebDriverAgent v16) with a 4-tier element-recognition fallback — coordinate cache → UI hierarchy → CDP WebView → Set-of-Mark/OCR vision — validated on TNG eWallet and now ported to AlipayHK Wallet</li>
+        <li>Driving the public open-source release of UI Automation One Framework, planned for end of 2026</li>
+        <li>Developed two AI testing skills adopted team-wide: an Excel→Gherkin BDD generator (≥70% test-creation time reduction) and an iOS WebDriverAgent real-device skill published to the team's AI coding-agent platform</li>
+        <li>Established Proxyman-based automated API mocking, enabling deterministic UI test states across wallet apps</li>
+
+      </ul>
+    </div>
+
+    </div>
+
+  <!-- PROJECTS -->
+  <div class="section">
+    <h2>Projects</h2>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">MAGI-QA '三智' — Multi-Agent AI Test-Analysis System</span>
+        <span class="project-tech">LLM orchestration, JSON schema design</span>
+      </div>
+      <ul>
+        <li>Designed a multi-agent LLM system converting product/design/API specs into test-analysis and test-case deliverables. Three specialized personas (spec compliance, user journeys, risk hunting) synthesized by an AI consensus engine</li>
+        <li>Architected an 8-skill file-based pipeline with a deterministic scope registry: unique ID per requirement and set-difference validation to detect missing requirement coverage and auto-generate gap-fill cases</li>
+        <li>Built consensus quality controls: domain-weighted voting, anti-anchoring Devil's-Advocate debate rules, mandatory per-case source citations, and an auditable evidence-based confidence score</li>
+      </ul>
+    </div>
+
+    <div class="project">
+      <div class="project-header">
+        <span class="project-name">Motion Tracker Analysis System (Final Year Project)</span>
+        <span class="project-tech">Python, Unity, Kinect</span>
+      </div>
+      <ul>
+        <li>Built a Python server bridging the Kinect sensor with a Unity interactive framework for exhibition use; achieved ~90% full-body tracking accuracy</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EDUCATION -->
+  <div class="section">
+    <h2>Education</h2>
+    <div class="edu-entry">
+      <span class="edu-degree">Bachelor of Computer Science (Interactive Software Technology)</span>
+      <span class="edu-year">2025</span>
+    </div>
+    <div class="edu-school">Tunku Abdul Rahman University of Management and Technology</div>
+  </div>
+
+  <!-- LANGUAGES -->
+  <div class="section">
+    <h2>Languages</h2>
+    <p class="lang-list">Mandarin (Native) · English (C1 Advanced, EF SET 61/100) · Malay (Professional working proficiency)</p>
+  </div>
+
+  </main>
+</body>
+</html>

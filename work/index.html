@@ -26,9 +26,9 @@ permalink: /work/
 
   {% if stack_set.size > 0 %}
   <div class="work-filters" role="group" aria-label="Filter projects by stack">
-    <button type="button" class="filter-chip is-active" data-filter="all">All</button>
+    <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All</button>
     {% for tech in stack_set %}
-    <button type="button" class="filter-chip" data-filter="{{ tech | slugify }}">{{ tech }}</button>
+    <button type="button" class="filter-chip" data-filter="{{ tech | slugify }}" aria-pressed="false">{{ tech }}</button>
     {% endfor %}
   </div>
   {% endif %}
@@ -37,7 +37,10 @@ permalink: /work/
     {% for project in projects %}
     {% assign slug_tags = "" %}
     {% if project.stack %}
-      {% for tech in project.stack %}{% assign slug_tags = slug_tags | append: tech | append: " " | append: tech | slugify | append: " " %}{% endfor %}
+      {% for tech in project.stack %}
+        {% assign tech_slug = tech | slugify %}
+        {% assign slug_tags = slug_tags | append: tech_slug | append: " " %}
+      {% endfor %}
     {% endif %}
     <a href="{{ project.url | relative_url }}" class="project-card" data-stack="{{ slug_tags | strip }}">
       <div class="project-card-glow"></div>
@@ -79,8 +82,12 @@ permalink: /work/
 
     chips.forEach(chip => {
       chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
+        chips.forEach(c => {
+          c.classList.remove('is-active');
+          c.setAttribute('aria-pressed', 'false');
+        });
         chip.classList.add('is-active');
+        chip.setAttribute('aria-pressed', 'true');
         const filter = chip.dataset.filter;
         cards.forEach(card => {
           const stack = (card.dataset.stack || '').toLowerCase();

@@ -24,15 +24,15 @@ The whole experience is a single interactive page served by Jekyll on GitHub Pag
 
 ### Card data model
 
-The full deck lives in [cards.js](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/tarot/cards.js) as a plain JavaScript array. Each card carries its arcana, suit, name, and imagery reference, which keeps the reading logic pure data-in / data-out and easy to extend.
+The full deck lives in [cards.js](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/tarot/cards.js) as a plain JavaScript array. Each card carries its arcana, suit, name, and imagery reference, which keeps the reading logic pure data-in / data-out and easy to extend.
 
 ### Interpretation engine
 
-[interpretations.js](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/tarot/interpretations.js) maps card + position to a written interpretation, so the same card reads differently in a "past" slot than in a "future" slot. This is where most of the writing lives.
+[interpretations.js](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/tarot/interpretations.js) maps card + position to a written interpretation, so the same card reads differently in a "past" slot than in a "future" slot. This is where most of the writing lives.
 
 ### CSS-first card flip
 
-Card animations in [tarot.css](file:///c:/Users/User/Documents/GitHub/monaruku.github.io/assets/tarot/tarot.css) use pure CSS 3D transforms — no animation library. The reveal timing and easing were tuned by hand to feel deliberate rather than snappy.
+Card animations in [tarot.css](https://github.com/Monaruku/monaruku.github.io/blob/main/assets/tarot/tarot.css) use pure CSS 3D transforms — no animation library. The reveal timing and easing were tuned by hand to feel deliberate rather than snappy.
 
 ## Notable details
 

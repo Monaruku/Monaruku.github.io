@@ -4,42 +4,65 @@ title: About Me
 permalink: /about/
 ---
 
-<div class="page about-page">
+<main class="page about-page">
   <header class="about-header">
-    <p class="section-eyebrow">About</p>
-    <h1 class="page-title gradient-about">Hi, I'm Monaruku</h1>
-    <p class="about-lede">I build small web experiments and write long-form pieces about the games I spend real time in. This site is where those two things live.</p>
+    <p class="section-eyebrow about-eyebrow">QA engineer · Kuala Lumpur, Malaysia</p>
+    <h1 class="page-title gradient-about">Hi, I'm Wong Yik Xiang.</h1>
+    <p class="about-alias">You may know me online as <strong>Monaruku</strong>.</p>
+    <p class="about-lede">I work on frontend quality for fintech products at Ant International, combining release testing with real-device automation and AI-assisted test analysis.</p>
+    <div class="hero-actions about-actions">
+      <a href="{{ '/resume/' | relative_url }}" class="btn btn-primary">View my CV <span aria-hidden="true">→</span></a>
+      <a href="mailto:yikxiangwong@gmail.com" class="btn btn-ghost">Email me <span aria-hidden="true">↗</span></a>
+    </div>
   </header>
 
   <div class="about-body">
-    <section class="about-block">
-      <h2 class="about-block-title">What I work with</h2>
-      <div class="stack-chips">
-        <span class="stack-chip">Jekyll</span>
-        <span class="stack-chip">Vanilla JS</span>
-        <span class="stack-chip">CSS</span>
-        <span class="stack-chip">HTML</span>
-        <span class="stack-chip">GitHub Pages</span>
+    <section class="about-block" aria-labelledby="about-approach">
+      <h2 class="about-block-title" id="about-approach">Making quality repeatable</h2>
+      <p class="about-paragraph">I'm interested in the engineering behind reliable testing: tracing requirements to test cases, making test environments predictable, and building tools that help teams investigate failures.</p>
+      <div class="about-focus-grid">
+        <article class="about-focus">
+          <h3>Real-device automation</h3>
+          <p>I built UI Automation One Framework for iOS testing, combining WebDriverAgent, UI hierarchy inspection, WebView automation, and vision-based fallbacks.</p>
+        </article>
+        <article class="about-focus">
+          <h3>AI-assisted test analysis</h3>
+          <p>I designed MAGI-QA to analyze specifications from multiple perspectives, with requirement traceability and source evidence to support human review.</p>
+        </article>
       </div>
     </section>
 
-    <section class="about-block">
-      <h2 class="about-block-title">Currently</h2>
-      <p class="about-paragraph">Refining the site's portfolio, writing new game reviews, and slowly expanding the Mystic Tarot experience.</p>
+    <section class="about-block" aria-labelledby="about-experience">
+      <h2 class="about-block-title" id="about-experience">Currently at Ant International</h2>
+      <p class="about-period">QA Engineer · <time datetime="2025-08">August 2025</time>–present</p>
+      <p class="about-paragraph">My work spans marketing and wallet experiences: planning frontend tests, investigating defects before release, maintaining regression automation, and using API mocking to create deterministic UI test states. I've also developed AI testing skills for BDD test-case generation and real-device testing.</p>
     </section>
 
-    <section class="about-block">
-      <h2 class="about-block-title">Say hello</h2>
+    <section class="about-block" aria-labelledby="about-tools">
+      <h2 class="about-block-title" id="about-tools">Tools I work with</h2>
+      <div class="stack-chips">
+        <span class="stack-chip">Python</span>
+        <span class="stack-chip">Java</span>
+        <span class="stack-chip">JavaScript / TypeScript</span>
+        <span class="stack-chip">WebDriverAgent</span>
+        <span class="stack-chip">Playwright</span>
+        <span class="stack-chip">Proxyman</span>
+        <span class="stack-chip">Git</span>
+      </div>
+    </section>
+
+    <section class="about-block" aria-labelledby="about-outside">
+      <h2 class="about-block-title" id="about-outside">Outside work</h2>
+      <p class="about-paragraph">I build browser-based tools and interactive experiments, from an <a href="{{ '/work/budget-tracker/' | relative_url }}">offline budget tracker</a> to a <a href="{{ '/work/mhw-stat-tracker/' | relative_url }}">Monster Hunter dashboard</a> and <a href="{{ '/work/tarot/' | relative_url }}">Mystic Tarot</a>. I also <a href="{{ '/blog/' | relative_url }}">write about games</a>. These projects are a place to explore ideas, design interactions, and learn by shipping.</p>
+    </section>
+
+    <section class="about-block about-contact" aria-labelledby="about-contact">
+      <h2 class="about-block-title" id="about-contact">Say hello</h2>
+      <p class="about-paragraph">For QA engineering opportunities or a conversation about testing and automation, reach me at <a href="mailto:yikxiangwong@gmail.com">yikxiangwong@gmail.com</a>.</p>
       <div class="contact-strip">
-        <a class="contact-pill" href="https://github.com/monaruku" rel="noopener">
-          <span>GitHub</span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="contact-pill" href="{{ '/work/' | relative_url }}">
-          <span>See my work</span>
-          <span aria-hidden="true">→</span>
-        </a>
+        <a class="contact-pill" href="https://github.com/monaruku" rel="noopener"><span>GitHub</span><span aria-hidden="true">↗</span></a>
+        <a class="contact-pill" href="{{ '/work/' | relative_url }}"><span>Explore my projects</span><span aria-hidden="true">→</span></a>
       </div>
     </section>
   </div>
-</div>
+</main>
