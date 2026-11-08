@@ -1,0 +1,74 @@
+---
+layout: default
+title: Photography
+permalink: /photography/
+photography: true
+section: photography
+---
+
+{% assign albums = site.photo_albums | where_exp: 'album', 'album.published != false' | sort: 'date' | reverse %}
+<main class="page photography-page">
+  <header class="photography-header">
+    <h1 class="photography-title">Learning to<br>look closer.</h1>
+    <p class="photography-intro">Street scenes, shared moments, and what I learn along the way. A place to document my photography journey, one frame at a time.</p>
+  </header>
+
+  <div class="photography-themes">
+    <section aria-labelledby="street-title">
+      <h2 id="street-title">Street</h2>
+      <p>Everyday life, passing light, and moments between destinations.</p>
+    </section>
+    <section aria-labelledby="events-title">
+      <h2 id="events-title">Events</h2>
+      <p>People coming together, the atmosphere, and the details that tell the story.</p>
+    </section>
+  </div>
+
+  <section aria-labelledby="albums-title" data-photo-archive>
+    <div class="photography-archive-heading">
+      <h2 id="albums-title">The journal</h2>
+      <p>Albums &amp; field notes</p>
+    </div>
+    {% if albums.size > 0 %}
+    <div class="photography-filters" role="group" aria-label="Filter photography albums" hidden>
+      <button type="button" class="photo-filter" data-photo-filter="all" aria-pressed="true" aria-controls="photo-albums">All</button>
+      <button type="button" class="photo-filter" data-photo-filter="street" aria-pressed="false" aria-controls="photo-albums">Street</button>
+      <button type="button" class="photo-filter" data-photo-filter="events" aria-pressed="false" aria-controls="photo-albums">Events</button>
+    </div>
+    <p class="photo-sr-only" role="status" data-photo-status></p>
+    <div class="photography-albums" id="photo-albums">
+      {% for album in albums %}
+      {% assign cover = album.photos | first %}
+      <article class="photo-album-card" data-photo-category="{{ album.category | escape }}">
+        <a href="{{ album.url | relative_url }}" class="photo-album-link">
+          {% if cover %}
+          <img class="photo-album-cover" src="{{ cover.thumb | default: cover.src | relative_url }}" alt="{{ cover.alt | escape }}" width="{{ cover.thumb_width | default: cover.width }}" height="{{ cover.thumb_height | default: cover.height }}" loading="lazy" decoding="async">
+          {% endif %}
+          <div class="photo-album-info">
+            <h3>{{ album.title | escape }}</h3>
+            <div class="photo-album-meta">
+              <span>{{ album.category | capitalize | escape }}</span>
+              <time datetime="{{ album.date | date: '%Y-%m-%d' }}">{{ album.date | date: '%d %b %Y' }}</time>
+              {% if album.location and album.location != '' %}<span>{{ album.location | escape }}</span>{% endif %}
+            </div>
+            {% if album.summary %}<p>{{ album.summary | escape }}</p>{% endif %}
+            <span class="photo-album-cta">View album <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          </div>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="photography-empty" data-photo-empty hidden>
+      <h3>No albums in this collection yet.</h3>
+      <p>Try All to explore the rest of the journal.</p>
+    </div>
+    {% else %}
+    <div class="photography-empty">
+      <h3>First albums on their way.</h3>
+      <p>This is the beginning of my photography journal. Street and event albums will appear here as I share them.</p>
+    </div>
+    {% endif %}
+  </section>
+  <footer class="photography-footer"><p>Monaruku · Photography journal</p></footer>
+</main>
+<script src="{{ '/assets/photography/filters.js' | relative_url }}" defer></script>

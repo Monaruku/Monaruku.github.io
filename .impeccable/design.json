@@ -1,0 +1,503 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T12:22:49.297Z",
+  "title": "Design System: Monaruku",
+  "extensions": {
+    "colorMeta": {
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "tonalRamp": [
+          "oklch(15% 0.0027 196.7)",
+          "oklch(26% 0.0044 196.7)",
+          "oklch(38% 0.0056 196.7)",
+          "oklch(49% 0.0060 196.7)",
+          "oklch(61% 0.0057 196.7)",
+          "oklch(72% 0.0047 196.7)",
+          "oklch(84% 0.0029 196.7)",
+          "oklch(95% 0.0009 196.7)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Pale Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0109 85.8)",
+          "oklch(26% 0.0176 85.8)",
+          "oklch(38% 0.0224 85.8)",
+          "oklch(49% 0.0241 85.8)",
+          "oklch(61% 0.0227 85.8)",
+          "oklch(72% 0.0186 85.8)",
+          "oklch(84% 0.0116 85.8)",
+          "oklch(95% 0.0038 85.8)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Deep Paper",
+        "tonalRamp": [
+          "oklch(15% 0.0137 85.6)",
+          "oklch(26% 0.0219 85.6)",
+          "oklch(38% 0.0280 85.6)",
+          "oklch(49% 0.0301 85.6)",
+          "oklch(61% 0.0283 85.6)",
+          "oklch(72% 0.0232 85.6)",
+          "oklch(84% 0.0145 85.6)",
+          "oklch(95% 0.0047 85.6)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "mustard": {
+        "role": "primary",
+        "displayName": "Mustard",
+        "tonalRamp": [
+          "oklch(15% 0.0637 86.6)",
+          "oklch(26% 0.1023 86.6)",
+          "oklch(38% 0.1304 86.6)",
+          "oklch(49% 0.1402 86.6)",
+          "oklch(61% 0.1320 86.6)",
+          "oklch(72% 0.1081 86.6)",
+          "oklch(84% 0.0676 86.6)",
+          "oklch(95% 0.0219 86.6)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "teal": {
+        "role": "primary",
+        "displayName": "Deep Teal",
+        "tonalRamp": [
+          "oklch(15% 0.0347 198.5)",
+          "oklch(26% 0.0557 198.5)",
+          "oklch(38% 0.0711 198.5)",
+          "oklch(49% 0.0764 198.5)",
+          "oklch(61% 0.0719 198.5)",
+          "oklch(72% 0.0589 198.5)",
+          "oklch(84% 0.0368 198.5)",
+          "oklch(95% 0.0120 198.5)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "brick": {
+        "role": "secondary",
+        "displayName": "Brick",
+        "tonalRamp": [
+          "oklch(15% 0.0688 29.4)",
+          "oklch(26% 0.1105 29.4)",
+          "oklch(38% 0.1410 29.4)",
+          "oklch(49% 0.1515 29.4)",
+          "oklch(61% 0.1426 29.4)",
+          "oklch(72% 0.1168 29.4)",
+          "oklch(84% 0.0730 29.4)",
+          "oklch(95% 0.0237 29.4)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0073 173.6)",
+          "oklch(26% 0.0118 173.6)",
+          "oklch(38% 0.0150 173.6)",
+          "oklch(49% 0.0162 173.6)",
+          "oklch(61% 0.0152 173.6)",
+          "oklch(72% 0.0125 173.6)",
+          "oklch(84% 0.0078 173.6)",
+          "oklch(95% 0.0025 173.6)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Line",
+        "tonalRamp": [
+          "oklch(15% 0.0131 88.8)",
+          "oklch(26% 0.0211 88.8)",
+          "oklch(38% 0.0269 88.8)",
+          "oklch(49% 0.0289 88.8)",
+          "oklch(61% 0.0272 88.8)",
+          "oklch(72% 0.0223 88.8)",
+          "oklch(84% 0.0139 88.8)",
+          "oklch(95% 0.0045 88.8)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "field": {
+        "role": "neutral",
+        "displayName": "Field",
+        "tonalRamp": [
+          "oklch(15% 0.0044 87.5)",
+          "oklch(26% 0.0071 87.5)",
+          "oklch(38% 0.0091 87.5)",
+          "oklch(49% 0.0098 87.5)",
+          "oklch(61% 0.0092 87.5)",
+          "oklch(72% 0.0075 87.5)",
+          "oklch(84% 0.0047 87.5)",
+          "oklch(95% 0.0015 87.5)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "tonalRamp": [
+          "oklch(15% 0.0000 89.9)",
+          "oklch(26% 0.0000 89.9)",
+          "oklch(38% 0.0000 89.9)",
+          "oklch(49% 0.0000 89.9)",
+          "oklch(61% 0.0000 89.9)",
+          "oklch(72% 0.0000 89.9)",
+          "oklch(84% 0.0000 89.9)",
+          "oklch(95% 0.0000 89.9)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "teal-hover": {
+        "role": "primary",
+        "displayName": "Teal Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0290 197.9)",
+          "oklch(26% 0.0466 197.9)",
+          "oklch(38% 0.0594 197.9)",
+          "oklch(49% 0.0638 197.9)",
+          "oklch(61% 0.0601 197.9)",
+          "oklch(72% 0.0492 197.9)",
+          "oklch(84% 0.0308 197.9)",
+          "oklch(95% 0.0100 197.9)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "teal-active": {
+        "role": "primary",
+        "displayName": "Teal Active",
+        "tonalRamp": [
+          "oklch(15% 0.0236 198.8)",
+          "oklch(26% 0.0379 198.8)",
+          "oklch(38% 0.0484 198.8)",
+          "oklch(49% 0.0520 198.8)",
+          "oklch(61% 0.0490 198.8)",
+          "oklch(72% 0.0401 198.8)",
+          "oklch(84% 0.0251 198.8)",
+          "oklch(95% 0.0081 198.8)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "teal-wash": {
+        "role": "neutral",
+        "displayName": "Teal Wash",
+        "tonalRamp": [
+          "oklch(15% 0.0062 145.5)",
+          "oklch(26% 0.0099 145.5)",
+          "oklch(38% 0.0127 145.5)",
+          "oklch(49% 0.0136 145.5)",
+          "oklch(61% 0.0128 145.5)",
+          "oklch(72% 0.0105 145.5)",
+          "oklch(84% 0.0066 145.5)",
+          "oklch(95% 0.0021 145.5)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      },
+      "caution": {
+        "role": "secondary",
+        "displayName": "Caution",
+        "tonalRamp": [
+          "oklch(15% 0.0395 80.9)",
+          "oklch(26% 0.0634 80.9)",
+          "oklch(38% 0.0809 80.9)",
+          "oklch(49% 0.0870 80.9)",
+          "oklch(61% 0.0819 80.9)",
+          "oklch(72% 0.0671 80.9)",
+          "oklch(84% 0.0419 80.9)",
+          "oklch(95% 0.0136 80.9)"
+        ],
+        "rampProvenance": "Synthesized for the design panel; these are previews, not additional implementation tokens."
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Home destination titles; uppercase in the title frames."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Responsive index-page title."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Project-card title."
+      },
+      "reading-heading": {
+        "displayName": "Reading heading",
+        "purpose": "Project and article body section heading."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Shared paragraph default; typically 70ch maximum for article/project prose."
+      },
+      "intro": {
+        "displayName": "Intro",
+        "purpose": "Index-page opening paragraph."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Secondary dates and metadata; no ornamental kicker role."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Tool action text; line-height is left to the actual control variant."
+      },
+      "data-heading": {
+        "displayName": "Data heading",
+        "purpose": "MH Wilds section heading."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tarot-deck",
+        "value": "0 8px 20px rgba(23,27,27,.16)",
+        "purpose": "Stacked shuffling Tarot cards only."
+      },
+      {
+        "name": "monster-dialog",
+        "value": "0 24px 70px rgba(0,0,0,.25)",
+        "purpose": "The open MH Wilds monster dialog."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "Navigation and title-link underline feedback."
+      },
+      {
+        "name": "title-underline",
+        "value": "transform 240ms var(--ease-out)",
+        "purpose": "Reveal from the left on hover and focus; disabled for reduced motion."
+      },
+      {
+        "name": "tool-state",
+        "value": "background-color .15s ease",
+        "purpose": "Tarot and MH Wilds action-button states."
+      },
+      {
+        "name": "photo-filter",
+        "value": "background 150ms ease, color 150ms ease",
+        "purpose": "Photography archive filter states."
+      },
+      {
+        "name": "tarot-flip",
+        "value": "transform .65s ease",
+        "purpose": "Task-driven card reveal; removed for reduced motion."
+      },
+      {
+        "name": "tarot-shuffle",
+        "value": "2.5s ease-in-out infinite",
+        "purpose": "The existing shuffle phase; removed for reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "wide-frame",
+        "value": "1600px",
+        "query": "min-width",
+        "purpose": "Add outer home-frame seams."
+      },
+      {
+        "name": "intermediate",
+        "value": "1000px",
+        "query": "max-width",
+        "purpose": "Editorial and MH Wilds intermediate layouts."
+      },
+      {
+        "name": "editorial-mobile",
+        "value": "760px",
+        "query": "max-width",
+        "purpose": "Stack the shared home and editorial layouts."
+      },
+      {
+        "name": "quest-stack",
+        "value": "720px",
+        "query": "max-width",
+        "purpose": "Stack the MH Wilds quest layout."
+      },
+      {
+        "name": "tarot-cv-mobile",
+        "value": "700px",
+        "query": "max-width",
+        "purpose": "Tarot grid and CV row changes."
+      },
+      {
+        "name": "photo-mhw-mobile",
+        "value": "640px",
+        "query": "max-width",
+        "purpose": "Single-column photography and compact MH Wilds layouts."
+      },
+      {
+        "name": "tarot-narrow",
+        "value": "400px",
+        "query": "max-width",
+        "purpose": "Three-column Tarot selection fan."
+      },
+      {
+        "name": "editorial-narrow",
+        "value": "360px",
+        "query": "max-width",
+        "purpose": "Narrow editorial gutters and title adjustments."
+      }
+    ],
+    "focus": [
+      {
+        "name": "shared",
+        "value": "3px solid currentColor; outline-offset: 5px",
+        "purpose": "Shared keyboard focus."
+      },
+      {
+        "name": "tool",
+        "value": "3px solid var(--teal); outline-offset: 3px",
+        "purpose": "MH Wilds; Tarot uses a 4px offset."
+      },
+      {
+        "name": "cv",
+        "value": "3px solid var(--mustard); outline-offset: 4px",
+        "purpose": "CV screen actions."
+      }
+    ],
+    "scope": {
+      "sources": [
+        "assets/css/style.css",
+        "assets/css/fonts.css",
+        "assets/photography/photography.css",
+        "assets/tarot/tarot.css",
+        "assets/mhw/mhw.css",
+        "resume/index.html"
+      ],
+      "excluded": [
+        "budget/**",
+        "assets/budget/**",
+        "BudgetTracker-Spec.md"
+      ],
+      "printException": "The CV keeps its independent A4 print stylesheet.",
+      "review": ".impeccable/review/finish-review.md"
+    }
+  },
+  "components": [
+    {
+      "name": "Editorial primary button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Ink-filled link for a primary destination.",
+      "html": "<a class=\"ds-button-primary\" href=\"/work/\">Explore the work</a>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:11px 22px;border:1px solid var(--ink, #171b1b);background:var(--ink, #171b1b);color:var(--paper, #f5eddc);font:600 1.125rem/1.6 var(--font-body, 'Barlow', sans-serif);text-decoration:none;cursor:pointer;} .ds-button-primary:hover{background:var(--teal, #146b6e);border-color:var(--teal, #146b6e);} .ds-button-primary:focus-visible{outline:3px solid var(--teal, #146b6e);outline-offset:5px;}"
+    },
+    {
+      "name": "Editorial ghost button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Outlined alternative beside an editorial action.",
+      "html": "<a class=\"ds-button-ghost\" href=\"/about/\">About me</a>",
+      "css": ".ds-button-ghost{display:inline-flex;align-items:center;justify-content:center;gap:18px;min-height:48px;padding:11px 22px;border:1px solid var(--ink, #171b1b);background:transparent;color:var(--ink, #171b1b);font:600 1.125rem/1.6 var(--font-body, 'Barlow', sans-serif);text-decoration:none;cursor:pointer;} .ds-button-ghost:hover{background:var(--paper-deep, #e8dec9);} .ds-button-ghost:focus-visible{outline:3px solid var(--ink, #171b1b);outline-offset:5px;}"
+    },
+    {
+      "name": "Tool action",
+      "kind": "button",
+      "refersTo": "button-operate",
+      "description": "The MH Wilds teal action; Tarot uses the same family with larger padding.",
+      "html": "<button class=\"ds-tool-button\" type=\"button\">Load from paste</button>",
+      "css": ".ds-tool-button{min-height:44px;padding:.65rem 1rem;border:1px solid var(--teal, #146b6e);border-radius:6px;background:var(--teal, #146b6e);color:#fff;font:600 1rem var(--font-body, 'Barlow', sans-serif);cursor:pointer;transition:background-color .15s ease;} .ds-tool-button:hover{background:#0c5254;border-color:#0c5254;} .ds-tool-button:active{background:#093e40;} .ds-tool-button:disabled{opacity:.55;cursor:wait;} .ds-tool-button:focus-visible{outline:3px solid var(--teal, #146b6e);outline-offset:3px;} @media(prefers-reduced-motion:reduce){.ds-tool-button{transition:none;}}"
+    },
+    {
+      "name": "Tool ghost action",
+      "kind": "button",
+      "refersTo": "button-operate-ghost",
+      "description": "Secondary action in MH Wilds.",
+      "html": "<button class=\"ds-tool-ghost\" type=\"button\">Explore with sample data</button>",
+      "css": ".ds-tool-ghost{min-height:44px;padding:.65rem 1rem;border:1px solid var(--teal, #146b6e);border-radius:6px;background:transparent;color:var(--teal, #146b6e);font:600 1rem var(--font-body, 'Barlow', sans-serif);cursor:pointer;transition:background-color .15s ease;} .ds-tool-ghost:active{background:#093e40;} .ds-tool-ghost:hover{background:var(--teal, #146b6e);border-color:#0c5254;color:#fff;} .ds-tool-ghost:disabled{opacity:.55;cursor:wait;} .ds-tool-ghost:focus-visible{outline:3px solid var(--teal, #146b6e);outline-offset:3px;} @media(prefers-reduced-motion:reduce){.ds-tool-ghost{transition:none;}}"
+    },
+    {
+      "name": "Question field",
+      "kind": "input",
+      "refersTo": "input-intention",
+      "description": "The Tarot intention field, with its label and visible focus.",
+      "html": "<label class=\"ds-question-label\" for=\"ds-question\">Your question <span>(optional)</span></label><input class=\"ds-question\" id=\"ds-question\" type=\"text\" placeholder=\"What would you like to reflect on?\">",
+      "css": ".ds-question-label{display:block;margin:1.75rem 0 .5rem;color:var(--ink, #171b1b);font:600 1.125rem/1.6 var(--font-body, 'Barlow', sans-serif);}.ds-question-label span{font-weight:400;color:var(--muted, #535f5b);}.ds-question{width:100%;min-height:52px;padding:.8rem 1rem;border:1px solid var(--muted, #535f5b);border-radius:6px;background:#fffcf5;color:var(--ink, #171b1b);font:400 1.125rem/1.6 var(--font-body, 'Barlow', sans-serif);caret-color:var(--teal, #146b6e);}.ds-question::placeholder{color:var(--muted, #535f5b);opacity:1;}.ds-question:focus-visible{outline:3px solid var(--teal, #146b6e);outline-offset:4px;}"
+    },
+    {
+      "name": "Photography filters",
+      "kind": "chip",
+      "refersTo": "filter-photo",
+      "description": "Square archive controls with an ink-filled selected state.",
+      "html": "<div class=\"ds-filters\" role=\"group\" aria-label=\"Filter photography albums\"><button class=\"ds-filter\" type=\"button\" aria-pressed=\"true\">All</button><button class=\"ds-filter\" type=\"button\" aria-pressed=\"false\">Street</button><button class=\"ds-filter\" type=\"button\" aria-pressed=\"false\">Events</button></div>",
+      "css": ".ds-filters{display:flex;flex-wrap:wrap;gap:.5rem;}.ds-filter{appearance:none;min-height:44px;padding:.6rem 1.15rem;border:1px solid var(--ink, #171b1b);border-radius:0;background:transparent;color:var(--ink, #171b1b);font:600 1rem/1.25 var(--font-body, 'Barlow', sans-serif);cursor:pointer;transition:background 150ms ease,color 150ms ease;}.ds-filter:hover{background:var(--paper-deep, #e8dec9);}.ds-filter[aria-pressed=\"true\"]{background:var(--ink, #171b1b);color:var(--paper, #f5eddc);}.ds-filter:focus-visible{outline:3px solid var(--teal, #146b6e);outline-offset:5px;}@media(prefers-reduced-motion:reduce){.ds-filter{transition:none;}}"
+    },
+    {
+      "name": "Main navigation",
+      "kind": "nav",
+      "refersTo": "navigation-link",
+      "description": "Visible navigation with current-page, hover and focus underlines.",
+      "html": "<nav aria-label=\"Main navigation\"><ul class=\"ds-nav\"><li><a href=\"/work/\" aria-current=\"page\">Work</a></li><li><a href=\"/blog/\">Writing</a></li><li><a href=\"/photography/\">Photography</a></li><li><a href=\"/about/\">About</a></li></ul></nav>",
+      "css": ".ds-nav{display:flex;flex-wrap:wrap;gap:28px;margin:0;padding:0;list-style:none;font:400 1.125rem/1.6 var(--font-body, 'Barlow', sans-serif);color:var(--ink, #171b1b);}.ds-nav a{display:block;position:relative;padding:5px 0;color:inherit;font-weight:600;text-decoration:none;}.ds-nav a::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:3px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 240ms var(--ease-out, cubic-bezier(.16, 1, .3, 1));}.ds-nav a:is(:hover,:focus-visible,[aria-current])::after{transform:scaleX(1);}.ds-nav a:focus-visible{outline:3px solid var(--ink, #171b1b);outline-offset:5px;}@media(max-width:760px){.ds-nav{gap:14px 22px;font-size:1rem;}}@media(prefers-reduced-motion:reduce){.ds-nav a::after{transition:none;}}"
+    },
+    {
+      "name": "Tool section",
+      "kind": "card",
+      "refersTo": "tool-section",
+      "description": "Quiet, rule-separated data section rather than a floating card.",
+      "html": "<section class=\"ds-tool-section\"><h2>Weapon usage</h2><p>Quests completed by category</p></section>",
+      "css": ".ds-tool-section{border:0;border-top:1px solid var(--line, #c5bda9);padding:2rem 0;color:var(--ink, #171b1b);font-family:var(--font-body, 'Barlow', sans-serif);}.ds-tool-section h2{margin:0 0 1rem;color:var(--ink, #171b1b);font:700 1.5rem/1.25 var(--font-body, 'Barlow', sans-serif);}.ds-tool-section p{margin:-.5rem 0 1.25rem;color:var(--muted, #535f5b);font:400 1rem/1.6 var(--font-body, 'Barlow', sans-serif);}@media(max-width:640px){.ds-tool-section{padding:1.5rem 0;}}"
+    },
+    {
+      "name": "Title-frame link",
+      "kind": "custom",
+      "refersTo": "title-link",
+      "description": "The short underline is the title sequence's signature link feedback.",
+      "html": "<div class=\"ds-title-frame\"><h2><a href=\"/work/\">Work</a></h2></div>",
+      "css": ".ds-title-frame{padding:30px 40px 22px;background:var(--mustard, #e0b23c);color:var(--ink, #171b1b);border-bottom:3px solid var(--ink, #171b1b);}.ds-title-frame h2{margin:0;font:400 clamp(3.3rem,6.7vw,6rem)/1.05 var(--font-display, 'Anton', sans-serif);letter-spacing:-.025em;text-transform:uppercase;}.ds-title-frame a{position:relative;color:inherit;text-decoration:none;}.ds-title-frame a::after{content:'';position:absolute;left:0;bottom:-5px;width:.8em;height:4px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform 240ms var(--ease-out, cubic-bezier(.16, 1, .3, 1));}.ds-title-frame a:is(:hover,:focus-visible)::after{transform:scaleX(1);}.ds-title-frame a:focus-visible{outline:3px solid var(--ink, #171b1b);outline-offset:5px;}@media(max-width:760px){.ds-title-frame{padding:28px 24px 24px;}.ds-title-frame h2{font-size:4rem;}}@media(prefers-reduced-motion:reduce){.ds-title-frame a::after{transition:none;}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Title Sequence",
+    "overview": "The Title Sequence is a personal anthology told through large condensed titles, decisive color fields and dark structural seams. Mustard, deep teal and brick carry the expressive surfaces; pale paper gives work, writing and personal identity a common ground.\n\nThe interior pages lower the volume for reading and operation. Anton names destinations and sections; Barlow carries paragraphs, controls and data. The world is crisp and predominantly flat, with no ornamental grain or glow. Existing artwork supplies the imagery; the photography archive stays truthful about photographs that have not yet been supplied.",
+    "keyCharacteristics": [
+      "Large Anton titles paired with readable Barlow text.",
+      "Mustard, deep teal and brick fields on pale paper.",
+      "Dark structural seams and square editorial frames.",
+      "Quiet reading measures and restrained tool controls.",
+      "Short underline feedback with visible keyboard focus."
+    ],
+    "rules": [
+      {
+        "name": "The Color Field Rule",
+        "body": "Use the strong palette as substantial title fields or meaningful interface states. Keep reading surfaces on pale paper.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Anton names the place; Barlow carries the reading and operation. Article and project body headings use Barlow, while photographic stories retain their existing Anton section headings.",
+        "section": "typography"
+      },
+      {
+        "name": "The Functional Depth Rule",
+        "body": "Editorial frames have no shadows. Preserve the soft Tarot deck shadow and the MH Wilds dialog shadow only for their existing physical-card and overlay roles.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use the shared palette and self-hosted Anton/Barlow pairing for new screen surfaces.",
+      "Do retain dark seams for major editorial divisions and lighter rules for repeated reading or data rows.",
+      "Do give article and project prose a readable measure and allow the mobile layout to become a clear vertical sequence.",
+      "Do preserve visible focus, selected-state text or semantics, and reduced-motion behavior.",
+      "Do show supplied artwork honestly and keep personal photography uncropped; record image origins in assets/ASSET-SOURCES.md.",
+      "Do use quieter Barlow controls and the existing tool variants within Tarot and MH Wilds."
+    ],
+    "donts": [
+      "Don't add ornamental grain, glow, gradients or texture simulations to the title-sequence world.",
+      "Don't turn the entire interface into rounded floating cards; the editorial surfaces are flat and square.",
+      "Don't use Anton for long paragraphs or dense tool data.",
+      "Don't make content depend on an entrance animation or hide destinations behind motion.",
+      "Don't fabricate personal photographs, portraits or visual evidence of work.",
+      "Don't apply this system to the excluded budget app or replace the CV's dedicated print treatment."
+    ]
+  }
+}

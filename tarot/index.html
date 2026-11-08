@@ -2,13 +2,16 @@
 layout: default
 title: Tarot
 permalink: /tarot/
+section: tarot
 ---
 
 <link rel="stylesheet" href="{{ '/assets/tarot/tarot.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
 
-<div class="page">
-  <a href="{{ '/' | relative_url }}" class="back-link">&larr; Back to portal</a>
-  <h1 class="page-title gradient-tarot">Tarot</h1>
+<main>
+<div class="page tool-heading">
+  <a href="{{ '/' | relative_url }}" class="back-link">Back to home</a>
+  <h1 class="page-title">MysticTarot</h1>
+  <p class="tarot-sub">A three-card reading for your past, present and future.</p>
 </div>
 
 <div class="tarot-app">
@@ -16,13 +19,13 @@ permalink: /tarot/
   <!-- Phase 1: Intention -->
   <div id="phase-intention" class="phase phase-active">
     <div class="intention-content">
-      <span class="phase-icon">&#x2726;</span>
       <h2>Set Your Intention</h2>
       <p>Take a moment to center yourself. Focus on a question, situation, or area of your life where you seek guidance.</p>
-      <input type="text" id="intention-input"
+      <label for="intention-input">Your question <span>(optional)</span></label>
+      <input type="text" id="intention-input" aria-describedby="intention-hint"
              placeholder="What seeks your attention today?"
              maxlength="200" autocomplete="off">
-      <p class="intention-hint">You may type a question or leave it open.</p>
+      <p id="intention-hint" class="intention-hint">You may type a question or leave it open.</p>
       <button id="btn-shuffle" class="tarot-btn">Shuffle the Deck</button>
     </div>
   </div>
@@ -32,26 +35,11 @@ permalink: /tarot/
     <h2>Choose Your Focus</h2>
     <p>Select the area of life you'd like the reading to illuminate.</p>
     <div class="category-grid">
-      <div class="category-card" data-category="love">
-        <span class="cat-icon">&#9829;</span>
-        <span class="cat-label">Love</span>
-      </div>
-      <div class="category-card" data-category="career">
-        <span class="cat-icon">&#9733;</span>
-        <span class="cat-label">Career</span>
-      </div>
-      <div class="category-card" data-category="health">
-        <span class="cat-icon">&#10022;</span>
-        <span class="cat-label">Health</span>
-      </div>
-      <div class="category-card" data-category="spiritual">
-        <span class="cat-icon">&#10023;</span>
-        <span class="cat-label">Spiritual</span>
-      </div>
-      <div class="category-card" data-category="general">
-        <span class="cat-icon">&#9678;</span>
-        <span class="cat-label">General</span>
-      </div>
+      <button type="button" class="category-card" data-category="love"><span class="cat-label">Love</span></button>
+      <button type="button" class="category-card" data-category="career"><span class="cat-label">Career</span></button>
+      <button type="button" class="category-card" data-category="health"><span class="cat-label">Health</span></button>
+      <button type="button" class="category-card" data-category="spiritual"><span class="cat-label">Spiritual</span></button>
+      <button type="button" class="category-card" data-category="general"><span class="cat-label">General</span></button>
     </div>
   </div>
 
@@ -60,7 +48,7 @@ permalink: /tarot/
     <div class="shuffle-container">
       <h2>Shuffling the Deck...</h2>
       <p>The cards are mixing with your intention. Stop when it feels right.</p>
-      <div class="shuffle-deck">
+      <div class="shuffle-deck" aria-hidden="true">
         <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
         <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
         <div class="shuffle-card"><img src="{{ '/assets/tarot/card-back.png' | relative_url }}" alt=""></div>
@@ -74,7 +62,7 @@ permalink: /tarot/
   <!-- Phase 4: Select -->
   <div id="phase-select" class="phase">
     <h2>Select Three Cards</h2>
-    <p class="select-instruction">Choose a card for: <span id="position-prompt" class="position-prompt past">Past</span></p>
+    <p class="select-instruction" aria-live="polite">Choose a card for: <span id="position-prompt" class="position-prompt past">Past</span></p>
     <div id="select-fan" class="select-fan"></div>
   </div>
 
@@ -97,6 +85,8 @@ permalink: /tarot/
   </div>
 
 </div>
+
+</main>
 
 <script>
   window.TAROT_CARD_BACK = "{{ '/assets/tarot/card-back.png' | relative_url }}";

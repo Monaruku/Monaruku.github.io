@@ -1,0 +1,10 @@
+PhotoSwipe 5.4.4 by Dmytro Semenov
+https://github.com/dimsemenov/PhotoSwipe/tree/v5.4.4
+
+Unmodified distribution files from that tag:
+dist/photoswipe-lightbox.esm.min.js
+dist/photoswipe.esm.min.js
+dist/photoswipe.css
+LICENSE (MIT)
+
+Self-hosted to avoid a third-party runtime CDN dependency.

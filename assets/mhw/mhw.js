@@ -377,13 +377,21 @@
     light_bowgun:     ico(fp("M3 10.2h12.5v3.4H3z") + fp("M15.5 10.9H20v2h-4.5z") + fp("M6 13.6 4.6 19h3.2l1.2-5.4z") + fp("M11.5 13.6v3.2h2v-3.2z"))
   };
 
-  /* Categorical palette — violet first (theme), then distinct hues. */
-  var PALETTE = ["#a78bfa", "#f0913f", "#e4645f", "#f472b6", "#f7d154", "#60a5fa", "#45d0c0", "#b8e356"];
-  var OTHER_COLOR = "rgba(240,240,245,0.3)";
+  /* Categorical colors remain distinct and legible on the cream surface. */
+  var PALETTE = ["#146b6e", "#a9372b", "#795816", "#365f8d", "#6e527c", "#365f30", "#875027", "#4c6067"];
+  var OTHER_COLOR = "#697770";
+  var CLOSE_ICON = ico('<path d="m6 6 12 12M18 6 6 18"/>');
+  var CROWN_ICON = ico('<path d="m3 6 5 4 4-7 4 7 5-4-2 13H5L3 6Zm2 10h14"/>');
 
   var QUEST_ICONS = {
-    assignments: "❗", optional: "📋", field_survey: "🧭", arena: "⚔️",
-    investigations: "🔍", event: "🎪", free_challenge: "🏁", challenge: "🏆"
+    assignments: ico('<circle cx="12" cy="12" r="9"/><path d="M12 7v6m0 4v.1"/>'),
+    optional: ico('<path d="M8 4H5v17h14V4h-3M9 3h6v4H9zm-1 9h8m-8 4h5"/>'),
+    field_survey: ico('<circle cx="12" cy="12" r="9"/><path d="m16 8-3 5-5 3 3-5Z"/>'),
+    arena: ico('<path d="m4 3 16 18M20 3 4 21M3 16l5 5m8 0 5-5"/>'),
+    investigations: ico('<circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/>'),
+    event: ico('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18m-13 5h2m4 0h2"/>'),
+    free_challenge: ico('<path d="M5 22V3m0 1h14l-3 5 3 5H5"/>'),
+    challenge: ico('<path d="M7 3h10v8a5 5 0 0 1-10 0V3Zm0 2H3v4a4 4 0 0 0 4 4m10-8h4v4a4 4 0 0 1-4 4m-5 3v5m-4 0h8"/>')
   };
 
   function hexRgb(hex) {
@@ -435,6 +443,10 @@
     list.forEach(function (r) {
       var chip = document.createElement("span");
       chip.className = "roster-chip" + (current && current.id === r.id ? " roster-chip--active" : "");
+      var choose = document.createElement("button");
+      choose.type = "button";
+      choose.className = "roster-select";
+      choose.setAttribute("aria-pressed", current && current.id === r.id ? "true" : "false");
       var label = document.createElement("span");
       label.textContent = r.name;
       var hr = document.createElement("span");
@@ -444,17 +456,19 @@
       pick.type = "button";
       pick.className = "chip-remove";
       pick.title = "Remove " + r.name;
-      pick.textContent = "×";
+      pick.setAttribute("aria-label", "Remove " + r.name);
+      pick.innerHTML = CLOSE_ICON;
       pick.addEventListener("click", function (ev) {
         ev.stopPropagation();
         rosterRemove(r.id);
         if (current && current.id === r.id) hideDashboard();
         renderRoster();
       });
-      chip.appendChild(label);
-      chip.appendChild(hr);
+      choose.appendChild(label);
+      choose.appendChild(hr);
+      chip.appendChild(choose);
       chip.appendChild(pick);
-      chip.addEventListener("click", function () {
+      choose.addEventListener("click", function () {
         acceptData(r.data, { silent: true });
       });
       els.rosterList.appendChild(chip);
@@ -516,7 +530,7 @@
 
       var icoSpan = document.createElement("span");
       icoSpan.className = "qtile-ico";
-      icoSpan.textContent = QUEST_ICONS[r.slug] || "•";
+      icoSpan.innerHTML = QUEST_ICONS[r.slug] || ico('<circle cx="12" cy="12" r="7"/>');
 
       var val = document.createElement("span");
       val.className = "qtile-val";
@@ -526,7 +540,7 @@
       track.className = "qtile-track";
       var fill = document.createElement("div");
       fill.className = "qtile-fill";
-      fill.style.background = "linear-gradient(to top," + tint(r.color, 0.35) + "," + r.color + ")";
+      fill.style.background = r.color;
       fill.style.height = "0%";
       fill.setAttribute("data-h", max > 0 ? Math.max((r.n / max) * 100, r.n > 0 ? 4 : 0).toFixed(2) + "%" : "0%");
       fill.style.transitionDelay = (i * 45 + 150) + "ms";
@@ -730,7 +744,7 @@
         /* Sub view: single full-brightness bar for secondary usage */
         var fillS = document.createElement("div");
         fillS.className = "weapon-bar-fill";
-        fillS.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
+        fillS.style.background = color;
         fillS.style.width = "0%";
         fillS.setAttribute("data-w", grand > 0 ? Math.max((c.sub / grand) * 100, c.sub > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
         fillS.style.transitionDelay = (i * 28) + "ms";
@@ -739,7 +753,7 @@
         /* Main view: main usage only */
         var fillMain = document.createElement("div");
         fillMain.className = "weapon-bar-fill";
-        fillMain.style.background = "linear-gradient(90deg," + tint(color, 0.45) + "," + color + ")";
+        fillMain.style.background = color;
         fillMain.style.width = "0%";
         fillMain.setAttribute("data-w", grand > 0 ? Math.max((c.main / grand) * 100, c.main > 0 ? 2 : 0).toFixed(2) + "%" : "0%");
         fillMain.style.transitionDelay = (i * 28) + "ms";
@@ -765,7 +779,8 @@
         var subBadge = document.createElement("span");
         subBadge.className = "weapon-sub-badge";
         subBadge.title = fmtInt(c.sub) + " quests as secondary";
-        subBadge.textContent = "⚡" + fmtInt(c.sub);
+        subBadge.setAttribute("aria-label", subBadge.title);
+        subBadge.textContent = "S: " + fmtInt(c.sub);
         row.appendChild(subBadge);
       }
 
@@ -821,10 +836,10 @@
     var speciesHunted = rows.filter(function (r) { return r.hunted > 0; }).length;
 
     els.logRings.innerHTML =
-      ringBlock("mini", "mini crowns", t.crownsSmall, totalSpecies, 0, "#f7d154", "#e8a13a") +
-      ringBlock("large", "large crowns", t.crownsLarge, totalSpecies, t.crownsSilver, "#f7d154", "#b8e356") +
-      ringBlock("disc", "discovered", discovered, totalSpecies, 0, "#60a5fa", "#45d0c0") +
-      ringBlock("hunt", "monsters hunted", speciesHunted, totalSpecies, 0, "#f0913f", "#e4645f") +
+      ringBlock("mini", "mini crowns", t.crownsSmall, totalSpecies, 0, "#795816", "#795816") +
+      ringBlock("large", "large crowns", t.crownsLarge, totalSpecies, t.crownsSilver, "#795816", "#795816") +
+      ringBlock("disc", "discovered", discovered, totalSpecies, 0, "#365f8d", "#365f8d") +
+      ringBlock("hunt", "monsters hunted", speciesHunted, totalSpecies, 0, "#a9372b", "#a9372b") +
       huntTotalBlock(t.hunts);
 
     /* ── Sort ── */
@@ -867,13 +882,13 @@
       var mini = document.createElement("span");
       mini.className = "crown" + (c.mini ? "" : " crown--missing");
       mini.title = "Mini crown" + (c.mini ? " earned" : " missing");
-      mini.textContent = "♛";
+      mini.innerHTML = CROWN_ICON;
       var large = document.createElement("span");
       large.className = "crown" + (c.gold ? "" : c.silver ? " crown--silver" : " crown--missing");
       large.title = c.gold ? "Gold large crown earned"
         : c.silver ? "Silver large crown — gold not yet"
         : "Large crown missing";
-      large.textContent = "♛";
+      large.innerHTML = CROWN_ICON;
       crowns.appendChild(mini);
       crowns.appendChild(large);
 
@@ -947,7 +962,7 @@
     }
     function chip(name, state, hint) {
       return '<div class="mmodal-crown mmodal-crown--' + state + '">' +
-        '<span class="mmodal-crown-glyph">♛</span>' +
+        '<span class="mmodal-crown-glyph">' + CROWN_ICON + '</span>' +
         '<span class="mmodal-crown-name">' + name + "</span>" +
         '<span class="mmodal-crown-hint">' + hint + "</span></div>";
     }
@@ -1248,7 +1263,7 @@
       var size = cols * modulePx;
       new QRious({
         element: els.qrCanvas, value: url, size: size, level: "L", padding: 0,
-        background: "#f0f0f5", foreground: "#14100a"
+        background: "#ffffff", foreground: "#171b1b"
       });
       var cssSize = Math.round(size / dpr);
       els.qrCanvas.style.width = cssSize + "px"; /* height stays auto — square via intrinsic ratio */
@@ -1314,7 +1329,17 @@
     if (e.target && e.target.hasAttribute && e.target.hasAttribute("data-modal-close")) closeMonsterModal();
   });
   document.addEventListener("keydown", function (e) {
+    if (els.monsterModal.hidden) return;
     if (e.key === "Escape") closeMonsterModal();
+    if (e.key === "Tab") {
+      var focusable = els.monsterModal.querySelectorAll('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]');
+      var first = focusable[0];
+      var last = focusable[focusable.length - 1];
+      if (first && (e.shiftKey && document.activeElement === first || !e.shiftKey && document.activeElement === last || !els.monsterModal.contains(document.activeElement))) {
+        e.preventDefault();
+        (e.shiftKey ? last : first).focus();
+      }
+    }
   });
 
   /* ── Weapon view toggle (main / secondary) ── */

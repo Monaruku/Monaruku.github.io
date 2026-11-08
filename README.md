@@ -1,15 +1,47 @@
 # Monaruku
 
-Personal portal homepage hosted on GitHub Pages.
+A personal home for projects, writing and photography, built with Jekyll and hosted on GitHub Pages.
 
 ## Sections
 
 | Section | Path | Description |
 |---------|------|-------------|
-| Blog | `/blog/` | Game reviews, thoughts & ideas |
+| Work | `/work/` | Projects, case studies and launch links |
+| Writing | `/blog/` | Game reviews, thoughts & ideas |
+| Photography | `/photography/` | Street and event albums, stories & reflections |
 | Tarot | `/tarot/` | Tarot readings & card meanings |
+| MH Wilds | `/mhw/` | Local hunter-profile dashboard |
 | Budget | `/budget/` | Offline-first budget tracker PWA (MYR) with iOS Shortcuts logging |
 | About | `/about/` | Personal info |
+| CV | `/resume/` | Career details and a print-friendly resume |
+
+## Photography — adding an album
+
+Albums use an uncropped photo grid with a manual [PhotoSwipe](https://photoswipe.com/getting-started/) lightbox for swipe, zoom and keyboard navigation. This suits mixed portrait/landscape photos and lets visitors browse at their own pace. PhotoSwipe runs as native JavaScript modules within Jekyll; no additional build system or backend is required. An autoplay carousel would hide most photos and require extra [playback and accessibility controls](https://www.w3.org/WAI/tutorials/carousels/).
+
+1. Export web copies from your photo editor, typically JPEG at 2400 pixels on the longest edge. Keep originals elsewhere. Optional thumbnails around 900 pixels on the longest edge make album pages load faster. Preserve the same composition and aspect ratio in both exports.
+2. Create a folder such as `assets/photography/your-album/` and add those exports. In GitHub's browser interface, open `assets/photography/`, choose **Add file → Upload files**, and drag in the folder. GitHub supports [up to 100 files per upload and 25 MiB per file](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
+3. Copy `_photo_albums/_template.md` to `_photo_albums/your-album.md`. In GitHub, you can copy the template's raw text, then use **Add file → Create new file** in `_photo_albums/` and paste it.
+4. Fill in the album details and one `photos` entry per image. Write a short story or reflection below the closing `---`. For event albums, arrange the entries in the order the story unfolds; the gallery and lightbox preserve that order. The first photo becomes the album cover.
+5. Change `published: false` to `published: true` only when the entry is ready, then commit the images and album entry to the site's publishing branch. GitHub Pages rebuilds the site; the album appears at `/photography/your-album/`. The template itself stays unpublished.
+
+Album fields:
+
+| Field | Value |
+|-------|-------|
+| `title` | Album title; quote it and escape any internal double quotes as `\"`. |
+| `date` | Date of the shoot, in `YYYY-MM-DD` format. |
+| `category` | `street` or `events`. |
+| `location` | Optional location. |
+| `summary` | A short introduction for the album card. |
+| `published` | `false` keeps an unfinished album out of the normal build. |
+| `photos` | Ordered list of photo entries, as shown in the template. |
+
+Each photo needs `src`, its actual exported `width` and `height` in pixels, and descriptive `alt` text. Use local paths beginning `/assets/photography/`; filenames and capitalization must match exactly. Optional `caption` text appears alongside the photo. PhotoSwipe requires dimensions to display and zoom images correctly.
+
+For a smaller preview, add `thumb` plus its actual `thumb_width` and `thumb_height`. If omitted, the original `src`, `width` and `height` are used. A distinct thumbnail with its width also supplies a responsive image candidate automatically; no hand-written `srcset` is needed. Resize without cropping so both versions share an aspect ratio.
+
+The site's upload workflow is through the repository: GitHub Pages serves static files and has no persistent upload endpoint. The [published site size limit is 1 GB](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits), so upload curated web exports rather than camera originals.
 
 ## Budget PWA — iPhone setup
 
@@ -51,4 +83,4 @@ Then open <http://localhost:4000>.
 
 - **Jekyll** – static site generator
 - **GitHub Pages** – hosting & automatic deploys
-- Custom dark theme with gradient cards
+- Title-sequence design with self-hosted Anton and Barlow fonts, responsive layouts, and accessible controls

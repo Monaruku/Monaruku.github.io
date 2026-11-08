@@ -1,31 +1,13 @@
 ---
 layout: default
+section: blog
 ---
-
-<div class="article-page">
-  <a href="{{ '/blog/' | relative_url }}" class="back-link">← Back to blog</a>
-
+<main class="article-page">
+  <a href="{{ '/blog/' | relative_url }}" class="back-link">{% include arrow.html %} All writing</a>
   <article class="article">
-    {% if page.cover %}
-    <div class="article-cover">
-      <img src="{{ page.cover | relative_url }}" alt="{{ page.title }}">
-    </div>
-    {% endif %}
-
-    <header class="article-header">
-      <h1 class="article-title">{{ page.title }}</h1>
-      <div class="article-meta">
-        <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
-        {% if page.tags %}
-        <span class="article-tags">
-          {% for tag in page.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
-        </span>
-        {% endif %}
-      </div>
-    </header>
-
-    <div class="article-body">
-      {{ content }}
-    </div>
+    <header class="article-header"><h1 class="article-title">{{ page.title | escape }}</h1><div class="article-meta"><time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: '%d %B %Y' }}</time>{% if page.tags %}<span class="article-tags">{% for tag in page.tags %}<span class="tag">{{ tag | escape }}</span>{% endfor %}</span>{% endif %}</div></header>
+    {% if page.cover %}<div class="article-cover"><img src="{{ page.cover | relative_url }}" alt="{{ page.title | escape }}"></div>{% endif %}
+    <div class="article-body">{{ content }}</div>
   </article>
-</div>
+  <a class="article-end text-link" href="{{ '/blog/' | relative_url }}">Back to all writing {% include arrow.html %}</a>
+</main>

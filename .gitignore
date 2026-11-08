@@ -8,3 +8,12 @@ Gemfile.lock
 preview.html
 .DS_Store
 Thumbs.db
+
+# Impeccable local review and decision artifacts; design records stay tracked.
+**/.impeccable/config.local.json
+**/.impeccable/hook.cache.json
+**/.impeccable/hook.pending.json
+**/.impeccable/*.png
+**/.impeccable/review/
+**/.impeccable/questions/
+**/.impeccable/mocks/

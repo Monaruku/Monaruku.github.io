@@ -1,0 +1,16 @@
+Self-hosted typefaces downloaded from the official Google Fonts repository.
+Retrieved: 2026-11-08
+
+Anton Regular
+https://github.com/google/fonts/tree/main/ofl/anton
+https://raw.githubusercontent.com/google/fonts/main/ofl/anton/Anton-Regular.ttf
+License: anton-OFL.txt (SIL Open Font License 1.1)
+
+Barlow Regular, SemiBold and Bold
+https://github.com/google/fonts/tree/main/ofl/barlow
+https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-Regular.ttf
+https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-SemiBold.ttf
+https://raw.githubusercontent.com/google/fonts/main/ofl/barlow/Barlow-Bold.ttf
+License: barlow-OFL.txt (SIL Open Font License 1.1)
+
+Font files are unmodified; only local filenames have changed.

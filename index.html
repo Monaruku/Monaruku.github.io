@@ -1,155 +1,31 @@
 ---
 layout: default
-title: Home
-permalink: /
+section: home
+description: The personal home of Monaruku. Browser tools, games, writing, and a photography journey.
 ---
-
-<!-- Decorative background layers -->
-<div class="particles" aria-hidden="true">
-  <span class="particle" style="left:5%;animation-duration:12s;animation-delay:0s"></span>
-  <span class="particle" style="left:15%;animation-duration:16s;animation-delay:2s"></span>
-  <span class="particle" style="left:25%;animation-duration:14s;animation-delay:4s"></span>
-  <span class="particle" style="left:38%;animation-duration:18s;animation-delay:1s"></span>
-  <span class="particle" style="left:50%;animation-duration:13s;animation-delay:3s"></span>
-  <span class="particle" style="left:62%;animation-duration:17s;animation-delay:5s"></span>
-  <span class="particle" style="left:75%;animation-duration:15s;animation-delay:2.5s"></span>
-  <span class="particle" style="left:85%;animation-duration:19s;animation-delay:0.5s"></span>
-  <span class="particle" style="left:93%;animation-duration:14s;animation-delay:4.5s"></span>
-</div>
-<div class="grid-overlay" aria-hidden="true"></div>
-
-<div class="portal">
-  <!-- Compact hero -->
-  <section class="portal-hero hero-compact">
-    <header class="portal-header">
-      <h1 class="portal-title">Monaruku</h1>
-      <p class="portal-tagline">Building small, tasteful web experiences — from interactive rituals to game-review long-reads.</p>
-      <div class="hero-actions">
-        <a href="{{ '/work/' | relative_url }}" class="btn btn-primary">
-          <span>View Work</span>
-          <span aria-hidden="true">→</span>
-        </a>
-        <a href="{{ '/blog/' | relative_url }}" class="btn btn-ghost">Read the Blog</a>
-      </div>
-    </header>
-    <div class="scroll-hint" aria-hidden="true">Scroll</div>
-  </section>
-
-  <div class="portal-divider" aria-hidden="true"></div>
-
-  <!-- Selected Work -->
-  {% assign featured = site.projects | where: 'featured', true | sort: 'order' %}
-  {% if featured.size > 0 %}
-  <section class="section" id="work">
-    <div class="section-heading">
-      <p class="section-eyebrow">Selected work</p>
-      <h2 class="section-title">Featured projects</h2>
-    </div>
-
-    <div class="featured-grid">
-      {% for project in featured %}
-      <a href="{{ project.url | relative_url }}" class="project-card">
-        <div class="project-card-glow"></div>
-        {% if project.thumb or project.cover %}
-        <div class="project-card-media">
-          <img src="{{ project.thumb | default: project.cover | relative_url }}" alt="{{ project.title }}">
-        </div>
-        {% endif %}
-        <div class="project-card-body">
-          <div class="project-card-meta">
-            {% if project.year %}<span>{{ project.year }}</span>{% endif %}
-            {% if project.role %}<span aria-hidden="true">·</span><span>{{ project.role }}</span>{% endif %}
-          </div>
-          <h3 class="project-card-title">{{ project.title }}</h3>
-          {% if project.summary %}
-          <p class="project-card-summary">{{ project.summary }}</p>
-          {% endif %}
-          {% if project.stack %}
-          <div class="stack-chips">
-            {% for tech in project.stack %}<span class="stack-chip">{{ tech }}</span>{% endfor %}
-          </div>
-          {% endif %}
-        </div>
-        <span class="project-card-arrow" aria-hidden="true">→</span>
+<main class="home-page">
+  <div class="title-sequence">
+    <section class="sequence-work" aria-labelledby="home-work">
+      <div class="sequence-heading"><h2 id="home-work"><a href="{{ '/work/' | relative_url }}">Work.</a></h2><p>Interactive projects.<br>Ideas made playable.</p></div>
+      <a class="sequence-feature" href="{{ '/work/mhw-stat-tracker/' | relative_url }}">
+        <img src="{{ '/assets/mhw/cover.jpg' | relative_url }}" alt="Monster Hunter Wilds artwork featuring a hunter and their companions" width="1000" height="562" fetchpriority="high">
+        <span class="sequence-feature-caption"><span><strong>MH Wilds Stat Tracker</strong><span>Your hunts, in perspective.</span></span><span class="sequence-feature-action">Explore {% include arrow.html %}</span></span>
       </a>
-      {% endfor %}
+      <div class="sequence-project-links"><a href="{{ '/work/tarot/' | relative_url }}">Mystic Tarot {% include arrow.html %}</a><a href="{{ '/work/mirthful-mayhem/' | relative_url }}">Mirthful {% include arrow.html %}</a><a href="{{ '/work/' | relative_url }}">All projects {% include arrow.html %}</a></div>
+    </section>
+    <div class="sequence-side">
+      <section class="sequence-writing" aria-labelledby="home-writing">
+        <h2 id="home-writing"><a href="{{ '/blog/' | relative_url }}">Writing.</a></h2>
+        <div class="sequence-posts">{% for post in site.posts limit:2 %}<a href="{{ post.url | relative_url }}"><h3>{{ post.title | escape }}</h3><span><time datetime="{{ post.date | date: '%Y-%m-%d' }}">{{ post.date | date: '%B %Y' }}</time>{% include arrow.html %}</span></a>{% endfor %}</div>
+        <a class="text-link" href="{{ '/blog/' | relative_url }}">More from my side of the screen {% include arrow.html %}</a>
+      </section>
+      <section class="sequence-photography" aria-labelledby="home-photography">
+        <h2 id="home-photography"><a href="{{ '/photography/' | relative_url }}">Photography.</a></h2>
+        <p>Street scenes. Shared moments.<br>A journal from behind the camera.</p>
+        <div class="sequence-photo-bottom"><span>{% if site.photo_albums.size > 0 %}{{ site.photo_albums.size }} {% if site.photo_albums.size == 1 %}album{% else %}albums{% endif %}{% else %}First albums coming soon.{% endif %}</span><a href="{{ '/photography/' | relative_url }}" class="text-link">Visit the journal {% include arrow.html %}</a></div>
+      </section>
     </div>
-
-    <a href="{{ '/work/' | relative_url }}" class="section-cta">
-      <span>View all work</span>
-      <span aria-hidden="true">→</span>
-    </a>
-  </section>
-  {% endif %}
-
-  <!-- Latest Writing -->
-  {% if site.posts.size > 0 %}
-  <section class="section" id="writing">
-    <div class="section-heading">
-      <p class="section-eyebrow">Latest writing</p>
-      <h2 class="section-title">Recent posts</h2>
-    </div>
-
-    <div class="writing-strip">
-      {% for post in site.posts limit:3 %}
-      <a href="{{ post.url | relative_url }}" class="blog-card">
-        {% if post.cover %}
-        <img class="blog-card-cover" src="{{ post.cover | relative_url }}" alt="{{ post.title }}">
-        {% endif %}
-        <div class="blog-card-meta">
-          <time>{{ post.date | date: "%b %d, %Y" }}</time>
-          {% if post.tags %}
-            {% for tag in post.tags limit:2 %}<span class="tag">{{ tag }}</span>{% endfor %}
-          {% endif %}
-        </div>
-        <h3 class="blog-card-title">{{ post.title }}</h3>
-        {% if post.excerpt %}
-        <p class="blog-card-excerpt">{{ post.excerpt | strip_html | truncate: 110 }}</p>
-        {% endif %}
-        <span class="blog-card-arrow">→</span>
-      </a>
-      {% endfor %}
-    </div>
-
-    <a href="{{ '/blog/' | relative_url }}" class="section-cta">
-      <span>View all writing</span>
-      <span aria-hidden="true">→</span>
-    </a>
-  </section>
-  {% endif %}
-
-  <!-- Contact -->
-  <section class="section" id="contact">
-    <div class="section-heading">
-      <p class="section-eyebrow">Say hi</p>
-      <h2 class="section-title">Get in touch</h2>
-    </div>
-    <div class="contact-strip">
-      <a class="contact-pill" href="https://github.com/monaruku" rel="noopener">
-        <span>GitHub</span>
-        <span aria-hidden="true">↗</span>
-      </a>
-      <a class="contact-pill" href="{{ '/about/' | relative_url }}">
-        <span>About me</span>
-        <span aria-hidden="true">→</span>
-      </a>
-    </div>
-  </section>
-
-  <footer class="portal-footer">
-    <p>&copy; {{ 'now' | date: "%Y" }} Monaruku</p>
-  </footer>
-</div>
-
-<script>
-  // Project card glow — follows the cursor for subtle depth on hover.
-  document.querySelectorAll('.project-card').forEach(card => {
-    const glow = card.querySelector('.project-card-glow');
-    if (!glow) return;
-    card.addEventListener('mousemove', e => {
-      const rect = card.getBoundingClientRect();
-      glow.style.left = (e.clientX - rect.left) + 'px';
-      glow.style.top = (e.clientY - rect.top) + 'px';
-    });
-  });
-</script>
+  </div>
+  <section class="home-about" aria-labelledby="home-about-heading"><h2 id="home-about-heading">Hello. I'm Yik Xiang.</h2><p>A QA engineer in Kuala Lumpur, making room for games, experiments, and the things I notice along the way.</p><div class="home-about-links"><a class="text-link" href="{{ '/about/' | relative_url }}">A little about me {% include arrow.html %}</a><a class="text-link" href="{{ '/resume/' | relative_url }}">View my CV {% include arrow.html %}</a></div></section>
+  <section class="home-projects" aria-labelledby="home-more"><div class="section-heading"><h2 id="home-more">More to explore.</h2><p>Small tools. Different worlds.</p></div><div class="project-index">{% assign projects = site.projects | sort: 'order' %}{% for project in projects %}{% unless project.url contains 'mhw-stat-tracker' %}<a class="project-index-item" href="{{ project.url | relative_url }}"><img src="{{ project.thumb | default: project.cover | relative_url }}" alt="" loading="lazy" width="180" height="120"><span class="project-index-copy"><h3>{{ project.title | escape }}</h3><p>{{ project.summary | escape }}</p></span><span class="project-index-year">{{ project.year }}</span>{% include arrow.html %}</a>{% endunless %}{% endfor %}</div></section>
+</main>

@@ -14,8 +14,19 @@
   };
   var POSITIONS = ['past', 'present', 'future'];
   var POSITION_NAMES = ['Past', 'Present', 'Future'];
-  var SUIT_SYMBOLS = { wands: '\u{1F525}', cups: '\u{1F4A7}', swords: '\u{1F4A8}', pentacles: '\u2B50' };
+  var ICON_HEAD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  var SUIT_SYMBOLS = {
+    wands: '<path d="m6 20 12-16M9 16l-4-1m8-5 5 1"/>',
+    cups: '<path d="M5 4h14v5a7 7 0 0 1-14 0V4Zm7 12v5m-4 0h8"/>',
+    swords: '<path d="m6 18 12-12V3h-3L3 15m1 1 4 4m-1-1-3 3"/>',
+    pentacles: '<circle cx="12" cy="12" r="9"/><path d="m12 5 4 13-10-8h12L8 18Z"/>',
+    major: '<path d="m12 3 8 9-8 9-8-9Z"/><circle cx="12" cy="12" r="3"/>'
+  };
+  function reducedMotion() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  function transitionDelay(ms) { return reducedMotion() ? 0 : ms; }
   var ROMAN = ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV'];
+
+  var shuffleTimer = null;
 
   // ── DOM cache ──
   var els = {};
@@ -23,7 +34,7 @@
   function $(id) { return document.getElementById(id); }
 
   // ── Phase Controller ──
-  function showPhase(name) {
+  function showPhase(name, moveFocus) {
     state.phase = name;
     var phases = document.querySelectorAll('.phase');
     for (var i = 0; i < phases.length; i++) {
@@ -32,9 +43,15 @@
     var target = $('phase-' + name);
     if (target) {
       target.classList.add('phase-active');
-      // Smooth scroll to top of app
-      var app = document.querySelector('.tarot-app');
-      if (app) app.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (moveFocus !== false) {
+        var heading = target.querySelector('h2');
+        if (heading) {
+          heading.setAttribute('tabindex', '-1');
+          heading.focus({ preventScroll: true });
+        }
+        var app = document.querySelector('.tarot-app');
+        if (app) app.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      }
     }
   }
 
@@ -68,19 +85,20 @@
     var stopBtn = $('btn-stop-shuffle');
     if (stopBtn) {
       stopBtn.disabled = false;
-      stopBtn.addEventListener('click', function handler() {
-        stopBtn.removeEventListener('click', handler);
-        showSelection();
-      });
+      stopBtn.onclick = function() {
+        if (state.phase === 'shuffle') showSelection();
+      };
     }
     // Auto-stop after 4 seconds
-    setTimeout(function() {
+    clearTimeout(shuffleTimer);
+    shuffleTimer = setTimeout(function() {
       if (state.phase === 'shuffle') showSelection();
     }, 4000);
   }
 
   // ── Phase 4: Selection ──
   function showSelection() {
+    clearTimeout(shuffleTimer);
     state.selectedCards = [];
     state.currentPosition = 0;
     state.fanCards = state.deck.slice(0, 7);
@@ -97,6 +115,17 @@
       var cardData = state.fanCards[i];
       var el = buildCardElement(cardData.card, cardData.isReversed);
       el.setAttribute('data-index', i);
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.setAttribute('aria-label', 'Select card ' + (i + 1));
+      el.setAttribute('aria-pressed', 'false');
+      el.querySelector('.tarot-card-inner').setAttribute('aria-hidden', 'true');
+      el.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          this.click();
+        }
+      });
       el.addEventListener('click', onFanCardClick);
       fan.appendChild(el);
     }
@@ -111,12 +140,15 @@
   }
 
   function onFanCardClick() {
-    if (state.currentPosition >= 3) return;
+    if (state.currentPosition >= 3 || this.classList.contains('selected')) return;
     var idx = parseInt(this.getAttribute('data-index'), 10);
     var cardData = state.fanCards[idx];
 
     // Mark selected
     this.classList.add('selected');
+    this.setAttribute('aria-pressed', 'true');
+    this.setAttribute('aria-disabled', 'true');
+    this.setAttribute('tabindex', '-1');
     this.removeEventListener('click', onFanCardClick);
 
     state.selectedCards.push({
@@ -132,12 +164,16 @@
       for (var i = 0; i < fanCards.length; i++) {
         if (!fanCards[i].classList.contains('selected')) {
           fanCards[i].classList.add('dimmed');
+          fanCards[i].setAttribute('aria-disabled', 'true');
+          fanCards[i].setAttribute('tabindex', '-1');
         }
       }
       // Transition to reveal after delay
-      setTimeout(revealCards, 800);
+      setTimeout(revealCards, transitionDelay(800));
     } else {
       updatePositionPrompt();
+      var nextCard = $('select-fan').querySelector('.tarot-card:not(.selected)');
+      if (nextCard) nextCard.focus({ preventScroll: true });
     }
   }
 
@@ -158,12 +194,13 @@
     back.className = 'tarot-card-face tarot-card-back';
     var backImg = document.createElement('img');
     backImg.src = (window.TAROT_CARD_BACK || '/assets/tarot/card-back.png');
-    backImg.alt = 'Card back';
+    backImg.alt = '';
+    back.setAttribute('aria-hidden', 'true');
     backImg.onerror = function() {
       this.style.display = 'none';
       var fb = document.createElement('span');
       fb.className = 'back-fallback';
-      fb.textContent = '\u2726';
+      fb.textContent = 'Tarot';
       back.appendChild(fb);
     };
     back.appendChild(backImg);
@@ -183,11 +220,7 @@
 
     var iconEl = document.createElement('div');
     iconEl.className = 'card-front-icon';
-    if (card.arcana === 'major') {
-      iconEl.textContent = '\u2726';
-    } else {
-      iconEl.textContent = SUIT_SYMBOLS[card.suit] || '\u2726';
-    }
+    iconEl.innerHTML = ICON_HEAD + (SUIT_SYMBOLS[card.suit] || SUIT_SYMBOLS.major) + '</svg>';
 
     var nameEl = document.createElement('div');
     nameEl.className = 'card-front-name';
@@ -238,7 +271,7 @@
     }
 
     // Sequential flip
-    setTimeout(function() { flipCard(0); }, 600);
+    setTimeout(function() { flipCard(0); }, transitionDelay(600));
   }
 
   function flipCard(index) {
@@ -246,10 +279,10 @@
     if (card) card.classList.add('flipped');
 
     if (index < 2) {
-      setTimeout(function() { flipCard(index + 1); }, 1200);
+      setTimeout(function() { flipCard(index + 1); }, transitionDelay(1200));
     } else {
       // All flipped — show reading after delay
-      setTimeout(showReading, 1500);
+      setTimeout(showReading, transitionDelay(1500));
     }
   }
 
@@ -294,7 +327,7 @@
     if (state.intention) {
       var qSpan = document.createElement('span');
       qSpan.className = 'question-text';
-      qSpan.textContent = '"' + escapeHtml(state.intention) + '"';
+      qSpan.textContent = '"' + state.intention + '"';
       introDiv.appendChild(qSpan);
     }
     content.appendChild(introDiv);
@@ -486,7 +519,7 @@
     var p4 = document.createElement('p');
     p4.textContent = pickRandom(templates.closings);
     p4.style.fontStyle = 'italic';
-    p4.style.color = 'rgba(240,240,245,0.5)';
+    p4.style.color = 'var(--muted)';
     div.appendChild(p4);
 
     return div;
@@ -494,6 +527,7 @@
 
   // ── Reset ──
   function resetReading() {
+    clearTimeout(shuffleTimer);
     state.intention = '';
     state.category = 'general';
     state.deck = [];
@@ -528,7 +562,7 @@
 
     initIntention();
     initCategory();
-    showPhase('intention');
+    showPhase('intention', false);
   }
 
   if (document.readyState === 'loading') {

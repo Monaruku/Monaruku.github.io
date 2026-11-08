@@ -3,31 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if page.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <title>{% if page.title %}{{ page.title | escape }} · {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: page.summary | default: site.description | escape }}">
+  <meta name="theme-color" content="#f5eddc">
+  <link rel="preload" href="{{ '/assets/fonts/anton-regular.ttf' | relative_url }}" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="{{ '/assets/css/fonts.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  {% if page.photography %}
+  {% if page.photos.size > 0 %}<link rel="stylesheet" href="{{ '/assets/photography/vendor/photoswipe/photoswipe.css' | relative_url }}">{% endif %}
+  <link rel="stylesheet" href="{{ '/assets/photography/photography.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M%S' }}">
+  {% endif %}
   <link rel="icon" type="image/x-icon" href="{{ '/assets/favicon.ico' | relative_url }}">
 </head>
-<body{% unless page.url == '/' %} class="body--sub"{% endunless %}>
-  {% assign url = page.url %}
-  {% assign is_work = false %}
-  {% if url contains '/work/' %}{% assign is_work = true %}{% endif %}
-  {% assign is_blog = false %}
-  {% if url contains '/blog/' %}{% assign is_blog = true %}{% endif %}
-  {% assign is_about = false %}
-  {% if url contains '/about/' %}{% assign is_about = true %}{% endif %}
-
-  <nav class="site-nav" aria-label="Primary">
-    <div class="site-nav-inner">
-      <a href="{{ '/' | relative_url }}" class="site-nav-brand">Monaruku</a>
-      <ul class="site-nav-links">
-        <li><a href="{{ '/work/' | relative_url }}"{% if is_work %} aria-current="page"{% endif %}>Work</a></li>
-        <li><a href="{{ '/blog/' | relative_url }}"{% if is_blog %} aria-current="page"{% endif %}>Blog</a></li>
-        <li><a href="{{ '/about/' | relative_url }}"{% if is_about %} aria-current="page"{% endif %}>About</a></li>
-      </ul>
+{% assign is_home = false %}{% if page.url == '/' %}{% assign is_home = true %}{% endif %}
+{% assign section = page.section | default: layout.section | default: 'content' %}
+{% if page.url contains '/work/' %}{% assign section = 'work' %}{% elsif page.url contains '/blog/' %}{% assign section = 'blog' %}{% elsif page.photography %}{% assign section = 'photography' %}{% endif %}
+<body class="site-page site-page--{{ section }}{% if is_home %} site-page--home{% endif %}">
+  <a class="skip-link" href="#main-content">Skip to content</a>
+  <header class="site-header">
+    <div class="site-header-inner">
+      {% if is_home %}<h1 class="site-wordmark">Monaruku</h1>{% else %}<a class="site-wordmark" href="{{ '/' | relative_url }}" aria-label="Monaruku home">Monaruku</a>{% endif %}
+      <div class="site-header-links">
+        {% if is_home %}<p class="site-identity">Wong Yik Xiang · Kuala Lumpur</p>{% endif %}
+        <nav aria-label="Main navigation"><ul class="site-nav-links">
+          <li><a href="{{ '/work/' | relative_url }}" {% if section == 'work' or section == 'tarot' or section == 'mhw' %}aria-current="page"{% endif %}>Work</a></li>
+          <li><a href="{{ '/blog/' | relative_url }}" {% if section == 'blog' %}aria-current="page"{% endif %}>Writing</a></li>
+          <li><a href="{{ '/photography/' | relative_url }}" {% if section == 'photography' %}aria-current="page"{% endif %}>Photography</a></li>
+          <li><a href="{{ '/about/' | relative_url }}" {% if section == 'about' %}aria-current="page"{% endif %}>About</a></li>
+        </ul></nav>
+      </div>
     </div>
-  </nav>
-
-  {{ content }}
+  </header>
+  <div id="main-content" tabindex="-1">{{ content }}</div>
+  <footer class="site-footer">
+    <div><a class="footer-wordmark" href="{{ '/' | relative_url }}">Monaruku</a><p>Work, play, and everything in between.</p></div>
+    <nav aria-label="Footer"><a href="mailto:yikxiangwong@gmail.com">Email</a><a href="https://github.com/monaruku">GitHub</a><a href="{{ '/resume/' | relative_url }}">CV</a></nav>
+    <small>&copy; {{ 'now' | date: '%Y' }} Wong Yik Xiang</small>
+  </footer>
 </body>
 </html>

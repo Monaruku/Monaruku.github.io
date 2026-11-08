@@ -10,6 +10,9 @@ collections:
   projects:
     output: true
     permalink: /work/:path/
+  photo_albums:
+    output: true
+    permalink: /photography/:path/
 
 defaults:
   - scope:
@@ -17,14 +20,23 @@ defaults:
       type: projects
     values:
       layout: project
+  - scope:
+      path: ""
+      type: photo_albums
+    values:
+      layout: photo_album
+      photography: true
 
 exclude:
   - Gemfile
   - Gemfile.lock
   - README.md
+  - PRODUCT.md
+  - DESIGN.md
   - .gitignore
   - MysticTarot-Spec.md
   - BudgetTracker-Spec.md
   - preview.html
   - vibe_images
   - vendor
+  - _photo_albums/_template.md

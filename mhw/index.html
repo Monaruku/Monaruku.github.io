@@ -2,13 +2,15 @@
 layout: default
 title: MH Wilds Stats
 permalink: /mhw/
+section: mhw
 ---
 
 <link rel="stylesheet" href="{{ '/assets/mhw/mhw.css' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}">
 
-<div class="page">
-  <a href="{{ '/' | relative_url }}" class="back-link">&larr; Back to portal</a>
-  <h1 class="page-title gradient-mhw">MH Wilds Stat Tracker</h1>
+<main>
+<div class="page tool-heading">
+  <a href="{{ '/' | relative_url }}" class="back-link">Back to home</a>
+  <h1 class="page-title">MH Wilds Stat Tracker</h1>
   <p class="mhw-sub">View your Monster Hunter Wilds hunter profile — hunt counts, crowns, weapon usage — right in your browser. No account, no server: your data never leaves this page unless you share a link.</p>
 </div>
 
@@ -20,9 +22,9 @@ permalink: /mhw/
     <div class="intake-grid">
 
       <div class="intake-method">
-        <h3>Paste</h3>
-        <p>Use the exporter's <em>Copy to clipboard</em> button in-game, then paste here.</p>
-        <textarea id="intake-paste" rows="4" spellcheck="false"
+        <h3><label for="intake-paste">Paste your export</label></h3>
+        <p id="paste-help">Use the exporter's <em>Copy to clipboard</em> button in-game, then paste here.</p>
+        <textarea id="intake-paste" aria-describedby="paste-help" rows="4" spellcheck="false"
           placeholder='Paste exported JSON here — it starts with {"schema":"mhw-stats/1" ...}'></textarea>
         <button id="btn-paste-load" class="mhw-btn">Load from paste</button>
       </div>
@@ -32,7 +34,7 @@ permalink: /mhw/
         <p>Drag <code>mhw-stats.json</code> from the exporter folder onto this zone.</p>
         <div id="drop-zone" class="drop-zone" tabindex="0" role="button"
              aria-label="Drop a stats file here or press to browse">
-          <span class="drop-icon">&#8681;</span>
+          <span class="drop-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></span>
           <span>Drop file here or click to browse</span>
         </div>
         <input type="file" id="file-input" accept=".json,application/json" hidden>
@@ -82,7 +84,7 @@ permalink: /mhw/
           <p class="qr-note">Scan to open <strong id="qr-name"></strong>&rsquo;s stats on your phone.</p>
           <p class="qr-hint">The whole export is encoded in the link — no account needed. If a save is too large to fit in a QR, the copied link still works.</p>
         </div>
-        <button type="button" id="qr-close" class="qr-close" aria-label="Close QR code">&times;</button>
+        <button type="button" id="qr-close" class="qr-close" aria-label="Close QR code"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
       </div>
     </section>
 
@@ -174,7 +176,7 @@ permalink: /mhw/
     <div id="monster-modal" class="monster-modal" hidden>
       <div class="monster-modal-backdrop" data-modal-close></div>
       <div class="monster-modal-card" role="dialog" aria-modal="true" aria-labelledby="mmodal-name">
-        <button type="button" class="monster-modal-close" id="modal-close" aria-label="Close details">&times;</button>
+        <button type="button" class="monster-modal-close" id="modal-close" aria-label="Close details"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
         <div id="modal-body" class="monster-modal-body"></div>
       </div>
     </div>
@@ -196,6 +198,8 @@ permalink: /mhw/
   </section>
 
 </div>
+
+</main>
 
 <script src="{{ '/assets/mhw/mhw-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
 <script src="{{ '/assets/mhw/sample-data.js' | relative_url }}?v={{ site.time | date: '%Y%m%d%H%M' }}"></script>
