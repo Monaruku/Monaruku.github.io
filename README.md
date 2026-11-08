@@ -46,7 +46,7 @@ For a smaller preview, add `thumb` plus its actual `thumb_width` and `thumb_heig
 
 The site's upload workflow is through the repository: GitHub Pages serves static files and has no persistent upload endpoint. The [published site size limit is 1 GB](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits), so upload curated web exports rather than camera originals.
 
-The initial collection preserves the owner's eight source-folder albums and contains 139 distinct photographs. Only six alternate exports of the same captures were omitted. [Photography sources](assets/photography/SOURCES.md) records the folder mapping and choices. Original files remain outside this repository; the site contains resized JPEGs and thumbnails with descriptive alt text. No capture date is shown for Urban Film because the scan files do not establish one.
+The collection contains 139 distinct photographs in seven albums, drawn from the owner's eight source folders. At the owner's request, Anime Event and Setapak Central Anime Event are combined as **Anime Event**, retaining all 29 photographs from August–September 2024. The other folder-defined albums remain intact. Only six alternate exports of the same captures were omitted. [Photography sources](assets/photography/SOURCES.md) records the folder mapping and choices. Original files remain outside this repository; the site contains resized JPEGs and thumbnails with descriptive alt text. No capture date is shown for Urban Film because the scan files do not establish one.
 
 ## Budget PWA — iPhone setup
 

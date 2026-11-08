@@ -32,7 +32,7 @@ Paths below are relative to `assets/`, except where stated. These files were alr
 
 The Mirthful Mayhem project also references an existing remote thumbnail at [itch.io's image CDN](https://img.itch.zone/aW1nLzE0ODI2NjUxLnBuZw==/315x250%23c/MO9eta.png), supplied through `_projects/mirthful-mayhem.md` and associated with the [Pixel Pioneers game page](https://monaruku.itch.io/ggj-2024-mmcq). The repository identifies the user's role as a team member; it does not identify the thumbnail's individual artist or license.
 
-The photography collection was supplied by the site owner, Wong Yik Xiang, on 2026-11-09. Its eight albums preserve the source-folder groupings: 139 distinct photographs and six omitted alternate exports. Urban Film was photographed on actual film; the other albums are digital. The website uses uncropped, resized JPEG copies and thumbnails. [Photography sources](photography/SOURCES.md) records the folder mapping and duplicate decisions. Originals remain unchanged outside the repository.
+The photography collection was supplied by the site owner, Wong Yik Xiang, on 2026-11-09. Its eight source folders supply seven albums: 139 distinct photographs and six omitted alternate exports. At the owner's request, Anime Event combines the Anime Event and Setapak Central Anime Event folders, retaining all 29 photographs; the other groups remain intact. Urban Film was photographed on actual film; the other albums are digital. The website uses uncropped, resized JPEG copies and thumbnails. [Photography sources](photography/SOURCES.md) records the folder mapping and duplicate decisions. Originals remain unchanged outside the repository.
 
 ## Gallery dependency
 

@@ -220,7 +220,7 @@ The main editorial layout changes at a maximum width of `760px`, with an interme
 
 Photography gallery images keep natural height and are not cropped; album covers use contained imagery. Project and article covers may crop within their editorial frames. Charts, selection fans and data grids retain their task-specific responsive arrangements.
 
-The photography title field pairs its teal introduction with a supplied film photograph. On phones the image follows the title and introduction. Street, Events and Nature filter complete albums; source-folder boundaries stay intact. Medium and reliable capture dates belong in the album metadata, with unknown dates omitted. The featured image link uses a mustard focus outline against teal.
+The photography title field pairs its teal introduction with a supplied film photograph. On phones the image follows the title and introduction. Street, Events and Nature filter complete albums. Album grouping follows the owner's choices: Anime Event combines the two anime-event source folders, while the remaining source-folder groups stay intact. Medium and reliable capture dates belong in the album metadata, with unknown dates omitted. The featured image link uses a mustard focus outline against teal.
 
 ## Elevation & Depth
 

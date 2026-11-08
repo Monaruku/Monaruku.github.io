@@ -23,7 +23,7 @@ Jekyll generates static pages hosted on GitHub Pages. The site has no shared app
 - Keep the current Jekyll architecture and existing URLs.
 - Preserve real project descriptions, original articles, biography and career facts.
 - Preserve the Tarot reading workflow, MH Wilds stat tracker, work filters, project launch links, game embed and printable CV.
-- Photography has eight folder-defined albums containing 139 distinct photographs, with Street, Events and Nature filters, an uncropped grid and a PhotoSwipe viewer. Urban Film is actual film photography; the other albums are digital. Only duplicate capture exports were omitted.
+- Photography has seven albums containing 139 distinct photographs, with Street, Events and Nature filters, an uncropped grid and a PhotoSwipe viewer. At the owner's request, Anime Event combines all 29 photographs from the Anime Event and Setapak Central Anime Event source folders. Urban Film is actual film photography; the other albums are digital. Only duplicate capture exports were omitted.
 - The budget calculator is explicitly excluded from the redesign. Do not change `budget/**`, `assets/budget/**` or `BudgetTracker-Spec.md`.
 - Budget is standalone and does not use the shared site layout or styles.
 
@@ -33,7 +33,7 @@ Retain the name Monaruku and the identity Wong Yik Xiang. The owner authorizes a
 
 ## Evidence on Hand
 
-Project records in `_projects`, game articles and existing images, biography in `about/index.html`, CV in `resume/index.html`, live Tarot and MH Wilds tools, and the owner's supplied photographs in `_photo_albums` and `assets/photography`. The eight photo album groups follow the owner's source folders. No portrait, testimonials or new professional claims are available to invent.
+Project records in `_projects`, game articles and existing images, biography in `about/index.html`, CV in `resume/index.html`, live Tarot and MH Wilds tools, and the owner's supplied photographs in `_photo_albums` and `assets/photography`. Seven photo albums draw from eight source folders, with the two anime-event folders merged by the owner's request and the remaining groups preserved. No portrait, testimonials or new professional claims are available to invent.
 
 ## Product Principles
 
