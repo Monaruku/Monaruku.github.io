@@ -12,7 +12,7 @@ Added 9 November 2026. These photographs were supplied by the site owner, Wong Y
 | `Noizucon 14_9 - 15_9` | Noizucon | 26 | Digital |
 | `Setapak Central Anime Event 21_9` | Anime Event | 23 | Digital |
 | `Err Pond Photos I Guess 24_01_2025` | Err Pond Photos I Guess | 6 | Digital |
-| `Plants 20_6` | Plants | 23 | Digital |
+| `Plants 20_6` | Everyday Observations | 23 | Digital |
 | `Urban_ Film` | Urban Film | 17 | Film |
 
 ## Duplicate decisions
@@ -32,7 +32,7 @@ All 145 source files were inspected. None were byte-identical. The six omitted f
 
 - Capture dates come from original EXIF/XMP metadata, never filesystem timestamps.
 - The combined Anime Event album spans August–September 2024: six captures from the Anime Event folder on 2 August and 23 from the Setapak Central folder in September. Bon Odori: 20 July 2024. Noizucon: 14–15 September 2024. Pond: 24 January 2025.
-- Plants includes captures from 20 June to 25 August 2024, including the street and train photographs placed in that folder.
+- Everyday Observations includes captures from 20 June to 25 August 2024 from the `Plants 20_6` folder, including its street and train photographs. Its existing URL and image paths are preserved.
 - CNY Stuff spans 30 October 2024 to 6 February 2025. The two PNG exports are from October/November; the JPEGs are from January/February.
 - The Setapak Central source folder includes 22 captures from 21 September 2024 and `IMG_0784.png` from 15 September. All 23 now appear in Anime Event; the source folder and exported image paths are unchanged.
 - Urban Film is actual film photography, as confirmed by the owner. Scan metadata does not establish capture dates, camera or film stock; those details are not inferred.

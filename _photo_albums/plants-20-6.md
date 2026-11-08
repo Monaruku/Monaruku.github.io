@@ -1,6 +1,6 @@
 ---
 # Source folder: Plants 20_6
-title: "Plants"
+title: "Everyday Observations"
 order: 5
 category: "nature"
 date_label: "June–August 2024"
