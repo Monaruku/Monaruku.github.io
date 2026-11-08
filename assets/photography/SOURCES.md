@@ -11,7 +11,7 @@ Added 9 November 2026. These photographs were supplied by the site owner, Wong Y
 | `CNY Stuff` | CNY Stuff | 28 | Digital |
 | `Noizucon 14_9 - 15_9` | Noizucon | 26 | Digital |
 | `Setapak Central Anime Event 21_9` | Anime Event | 23 | Digital |
-| `Err Pond Photos I Guess 24_01_2025` | Err Pond Photos I Guess | 6 | Digital |
+| `Err Pond Photos I Guess 24_01_2025` | Pond Photos I Guess | 6 | Digital |
 | `Plants 20_6` | Everyday Observations | 23 | Digital |
 | `Urban_ Film` | Urban Film | 17 | Film |
 

@@ -1,6 +1,6 @@
 ---
 # Source folder: Err Pond Photos I Guess 24_01_2025
-title: "Err Pond Photos I Guess"
+title: "Pond Photos I Guess"
 order: 2
 category: "nature"
 shoot_date: "2025-01-24"
