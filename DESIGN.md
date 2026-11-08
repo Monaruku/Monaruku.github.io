@@ -143,7 +143,7 @@ components:
 
 The Title Sequence is a personal anthology told through large condensed titles, decisive color fields and dark structural seams. Mustard, deep teal and brick carry the expressive surfaces; pale paper gives work, writing and personal identity a common ground.
 
-The interior pages lower the volume for reading and operation. Anton names destinations and sections; Barlow carries paragraphs, controls and data. The world is crisp and predominantly flat, with no ornamental grain or glow. Existing artwork supplies the imagery; the photography archive stays truthful about photographs that have not yet been supplied.
+The interior pages lower the volume for reading and operation. Anton names destinations and sections; Barlow carries paragraphs, controls and data. The world is crisp and predominantly flat, with no ornamental grain or glow. Existing artwork supplies the project imagery; the photography archive leads with the owner's photographs and distinguishes actual film from digital captures.
 
 The shared screen system is extracted from the finished Jekyll implementation: `assets/css/style.css`, `assets/css/fonts.css`, the photography, Tarot and MH Wilds stylesheets, and the screen rules in `resume/index.html`. The budget app is expressly excluded. The CV retains a separate A4 print stylesheet; its print typography and monochrome palette are not shared screen tokens.
 
@@ -219,6 +219,8 @@ The extracted spacing steps are recurring values, not an exclusive scale: the bu
 The main editorial layout changes at a maximum width of `760px`, with an intermediate adjustment at `1000px` and narrow-screen adjustments at `360px`. Photography becomes one column at `640px`. Tarot changes at `700px` and `400px`; MH Wilds changes at `1000px`, `720px` and `640px`. CV screen rows stack at `700px`. These are existing surface breakpoints, not a new universal grid.
 
 Photography gallery images keep natural height and are not cropped; album covers use contained imagery. Project and article covers may crop within their editorial frames. Charts, selection fans and data grids retain their task-specific responsive arrangements.
+
+The photography title field pairs its teal introduction with a supplied film photograph. On phones the image follows the title and introduction. Street, Events and Nature filter complete albums; source-folder boundaries stay intact. Medium and reliable capture dates belong in the album metadata, with unknown dates omitted. The featured image link uses a mustard focus outline against teal.
 
 ## Elevation & Depth
 

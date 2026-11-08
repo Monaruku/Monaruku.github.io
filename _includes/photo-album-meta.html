@@ -1,0 +1,10 @@
+<div class="photo-album-meta">
+  <span>{{ include.album.category | capitalize | escape }}</span>
+  {% if include.album.medium == 'film' %}<span>Shot on film</span>{% elsif include.album.medium == 'digital' %}<span>Digital</span>{% endif %}
+  {% if include.album.date_label and include.album.date_label != '' %}
+  <span>{{ include.album.date_label | escape }}</span>
+  {% elsif include.album.shoot_date %}
+  <time datetime="{{ include.album.shoot_date | date: '%Y-%m-%d' }}">{{ include.album.shoot_date | date: '%d %b %Y' }}</time>
+  {% endif %}
+  {% if include.album.location and include.album.location != '' %}<span>{{ include.album.location | escape }}</span>{% endif %}
+</div>

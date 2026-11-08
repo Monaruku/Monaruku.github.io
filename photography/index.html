@@ -6,34 +6,36 @@ photography: true
 section: photography
 ---
 
-{% assign albums = site.photo_albums | where_exp: 'album', 'album.published != false' | sort: 'date' | reverse %}
+{% assign albums = site.photo_albums | where_exp: 'album', 'album.published != false' | sort: 'order' %}
+{% assign featured_album = albums | where: 'medium', 'film' | first %}
+{% assign frame_count = 0 %}
+{% for album in albums %}{% assign frame_count = frame_count | plus: album.photos.size %}{% endfor %}
 <main class="page photography-page">
-  <header class="photography-header">
-    <h1 class="photography-title">Learning to<br>look closer.</h1>
-    <p class="photography-intro">Street scenes, shared moments, and what I learn along the way. A place to document my photography journey, one frame at a time.</p>
+  <header class="photography-header{% if featured_album %} photography-header-with-photo{% endif %}">
+    <div class="photography-header-copy">
+      <h1 class="photography-title">Learning to<br>look closer.</h1>
+      <p class="photography-intro">Street scenes, shared moments, and small details. A photography journey in digital and film.</p>
+    </div>
+    {% if featured_album %}
+    {% assign featured_photo = featured_album.photos | first %}
+    <a class="photography-feature" href="{{ featured_album.url | relative_url }}">
+      <img src="{{ featured_photo.thumb | default: featured_photo.src | relative_url }}" alt="{{ featured_photo.alt | escape }}" width="{{ featured_photo.thumb_width | default: featured_photo.width }}" height="{{ featured_photo.thumb_height | default: featured_photo.height }}" fetchpriority="high" decoding="async">
+      <span><strong>{{ featured_album.title | escape }} · Shot on film</strong>{% include arrow.html %}</span>
+    </a>
+    {% endif %}
   </header>
-
-  <div class="photography-themes">
-    <section aria-labelledby="street-title">
-      <h2 id="street-title">Street</h2>
-      <p>Everyday life, passing light, and moments between destinations.</p>
-    </section>
-    <section aria-labelledby="events-title">
-      <h2 id="events-title">Events</h2>
-      <p>People coming together, the atmosphere, and the details that tell the story.</p>
-    </section>
-  </div>
 
   <section aria-labelledby="albums-title" data-photo-archive>
     <div class="photography-archive-heading">
       <h2 id="albums-title">The journal</h2>
-      <p>Albums &amp; field notes</p>
+      <p>{% if albums.size > 0 %}{{ albums.size }} albums · {{ frame_count }} photographs{% else %}Albums &amp; field notes{% endif %}</p>
     </div>
     {% if albums.size > 0 %}
     <div class="photography-filters" role="group" aria-label="Filter photography albums" hidden>
       <button type="button" class="photo-filter" data-photo-filter="all" aria-pressed="true" aria-controls="photo-albums">All</button>
       <button type="button" class="photo-filter" data-photo-filter="street" aria-pressed="false" aria-controls="photo-albums">Street</button>
       <button type="button" class="photo-filter" data-photo-filter="events" aria-pressed="false" aria-controls="photo-albums">Events</button>
+      <button type="button" class="photo-filter" data-photo-filter="nature" aria-pressed="false" aria-controls="photo-albums">Nature</button>
     </div>
     <p class="photo-sr-only" role="status" data-photo-status></p>
     <div class="photography-albums" id="photo-albums">
@@ -46,13 +48,9 @@ section: photography
           {% endif %}
           <div class="photo-album-info">
             <h3>{{ album.title | escape }}</h3>
-            <div class="photo-album-meta">
-              <span>{{ album.category | capitalize | escape }}</span>
-              <time datetime="{{ album.date | date: '%Y-%m-%d' }}">{{ album.date | date: '%d %b %Y' }}</time>
-              {% if album.location and album.location != '' %}<span>{{ album.location | escape }}</span>{% endif %}
-            </div>
+            {% include photo-album-meta.html album=album %}
             {% if album.summary %}<p>{{ album.summary | escape }}</p>{% endif %}
-            <span class="photo-album-cta">View album <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <span class="photo-album-cta">View {{ album.photos.size }} photographs <svg class="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15M13 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           </div>
         </a>
       </article>

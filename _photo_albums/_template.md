@@ -2,8 +2,11 @@
 # Copy this file to your-album.md and replace all example values.
 # Keep published: false until your real photos and text are ready.
 title: "Replace with your album title"
-date: 2026-11-08 # Replace with the date of the shoot: YYYY-MM-DD.
-category: street # Choose street or events.
+shoot_date: 2026-11-08 # Replace with the known shoot date, or remove if unknown.
+# date_label: "June–August 2026" # Optional date span; overrides shoot_date.
+order: 10 # Lower numbers appear first in the journal.
+category: street # Choose street, events or nature.
+medium: digital # Choose digital or film (photographed on actual film).
 location: "" # Optional.
 summary: "Replace with a short introduction to this shoot."
 published: false

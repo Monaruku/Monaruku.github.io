@@ -1,14 +1,16 @@
 /* Photography: a bold title frame, then quiet space for the photographs. */
 .photography-page, .photo-album-page { max-width: 1280px; }
-.photography-header { background: var(--teal); color: var(--paper); padding: clamp(1.5rem, 5vw, 4rem); margin-bottom: 1.5rem; }
+.photography-header { background: var(--teal); color: var(--paper); margin-bottom: 3rem; }
+.photography-header-copy { padding: clamp(1.5rem, 4vw, 3rem); }
+.photography-header-with-photo { display: grid; grid-template-columns: 1fr 1fr; align-items: center; }
+.photography-feature { display: block; min-width: 0; padding: 1.5rem; color: var(--paper); text-decoration: none; }
+.photography-feature img { display: block; width: 100%; height: auto; }
+.photography-feature > span { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: .9rem; font-size: 1rem; line-height: 1.5; }
+.photography-feature:hover strong { text-decoration: underline; text-underline-offset: .2em; }
+.photography-page .photography-feature:focus-visible { outline-color: var(--mustard); outline-offset: -5px; }
 .photography-title, .photo-album-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(3.2rem, 7vw, 6rem); line-height: 1.02; letter-spacing: -.015em; text-transform: uppercase; text-wrap: balance; }
 .photography-title { max-width: 16ch; }
 .photography-intro, .photo-album-intro { max-width: 65ch; margin-top: 1.5rem; font-size: 1.125rem; line-height: 1.65; }
-.photography-themes { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 4rem; }
-.photography-themes section { background: var(--mustard); padding: 2rem; }
-.photography-themes section + section { background: var(--brick); color: var(--paper); }
-.photography-themes h2 { font-family: var(--font-display); font-size: 2.5rem; line-height: 1.05; text-transform: uppercase; font-weight: 400; margin-bottom: .8rem; }
-.photography-themes p { max-width: 38ch; font-size: 1.125rem; line-height: 1.6; }
 .photography-archive-heading, .photo-gallery-heading { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .75rem 1.5rem; margin-bottom: 1.5rem; }
 .photography-archive-heading h2, .photo-gallery-heading h2 { font-family: var(--font-display); font-size: 2.75rem; font-weight: 400; line-height: 1.1; text-transform: uppercase; }
 .photography-archive-heading p, .photo-gallery-heading p { color: var(--muted); font-size: 1rem; }
@@ -60,8 +62,8 @@
 .pswp__photo-caption:focus-visible { outline: 2px solid #e0b23c; }
 @media (max-width: 640px) {
   .photography-title { font-size: clamp(2.9rem, 12vw, 4.5rem); }
-  .photography-themes { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 3rem; }
-  .photography-themes section { padding: 1.5rem; }
+  .photography-header-with-photo { grid-template-columns: 1fr; }
+  .photography-feature { padding-top: 0; }
   .photography-albums, .photo-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .photography-archive-heading h2, .photo-gallery-heading h2 { font-size: 2.1rem; }
   .photo-album-header { padding-bottom: 2rem; }

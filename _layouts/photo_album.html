@@ -8,11 +8,7 @@ section: photography
   <article>
     <header class="photo-album-header">
       <h1 class="photo-album-title">{{ page.title | escape }}</h1>
-      <div class="photo-album-meta">
-        <span>{{ page.category | capitalize | escape }}</span>
-        <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%d %B %Y' }}</time>
-        {% if page.location and page.location != '' %}<span>{{ page.location | escape }}</span>{% endif %}
-      </div>
+      {% include photo-album-meta.html album=page %}
       {% if page.summary %}<p class="photo-album-intro">{{ page.summary | escape }}</p>{% endif %}
     </header>
     {% assign story = content | strip %}

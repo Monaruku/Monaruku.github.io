@@ -8,7 +8,7 @@ A personal home for projects, writing and photography, built with Jekyll and hos
 |---------|------|-------------|
 | Work | `/work/` | Projects, case studies and launch links |
 | Writing | `/blog/` | Game reviews, thoughts & ideas |
-| Photography | `/photography/` | Street and event albums, stories & reflections |
+| Photography | `/photography/` | Street, event and nature albums, on digital and film |
 | Tarot | `/tarot/` | Tarot readings & card meanings |
 | MH Wilds | `/mhw/` | Local hunter-profile dashboard |
 | Budget | `/budget/` | Offline-first budget tracker PWA (MYR) with iOS Shortcuts logging |
@@ -30,8 +30,11 @@ Album fields:
 | Field | Value |
 |-------|-------|
 | `title` | Album title; quote it and escape any internal double quotes as `\"`. |
-| `date` | Date of the shoot, in `YYYY-MM-DD` format. |
-| `category` | `street` or `events`. |
+| `shoot_date` | Known date of the shoot, in `YYYY-MM-DD` format. Omit when unknown; do not use file-copy or scan dates. |
+| `date_label` | Optional human-readable date span, such as `June–August 2024`; takes precedence over `shoot_date`. |
+| `order` | Number controlling album order; lower numbers appear first. |
+| `category` | `street`, `events` or `nature`. This filters whole albums without moving individual photographs. |
+| `medium` | `digital` or `film`. Film albums are labelled “Shot on film”; the first film album also appears in the journal header. |
 | `location` | Optional location. |
 | `summary` | A short introduction for the album card. |
 | `published` | `false` keeps an unfinished album out of the normal build. |
@@ -42,6 +45,8 @@ Each photo needs `src`, its actual exported `width` and `height` in pixels, and 
 For a smaller preview, add `thumb` plus its actual `thumb_width` and `thumb_height`. If omitted, the original `src`, `width` and `height` are used. A distinct thumbnail with its width also supplies a responsive image candidate automatically; no hand-written `srcset` is needed. Resize without cropping so both versions share an aspect ratio.
 
 The site's upload workflow is through the repository: GitHub Pages serves static files and has no persistent upload endpoint. The [published site size limit is 1 GB](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits), so upload curated web exports rather than camera originals.
+
+The initial collection preserves the owner's eight source-folder albums and contains 139 distinct photographs. Only six alternate exports of the same captures were omitted. [Photography sources](assets/photography/SOURCES.md) records the folder mapping and choices. Original files remain outside this repository; the site contains resized JPEGs and thumbnails with descriptive alt text. No capture date is shown for Urban Film because the scan files do not establish one.
 
 ## Budget PWA — iPhone setup
 
